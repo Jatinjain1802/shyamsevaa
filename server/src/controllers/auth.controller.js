@@ -122,6 +122,8 @@ export const forgotPassword = async (req, res) => {
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  const rowsUpdated = await AuthModel.saveOtp(email, otp, expiresAt);
+  console.log("OTP rows updated:", rowsUpdated);
 
   await AuthModel.saveOtp(email, otp, expiresAt);
 
@@ -144,6 +146,14 @@ export const verifyOtp = async (req, res) => {
 
   const user = await AuthModel.findByEmail(email);
 
+  console.log("------ OTP DEBUG ------");
+  console.log("REQ EMAIL:", email);
+  console.log("REQ OTP:", otp, typeof otp);
+  console.log("DB OTP:", user?.otp, typeof user?.otp);
+  console.log("DB EXPIRY:", user?.otp_expires_at);
+  console.log("NOW:", new Date());
+  console.log("-----------------------");
+
   if (!user || !user.otp || !user.otp_expires_at) {
     return res.status(400).json({
       success: false,
@@ -151,9 +161,12 @@ export const verifyOtp = async (req, res) => {
     });
   }
 
-  const isOtpMatch = String(user.otp) === String(otp);
+  const isOtpMatch = String(user.otp).trim() === String(otp).trim();
   const isExpired =
     Date.now() > new Date(user.otp_expires_at).getTime();
+
+  console.log("OTP MATCH:", isOtpMatch);
+  console.log("IS EXPIRED:", isExpired);
 
   if (!isOtpMatch || isExpired) {
     return res.status(400).json({
@@ -161,10 +174,6 @@ export const verifyOtp = async (req, res) => {
       message: "Invalid or expired OTP",
     });
   }
- console.log("DB OTP:", user.otp);
-console.log("REQ OTP:", otp);
-console.log("DB Expiry:", user.otp_expires_at);
-console.log("Now:", new Date());
 
   return res.json({
     success: true,
@@ -172,17 +181,49 @@ console.log("Now:", new Date());
   });
 };
 
-
-
-
-
-
 export const resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+  try {
+    const { email, newPassword } = req.body;
 
-  const hashed = await bcrypt.hash(newPassword, 10);
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and new password are required",
+      });
+    }
 
-  await AuthModel.updatePassword(email, hashed);
+    const user = await AuthModel.findByEmail(email);
 
-  res.json({ success: true, message: "Password updated successfully" });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // OPTIONAL SAFETY: ensure OTP was verified earlier
+    if (!user.otp || !user.otp_expires_at) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP verification required",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password + clear OTP
+    await AuthModel.updatePasswordAndClearOtp(email, hashedPassword);
+
+    return res.json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 };
