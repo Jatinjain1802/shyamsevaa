@@ -1,24 +1,25 @@
-const mysql = require('mysql2');
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
-// Create connection pool
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',        // default XAMPP user
-//   password: '',        // default XAMPP password (empty)
-  database: 'shyamsevaa',
+dotenv.config();
+
+const db = await mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
-// Test connection
-db.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ MySQL connection failed:', err.message);
-  } else {
-    console.log('✅ MySQL connected successfully');
-    connection.release();
-  }
-});
+// Test DB connection
+try {
+  const connection = await db.getConnection();
+  console.log("MySQL connected successfully");
+  connection.release();
+} catch (error) {
+  console.error(" MySQL connection failed:", error.message);
+}
 
-module.exports = db;
+export default db;

@@ -1,0 +1,32 @@
+import db from "../config/db.js";
+
+export const findByEmail = async (email) => {
+  const [rows] = await db.query(
+    "SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1",
+    [email]
+  );
+  return rows[0];
+};
+
+export const createUser = async ({ name, email, mobile, password, role }) => {
+  const [result] = await db.query(
+    `INSERT INTO users (name, email, mobile, password, role)
+     VALUES (?, ?, ?, ?, ?)`,
+    [name, email, mobile, password, role]
+  );
+  return result.insertId;
+};
+
+export const saveOtp = async (email, otp, expiresAt) => {
+  await db.query(
+    "UPDATE users SET otp = ?, otp_expires_at = ? WHERE email = ?",
+    [otp, expiresAt, email]
+  );
+};
+
+export const updatePassword = async (email, password) => {
+  await db.query(
+    "UPDATE users SET password = ?, otp = NULL, otp_expires_at = NULL WHERE email = ?",
+    [password, email]
+  );
+};
