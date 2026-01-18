@@ -8,7 +8,10 @@ import {
   FiLogOut, 
   FiMenu, 
   FiX,
-  FiUser
+  FiUser,
+  FiBook,
+  FiBriefcase,
+  FiCalendar
 } from "react-icons/fi";
 
 export default function AdminLayout() {
@@ -21,11 +24,23 @@ export default function AdminLayout() {
     navigate("/admin/login");
   };
 
-  const navItems = [
-    { name: "Dashboard", path: "/admin", icon: FiHome, end: true },
-    // Add more nav items as we build them
-    // { name: "Users", path: "/admin/users", icon: FiUsers },
-  ];
+const navItems = [
+  { name: "Dashboard", path: "/admin", icon: FiHome, end: true },
+
+  { name: "Poojas", path: "/admin/poojas", icon: FiBook },
+  { name: "Pooja Addons", path: "/admin/pooja-addons", icon: FiSettings },
+
+  { name: "Temples", path: "/admin/temples", icon: FiHome },
+
+  { name: "Chadawas", path: "/admin/chadawas", icon: FiCalendar },
+  { name: "Chadawa Items", path: "/admin/chadawa-items", icon: FiSettings },
+
+  { name: "Pandits", path: "/admin/pandits", icon: FiBriefcase },
+  { name: "Bookings", path: "/admin/bookings", icon: FiCalendar },
+
+  { name: "Users", path: "/admin/users", icon: FiUsers },
+];
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
