@@ -18,15 +18,30 @@ export const createUser = async ({ name, email, mobile, password, role }) => {
 };
 
 export const saveOtp = async (email, otp, expiresAt) => {
-  await db.query(
-    "UPDATE users SET otp = ?, otp_expires_at = ? WHERE email = ?",
+  const [result] = await db.query(
+    `
+    UPDATE users 
+    SET otp = ?, otp_expires_at = ?
+    WHERE LOWER(email) = LOWER(?)
+    `,
     [otp, expiresAt, email]
   );
+
+  return result.affectedRows; // debugging ke liye
 };
 
-export const updatePassword = async (email, password) => {
-  await db.query(
-    "UPDATE users SET password = ?, otp = NULL, otp_expires_at = NULL WHERE email = ?",
-    [password, email]
+export const updatePasswordAndClearOtp = async (email, hashedPassword) => {
+  const [result] = await db.query(
+    `
+    UPDATE users
+    SET 
+      password = ?,
+      otp = NULL,
+      otp_expires_at = NULL
+    WHERE LOWER(email) = LOWER(?)
+    `,
+    [hashedPassword, email]
   );
+
+  return result.affectedRows;
 };
