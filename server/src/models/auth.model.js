@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export const findByEmail = async (email) => {
   const [rows] = await db.query(
-    "SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1",
+    "SELECT id, name, email, password, role, otp, otp_expires_at FROM users WHERE email = ? LIMIT 1",
     [email]
   );
   return rows[0];

@@ -1,3 +1,119 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-primary: #f25d11; /* Vibrant Orange from SevatSatkar */
+    --color-primary-dark: #d14909;
+    --color-secondary: #fff8f0; /* Cream Background */
+    --color-accent: #ffd700; /* Gold */
+    --color-whatsapp: #25d366; /* WhatsApp Green */
+    --color-text-dark: #2d1810;
+    --color-text-light: #555555;
+  }
+
+  body {
+    @apply bg-white text-[var(--color-text-dark)] font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif text-[var(--color-primary-dark)];
+  }
+
+  .font-hindi {
+    font-family: "Tiro Devanagari Hindi", serif;
+  }
+}
+
+@layer components {
+  .btn-primary-custom {
+    @apply bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2;
+  }
+
+  .btn-outline-custom {
+    @apply border-2 border-[var(--color-primary)] text-[var(--color-secondary)] px-6 py-2 rounded-full font-semibold hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300;
+  }
+
+  .card-dharmik {
+    @apply bg-white rounded-xl shadow-lg border border-orange-100/50 p-6 hover:shadow-xl transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  .fade-in {
+    animation-name: fadeIn;
+  }
+
+  .slide-in-from-bottom-4 {
+    --tw-translate-y: 1rem;
+    animation-name: slideInBottom;
+  }
+
+  .slide-in-from-bottom-8 {
+    --tw-translate-y: 2rem;
+    animation-name: slideInBottom;
+  }
+
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInBottom {
+    from {
+      opacity: 0;
+      transform: translateY(var(--tw-translate-y, 0));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+}
