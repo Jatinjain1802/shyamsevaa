@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/admin/temples", templeRoutes);
 app.use("/api/temples", templeRoutes);
 app.use("/api/poojas", poojas);
 // Base route

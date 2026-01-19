@@ -12,6 +12,14 @@ import adminMiddleware from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 
+/* ================= PUBLIC ================= */
+
+// PUBLIC TEMPLE LIST
+router.get("/public", getAllTemples);
+
+// PUBLIC SINGLE TEMPLE (optional, future use)
+router.get("/public/:id", getTempleById);
+
 // Admin-only CRUD
 router.post("/", authMiddleware, adminMiddleware, createTemple);
 router.get("/", authMiddleware, adminMiddleware, getAllTemples);
