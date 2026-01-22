@@ -69,3 +69,33 @@ export const removeAddonFromPooja = async (mapId) => {
         [mapId]
     );
 };
+/* =======================
+   GET ADDONS (READ)
+======================= */
+
+// all addons (admin)
+export const getAllAddons = async () => {
+    const [rows] = await db.query(
+        `SELECT id, title, price FROM addons ORDER BY created_at DESC`
+    );
+    return rows;
+};
+
+// addons linked to pooja (with mapId)
+export const getAddonsByPooja = async (poojaId) => {
+    const [rows] = await db.query(
+        `
+    SELECT 
+      pa.id AS mapId,
+      a.id AS addonId,
+      a.title,
+      a.price
+    FROM pooja_addons pa
+    JOIN addons a ON a.id = pa.addon_id
+    WHERE pa.pooja_id = ?
+    `,
+        [poojaId]
+    );
+    return rows;
+};
+

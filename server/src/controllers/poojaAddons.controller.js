@@ -1,5 +1,5 @@
 
-import * as PoojaModel from "../models/poojaAddons.model";
+import * as PoojaModel from "../models/poojaAddons.model.js";
 /* =======================
    ADDONS (ADMIN)
 ======================= */
@@ -83,5 +83,28 @@ export const removeAddonFromPooja = async (req, res) => {
     res.json({
         success: true,
         message: "Addon removed from pooja",
+    });
+};
+
+/* =======================
+   GET ADDONS (ADMIN)
+======================= */
+
+export const getAllAddons = async (req, res) => {
+    const data = await PoojaModel.getAllAddons();
+    res.json({
+        success: true,
+        data,
+    });
+};
+
+export const getPoojaAddons = async (req, res) => {
+    const data = await PoojaModel.getAddonsByPooja(
+        req.params.poojaId
+    );
+
+    res.json({
+        success: true,
+        data,
     });
 };

@@ -1,23 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
-const dummyPoojas = [
-  {
-    id: 1,
-    title: "Maha Mrityunjaya Pooja",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWcGVxTbR45Wbse29M3i7P5UURlx3G5oUOyw&s",
-  },
-  {
-    id: 2,
-    title: "Rudrabhishek Pooja",
-    image: "https://cdn.panditsnearme.com/uploads/2024/09/Rudrabhishek-Puja.webp",
-  },
-  {
-    id: 3,
-    title: "Navagraha Shanti Pooja",
-    image: "https://www.panditg.in/wp-content/uploads/2024/03/Navgrah-2.jpeg",
-  },
-];
 
 export default function TempleDetail() {
   const { id } = useParams();
@@ -30,6 +13,7 @@ export default function TempleDetail() {
       try {
         const res = await api.get(`/temples/public/${id}`);
         setTemple(res.data.data);
+        console.log(res.data.data);
       } catch (err) {
         console.error("Failed to load temple", err);
       } finally {
@@ -37,18 +21,17 @@ export default function TempleDetail() {
       }
     };
 
-    // const fetchPoojas = async () => {
-    //   try {
-    //     const res = await api.get(`/poojas/temple/${id}`);
-    //     setPoojas(res.data.data || []);
-    //   } catch (err) {
-    //     console.error("Failed to load poojas", err);
-    //   }
-    // };
+    const fetchPoojas = async () => {
+      try {
+        const res = await api.get(`/poojas/temple/${id}`);
+        setPoojas(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to load poojas", err);
+      }
+    };
 
     fetchTemple();
-    // fetchPoojas();
-    setPoojas(dummyPoojas);
+    fetchPoojas();
   }, [id]);
 
 
@@ -89,16 +72,17 @@ export default function TempleDetail() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {poojas.map((p) => (
-            <div
+            <Link
               key={p.id}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+              to={`/poojas/${p.id}`}
+              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden block group"
             >
               <div className="h-44 bg-gray-100">
                 {p.image ? (
                   <img
                     src={p.image}
                     alt={p.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -110,11 +94,11 @@ export default function TempleDetail() {
               <div className="p-4">
                 <h3 className="text-lg font-semibold">{p.title}</h3>
 
-                <button className="mt-3 text-sm text-orange-600 font-medium hover:underline">
+                <span className="mt-3 text-sm text-orange-600 font-medium hover:underline inline-block">
                   View Details →
-                </button>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
 
           {poojas.length === 0 && (

@@ -41,3 +41,15 @@ export const deletePoojaVariant = async (variantId) => {
   );
   return res.affectedRows;
 };
+export const getVariantsByPoojaId = async (poojaId) => {
+  const [rows] = await db.query(
+    `
+    SELECT id, persons, description, price
+    FROM pooja_variants
+    WHERE pooja_id = ?
+    ORDER BY persons ASC
+    `,
+    [poojaId]
+  );
+  return rows;
+};

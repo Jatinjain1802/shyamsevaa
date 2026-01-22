@@ -14,11 +14,12 @@ import Pandits from "../pages/admin/Pandits";
 import Users from "../pages/admin/Users";
 import ProtectedAdmin from "./ProtectedAdmin";
 import Poojas from "../pages/admin/Poojas";
-import PoojaAddons from "../pages/admin/PoojaAddons";
 import Temples from "../pages/admin/Temples";
 import Chadawas from "../pages/admin/Chadawas";
 import ChadawaItems from "../pages/admin/ChadawaItems";
 import TempleDetail from "../pages/users/TempleDetail";
+import Addons from "../pages/admin/Addons";
+import PoojaDetail from "../pages/users/PoojaDetail";
 
 export default function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ export default function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="/temples" element={<Templess />} />
         <Route path="/temples/:id" element={<TempleDetail />} />
+        <Route path="/poojas/:poojaId" element={<PoojaDetail />} />
       </Route>
 
       {/* Admin Login Routes */}
@@ -36,20 +38,6 @@ export default function AppRoutes() {
       <Route path="/admin/verify-otp" element={<VerifyOtp />} />
       <Route path="/admin/reset-password" element={<ResetPassword />} />
       {/* Admin Dashboard Routes */}
-      {/* <Route
-        path="/admin"
-        element={
-          <ProtectedAdmin>
-            <AdminLayout />
-          </ProtectedAdmin>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="bookings" element={<Bookings />} />
-        <Route path="services" element={<Services />} />
-        <Route path="pandits" element={<Pandits />} />
-        <Route path="users" element={<Users />} />
-      </Route> */}
       <Route
         path="/admin"
         element={
@@ -61,7 +49,7 @@ export default function AppRoutes() {
         <Route index element={<Dashboard />} />
 
         <Route path="poojas" element={<Poojas />} />
-        <Route path="pooja-addons" element={<PoojaAddons />} />
+        <Route path="addons" element={<Addons />} />
         <Route path="temples" element={<Temples />} />
 
         <Route path="chadawas" element={<Chadawas />} />

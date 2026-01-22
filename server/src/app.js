@@ -4,9 +4,13 @@ import cors from "cors";
 // routes
 import authRoutes from "./routes/auth.routes.js";
 import templeRoutes from "./routes/temples.routes.js"
-import poojas from "./routes/poojas.routes.js";
-import poojaVariants from "./routes/poojaVariants.routes.js";
-import poojaAddons from "./routes/poojaAddons.routes.js";
+import poojaRoutes from "./routes/poojas.routes.js";
+import poojaVariantsRoutes from "./routes/poojaVariants.routes.js";
+import poojaAddonsRoutes from "./routes/poojaAddons.routes.js";
+import poojaTemplesRoutes from "./routes/poojaTemples.routes.js";
+
+
+
 
 const app = express();
 
@@ -16,13 +20,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/temples", templeRoutes);
 app.use("/api/temples", templeRoutes);
-app.use("/api/poojas", poojas);
+app.use("/api", poojaTemplesRoutes);
+app.use("/api", poojaAddonsRoutes);
+app.use("/api/admin", poojaVariantsRoutes);
 
-app.use("/api/pooja-variants", poojaVariants);
-app.use("/api/pooja-addons", poojaAddons);
+// ADMIN
+app.use("/api/admin/poojas", poojaRoutes);
+// USER
+app.use("/api/poojas", poojaRoutes);
 // Base route
 app.get("/", (req, res) => {
   res.send("Server is running!");

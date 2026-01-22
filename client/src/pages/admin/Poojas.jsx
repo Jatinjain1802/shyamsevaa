@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
+import PoojaVariants from "./PoojaVariants";
+import PoojaAddons from "./PoojaAddons";
+import PoojaTemples from "./PoojaTemples";
 
 export default function Poojas() {
   const [poojas, setPoojas] = useState([]);
@@ -14,12 +17,18 @@ export default function Poojas() {
     benefits: "",
   });
 
+  // Close modal handler
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+  };
+
   const fetchPoojas = async () => {
     try {
-      const res = await api.get("/admin/poojas");
+      const res = await api.get("/poojas"); // optional list API
       setPoojas(res.data.data || []);
-    } catch (err) {
-      console.error("Failed to fetch poojas", err);
+    } catch {
+      setPoojas([]);
     } finally {
       setLoading(false);
     }
@@ -29,24 +38,18 @@ export default function Poojas() {
     fetchPoojas();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const openCreateForm = () => {
+  const openCreate = () => {
     setEditingId(null);
     setForm({ title: "", image: "", description: "", benefits: "" });
     setShowForm(true);
   };
 
-  const openEditForm = (pooja) => {
-    setEditingId(pooja.id);
-    setForm({
-      title: pooja.title,
-      image: pooja.image || "",
-      description: pooja.description,
-      benefits: pooja.benefits || "",
-    });
+  const openEdit = (p) => {
+    setEditingId(p.id);
+    setForm(p);
     setShowForm(true);
   };
 
@@ -60,21 +63,21 @@ export default function Poojas() {
         await api.post("/admin/poojas", form);
       }
 
-      setShowForm(false);
+      closeForm();
       fetchPoojas();
-    } catch (err) {
-      alert("Something went wrong while saving pooja");
+    } catch {
+      alert("Failed to save pooja");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this pooja?")) return;
+    if (!confirm("Delete this pooja?")) return;
 
     try {
       await api.delete(`/admin/poojas/${id}`);
       fetchPoojas();
-    } catch (err) {
-      alert("Failed to delete pooja");
+    } catch {
+      alert("Failed to delete");
     }
   };
 
@@ -84,119 +87,179 @@ export default function Poojas() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Pooja Management</h1>
         <button
-          onClick={openCreateForm}
+          onClick={openCreate}
           className="bg-orange-600 text-white px-4 py-2 rounded"
         >
           + Add Pooja
         </button>
       </div>
 
-      {/* Table */}
+      {/* Cards */}
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="bg-white rounded shadow overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="text-left p-3">Title</th>
-                <th className="text-left p-3">Description</th>
-                <th className="text-right p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {poojas.map((p) => (
-                <tr key={p.id} className="border-t">
-                  <td className="p-3 font-medium">{p.title}</td>
-                  <td className="p-3 text-gray-600">
-                    {p.description.slice(0, 80)}...
-                  </td>
-                  <td className="p-3 text-right space-x-2">
-                    <button
-                      onClick={() => openEditForm(p)}
-                      className="px-3 py-1 bg-blue-500 text-white rounded"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {poojas.length === 0 && (
-                <tr>
-                  <td colSpan="3" className="p-4 text-center text-gray-500">
-                    No poojas found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {poojas.map((p) => (
+            <div
+              key={p.id}
+              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+            >
+              <div className="h-40 bg-gray-100">
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    No Image
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4">
+                <h3 className="text-lg font-semibold">{p.title}</h3>
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {p.description}
+                </p>
+
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    onClick={() => openEdit(p)}
+                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {poojas.length === 0 && (
+            <p className="col-span-full text-center text-gray-500">
+              No poojas found
+            </p>
+          )}
         </div>
       )}
 
       {/* Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-xl rounded p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingId ? "Edit Pooja" : "Add Pooja"}
-            </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom-8 duration-300">
+            <div className="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {editingId ? "Edit Pooja" : "Add New Pooja"}
+              </h2>
+              <button
+                onClick={closeForm}
+                className="text-gray-500 hover:text-red-500 transition-colors text-2xl"
+              >
+                &times;
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                name="title"
-                placeholder="Pooja Title"
-                value={form.title}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              />
+            <div className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Title
+                    </label>
+                    <input
+                      name="title"
+                      value={form.title}
+                      onChange={handleChange}
+                      placeholder="e.g. Satyanarayan Pooja"
+                      className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Image URL
+                    </label>
+                    <input
+                      name="image"
+                      value={form.image}
+                      onChange={handleChange}
+                      placeholder="https://..."
+                      className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                    />
+                  </div>
+                </div>
 
-              <input
-                name="image"
-                placeholder="Image URL"
-                value={form.image}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
+                {form.image && (
+                  <div className="h-48 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => (e.target.style.display = "none")}
+                    />
+                  </div>
+                )}
 
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={form.description}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                rows="3"
-                required
-              />
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    rows="3"
+                    placeholder="Brief description of the pooja..."
+                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all resize-y"
+                  />
+                </div>
 
-              <textarea
-                name="benefits"
-                placeholder="Benefits"
-                value={form.benefits}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                rows="2"
-              />
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Benefits
+                  </label>
+                  <textarea
+                    name="benefits"
+                    value={form.benefits}
+                    onChange={handleChange}
+                    rows="3"
+                    placeholder="List the benefits of this pooja..."
+                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all resize-y"
+                  />
+                </div>
 
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2 border rounded"
-                >
-                  Cancel
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded">
-                  Save
-                </button>
-              </div>
-            </form>
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeForm}
+                    className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-linear-to-r from-orange-600 to-orange-700 text-white font-medium rounded-lg hover:shadow-lg transition-all transform active:scale-95"
+                  >
+                    {editingId ? "Update Pooja" : "Create Pooja"}
+                  </button>
+                </div>
+              </form>
+
+              {editingId && (
+                <div className="mt-10 pt-8 border-t border-gray-100">
+                  <PoojaVariants poojaId={editingId} />
+                  <PoojaAddons poojaId={editingId} />
+                  <PoojaTemples poojaId={editingId} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

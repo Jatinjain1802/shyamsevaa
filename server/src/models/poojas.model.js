@@ -37,6 +37,11 @@ export const getPoojaById = async (id) => {
   return row;
 };
 
+export const getAllPoojas = async () => {
+  const [rows] = await db.query("SELECT * FROM poojas");
+  return rows;
+};
+
 /* TEMPLE MAPPING */
 
 export const getPoojasByTemple = async (templeId) => {
@@ -70,7 +75,7 @@ export const getVariantsByPooja = async (poojaId) => {
 export const getAddonsByPooja = async (poojaId) => {
   const [rows] = await db.query(
     `
-    SELECT a.id, a.title, a.price, a.image
+    SELECT a.id, a.title, a.price, a.image, a.description
     FROM pooja_addons pa
     JOIN addons a ON a.id = pa.addon_id
     WHERE pa.pooja_id = ?

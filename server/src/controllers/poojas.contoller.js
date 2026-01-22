@@ -32,39 +32,60 @@ export const createPooja = async (req, res) => {
 };
 
 export const updatePooja = async (req, res) => {
-  const updated = await PoojaModel.updatePooja(
-    req.params.poojaId,
-    req.body
-  );
+  try {
+    const updated = await PoojaModel.updatePooja(
+      req.params.poojaId,
+      req.body
+    );
 
-  if (!updated) {
-    return res.status(404).json({
-      success: false,
-      message: "Pooja not found",
-    });
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Pooja not found",
+      });
+    }
+
+    res.json({ success: true, message: "Pooja updated" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-
-  res.json({ success: true, message: "Pooja updated" });
 };
 
 export const deletePooja = async (req, res) => {
-  const deleted = await PoojaModel.deletePooja(req.params.poojaId);
+  try {
+    const deleted = await PoojaModel.deletePooja(req.params.poojaId);
 
-  if (!deleted) {
-    return res.status(404).json({
-      success: false,
-      message: "Pooja not found",
-    });
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Pooja not found",
+      });
+    }
+
+    res.json({ success: true, message: "Pooja deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-
-  res.json({ success: true, message: "Pooja deleted" });
 };
+
 
 /* ================= USER ================= */
 
 export const getPoojasByTemple = async (req, res) => {
   const data = await PoojaModel.getPoojasByTemple(req.params.templeId);
   res.json({ success: true, data });
+};
+
+export const getAllPoojas = async (req, res) => {
+  try {
+    const data = await PoojaModel.getAllPoojas();
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };
 
 export const getPoojaDetail = async (req, res) => {

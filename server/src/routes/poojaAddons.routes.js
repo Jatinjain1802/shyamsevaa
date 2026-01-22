@@ -5,6 +5,8 @@ import {
     deleteAddon,
     mapAddonToPooja,
     removeAddonFromPooja,
+    getAllAddons,
+    getPoojaAddons,
 } from "../controllers/poojaAddons.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
@@ -55,4 +57,20 @@ router.delete(
     adminMiddleware,
     removeAddonFromPooja
 );
+// get all addons (admin)
+router.get(
+    "/admin/addons",
+    authMiddleware,
+    adminMiddleware,
+    getAllAddons
+);
+
+// get addons of a pooja
+router.get(
+    "/admin/poojas/:poojaId/addons",
+    authMiddleware,
+    adminMiddleware,
+    getPoojaAddons
+);
+
 export default router;

@@ -42,48 +42,59 @@ export const addPoojaVariant = async (req, res) => {
 };
 
 export const updatePoojaVariant = async (req, res) => {
-  const { persons, description, price } = req.body;
-  const { variantId } = req.params;
+  try {
+    const { persons, description, price } = req.body;
+    const { variantId } = req.params;
 
-  const updated = await PoojaModel.updatePoojaVariant(variantId, {
-    persons,
-    description,
-    price,
-  });
-
-  if (!updated) {
-    return res.status(404).json({
-      success: false,
-      message: "Variant not found",
+    const updated = await PoojaModel.updatePoojaVariant(variantId, {
+      persons,
+      description,
+      price,
     });
-  }
 
-  res.json({
-    success: true,
-    message: "Pooja variant updated",
-  });
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Variant not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Pooja variant updated",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };
 
+
 export const deletePoojaVariant = async (req, res) => {
-  const deleted = await PoojaModel.deletePoojaVariant(
-    req.params.variantId
-  );
+  try {
+    const deleted = await PoojaModel.deletePoojaVariant(
+      req.params.variantId
+    );
 
-  if (!deleted) {
-    return res.status(404).json({
-      success: false,
-      message: "Variant not found",
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Variant not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Pooja variant deleted",
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-
-  res.json({
-    success: true,
-    message: "Pooja variant deleted",
-  });
 };
 
 export const getPoojaVariants = async (req, res) => {
-  const variants = await PoojaModel.getVariantsByPooja(
+  const variants = await PoojaModel.getVariantsByPoojaId(
     req.params.poojaId
   );
 
