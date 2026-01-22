@@ -3,6 +3,7 @@ import {
   createPooja,
   getPoojasByTemple,
   getPoojaDetail,
+  updatePooja,
   deletePooja,
 } from "../controllers/poojas.contoller.js";
 
@@ -11,9 +12,44 @@ import adminMiddleware from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, adminMiddleware, createPooja);
-router.get("/temple/:templeId", authMiddleware, adminMiddleware, getPoojasByTemple);
-router.get("/:id", authMiddleware, adminMiddleware, getPoojaDetail);
-router.delete("/:id", authMiddleware, adminMiddleware, deletePooja);
+/* ================= ADMIN APIs ================= */
+
+// create pooja
+router.post(
+  "/admin/poojas",
+  authMiddleware,
+  adminMiddleware,
+  createPooja
+);
+
+// update pooja
+router.put(
+  "/admin/poojas/:poojaId",
+  authMiddleware,
+  adminMiddleware,
+  updatePooja
+);
+
+// delete pooja
+router.delete(
+  "/admin/poojas/:poojaId",
+  authMiddleware,
+  adminMiddleware,
+  deletePooja
+);
+
+/* ================= USER APIs ================= */
+
+// poojas by temple
+router.get(
+  "/poojas/temple/:templeId",
+  getPoojasByTemple
+);
+
+// full pooja detail page
+router.get(
+  "/poojas/:poojaId",
+  getPoojaDetail
+);
 
 export default router;
