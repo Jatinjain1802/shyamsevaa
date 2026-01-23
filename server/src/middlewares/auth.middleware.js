@@ -4,7 +4,6 @@ const authMiddleware = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    // Token missing
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
@@ -13,19 +12,39 @@ const authMiddleware = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach user info to request
     req.user = decoded;
-
     next();
   } catch (error) {
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
     });
+  }
+};
+
+/* ================================
+   OPTIONAL AUTH (Guest allowed)
+================================ */
+authMiddleware.optional = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    // No token → guest user
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      req.user = null;
+      return next();
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    req.user = null; // invalid token → treat as guest
+    next();
   }
 };
 

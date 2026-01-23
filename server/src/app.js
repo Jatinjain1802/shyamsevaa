@@ -33,6 +33,7 @@ app.use("/api/admin/poojas", poojaRoutes);
 // USER
 app.use("/api/poojas", poojaRoutes);
 // Base route
+
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
