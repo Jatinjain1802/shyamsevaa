@@ -1,19 +1,21 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
+import UnifiedCard from "../../components/common/UnifiedCard";
 
 export default function TempleDetail() {
   const { id } = useParams();
   const [temple, setTemple] = useState(null);
   const [poojas, setPoojas] = useState([]);
+  const [chadawas, setChadawas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("poojas");
 
   useEffect(() => {
     const fetchTemple = async () => {
       try {
         const res = await api.get(`/temples/public/${id}`);
         setTemple(res.data.data);
-        console.log(res.data.data);
       } catch (err) {
         console.error("Failed to load temple", err);
       } finally {
@@ -30,8 +32,18 @@ export default function TempleDetail() {
       }
     };
 
+    const fetchChadawas = async () => {
+      try {
+        const res = await api.get(`/chadawas/temple/${id}`);
+        setChadawas(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to load chadawas", err);
+      }
+    }
+
     fetchTemple();
     fetchPoojas();
+    fetchChadawas();
   }, [id]);
 
 
@@ -44,9 +56,9 @@ export default function TempleDetail() {
   }
 
   return (
-    <div className="pt-25 max-w-5xl mx-auto px-4">
+    <div className="pt-24 max-w-5xl mx-auto px-4 pb-12">
       {/* Image */}
-      <div className="w-full h-80 rounded-2xl overflow-hidden mb-8 bg-gray-100">
+      <div className="w-full h-80 rounded-2xl overflow-hidden mb-8 bg-gray-100 shadow-md">
         {temple.image ? (
           <img
             src={temple.image}
@@ -61,52 +73,67 @@ export default function TempleDetail() {
       </div>
 
       {/* Content */}
-      <h1 className="text-3xl font-bold mb-4">{temple.title}</h1>
-      <p className="text-gray-700 leading-relaxed">{temple.description}</p>
+      <h1 className="text-4xl font-bold mb-4 text-gray-900">{temple.title}</h1>
+      <p className="text-gray-700 leading-relaxed text-lg">{temple.description}</p>
 
-      {/* NEXT PHASE */}
+      {/* OFFERINGS SECTION */}
       <div className="mt-12 mb-12">
-        <h2 className="text-2xl text-center font-semibold mb-6">
-          Poojas at this Temple
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {poojas.map((p) => (
-            <Link
-              key={p.id}
-              to={`/poojas/${p.id}`}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden block group"
-            >
-              <div className="h-44 bg-gray-100">
-                {p.image ? (
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    No Image
-                  </div>
-                )}
-              </div>
-
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{p.title}</h3>
-
-                <span className="mt-3 text-sm text-orange-600 font-medium hover:underline inline-block">
-                  View Details →
-                </span>
-              </div>
-            </Link>
-          ))}
-
-          {poojas.length === 0 && (
-            <p className="col-span-full text-gray-500">
-              No poojas available for this temple.
-            </p>
-          )}
+        <div className="flex justify-center gap-8 border-b border-gray-200 mb-8">
+          <button
+            onClick={() => setActiveTab('poojas')}
+            className={`pb-4 text-lg font-medium transition-all ${activeTab === 'poojas' ? 'text-orange-600 border-b-2 border-orange-600 translate-y-px' : 'text-gray-500 hover:text-gray-800'}`}
+          >
+            Poojas
+          </button>
+          <button
+            onClick={() => setActiveTab('chadawas')}
+            className={`pb-4 text-lg font-medium transition-all ${activeTab === 'chadawas' ? 'text-orange-600 border-b-2 border-orange-600 translate-y-px' : 'text-gray-500 hover:text-gray-800'}`}
+          >
+            Chadawas (Offerings)
+          </button>
         </div>
+
+        {activeTab === 'poojas' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
+            {poojas.map((p) => (
+              <UnifiedCard
+                key={p.id}
+                image={p.image}
+                title={p.title}
+                description={p.description || "Join this sacred pooja."}
+                link={`/poojas/${p.id}`}
+                buttonText="View Details"
+                className="h-full"
+              />
+            ))}
+
+            {poojas.length === 0 && (
+              <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                <p className="text-gray-500">No poojas available for this temple currently.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
+            {chadawas.map((c) => (
+              <UnifiedCard
+                key={c.id}
+                image={c.image}
+                title={c.title}
+                description={c.description || "Make a sacred offering."}
+                link={`/chadawas/${c.id}`}
+                buttonText="Make Offering"
+                className="h-full"
+              />
+            ))}
+
+            {chadawas.length === 0 && (
+              <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                <p className="text-gray-500">No chadawas available for this temple currently.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
     </div>

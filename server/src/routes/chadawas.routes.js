@@ -12,8 +12,10 @@ import {
 
     addChadawaBenefit,
     deleteChadawaBenefit,
-
+    getAllChadawas,
     mapChadawaTemple,
+    removeChadawaTemple,
+    getLinkedTemples,
 } from "../controllers/chadawas.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
@@ -39,13 +41,25 @@ router.delete("/admin/chadawas/benefits/:benefitId", authMiddleware, adminMiddle
 
 // chadawa ↔ temple mapping
 router.post("/admin/chadawas/:chadawaId/temples", authMiddleware, adminMiddleware, mapChadawaTemple);
+router.delete("/admin/chadawas/:chadawaId/temples/:templeId", authMiddleware, adminMiddleware, removeChadawaTemple);
+router.get("/admin/chadawas/:chadawaId/temples", authMiddleware, adminMiddleware, getLinkedTemples);
 
 /* ========== USER APIs ========== */
 
 // full chadawa detail page
 router.get("/chadawas/:chadawaId", getChadawaDetail);
 
+// get all chadawas (public)
+router.get("/chadawas", getAllChadawas);
+
 // chadawas by temple
 router.get("/chadawas/temple/:templeId", getChadawasByTemple);
+router.get(
+    "/admin/chadawas",
+    authMiddleware,
+    adminMiddleware,
+    getAllChadawas
+);
+
 
 export default router;

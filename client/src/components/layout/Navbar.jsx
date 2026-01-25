@@ -21,21 +21,19 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    {name : "Temples",path:"/temples"},
-    { name: "Services", path: "/services" },
-    { name: "Bookings", path: "/bookings" },
+    { name: "Temples", path: "/temples" },
+    { name: "Poojas", path: "/poojas" },
+    { name: "Chadawas", path: "/chadawas" },
     { name: "Gallery", path: "/gallery" },
     { name: "About Us", path: "/about" },
-    { name: "Contact", path: "/contact" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-md py-3"
-          : "bg-transparent py-5"
-      }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
+        ? "bg-white/90 backdrop-blur-md shadow-md py-3"
+        : "bg-transparent py-5"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
@@ -44,9 +42,8 @@ export default function Navbar() {
             <div className="w-10 h-10 rounded-full bg-linear-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
               S
             </div>
-            <span className={`text-2xl font-bold font-serif ${
-              scrolled ? "text-[var(--color-text-dark)]" : "text-[var(--color-primary-dark)]"
-            } transition-colors`}>
+            <span className={`text-2xl font-bold font-serif ${scrolled ? "text-[var(--color-text-dark)]" : "text-[var(--color-primary-dark)]"
+              } transition-colors`}>
               ShyamSeva
             </span>
           </Link>
@@ -58,19 +55,17 @@ export default function Navbar() {
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  `font-medium text-base transition-all duration-300 relative group ${
-                    isActive
-                      ? "text-[var(--color-primary)]"
-                      : scrolled ? "text-gray-700 hover:text-[var(--color-primary)]" : "text-gray-800 hover:text-[var(--color-primary)]"
+                  `font-medium text-base transition-all duration-300 relative group ${isActive
+                    ? "text-[var(--color-primary)]"
+                    : scrolled ? "text-gray-700 hover:text-[var(--color-primary)]" : "text-gray-800 hover:text-[var(--color-primary)]"
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
                     {link.name}
-                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}></span>
+                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}></span>
                   </>
                 )}
               </NavLink>
@@ -86,10 +81,10 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                to="/donate"
+                to="/contact"
                 className="btn-primary-custom !px-5 !py-2 !text-sm"
               >
-                Donate
+                Contact
               </Link>
             </div>
           </div>
@@ -108,17 +103,15 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setIsOpen(false)}
       ></div>
 
       {/* Mobile Menu Drawer */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 z-50 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center p-6 border-b border-gray-100">
@@ -138,17 +131,16 @@ export default function Navbar() {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-3 rounded-xl font-medium transition-all ${
-                    isActive
-                      ? "bg-orange-50 text-[var(--color-primary)]"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)]"
+                  `block px-4 py-3 rounded-xl font-medium transition-all ${isActive
+                    ? "bg-orange-50 text-[var(--color-primary)]"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)]"
                   }`
                 }
               >
                 {link.name}
               </NavLink>
             ))}
-            
+
             <div className="my-6 border-t border-gray-100 pt-6 space-y-4">
               <Link
                 to="/login"
@@ -166,16 +158,16 @@ export default function Navbar() {
                 Donate Now
               </Link>
             </div>
-            
-             <div className="px-4 pt-4">
-               <div className="bg-[var(--color-secondary)] p-4 rounded-xl">
-                 <p className="text-sm text-gray-500 mb-2">Need assistance?</p>
-                 <a href="tel:+919876543210" className="flex items-center gap-2 text-[var(--color-primary-dark)] font-semibold hover:underline">
-                   <FiPhone className="w-4 h-4" />
-                   +91 98765 43210
-                 </a>
-               </div>
-             </div>
+
+            <div className="px-4 pt-4">
+              <div className="bg-[var(--color-secondary)] p-4 rounded-xl">
+                <p className="text-sm text-gray-500 mb-2">Need assistance?</p>
+                <a href="tel:+919876543210" className="flex items-center gap-2 text-[var(--color-primary-dark)] font-semibold hover:underline">
+                  <FiPhone className="w-4 h-4" />
+                  +91 98765 43210
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

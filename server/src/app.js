@@ -8,6 +8,7 @@ import poojaRoutes from "./routes/poojas.routes.js";
 import poojaVariantsRoutes from "./routes/poojaVariants.routes.js";
 import poojaAddonsRoutes from "./routes/poojaAddons.routes.js";
 import poojaTemplesRoutes from "./routes/poojaTemples.routes.js";
+import chadawaRoutes from "./routes/chadawas.routes.js";
 
 
 
@@ -30,8 +31,10 @@ app.use("/api/admin", poojaVariantsRoutes);
 
 // ADMIN
 app.use("/api/admin/poojas", poojaRoutes);
+app.use("/api", chadawaRoutes);
 // USER
 app.use("/api/poojas", poojaRoutes);
+app.use("/api/chadawas", chadawaRoutes);
 // Base route
 
 app.get("/", (req, res) => {

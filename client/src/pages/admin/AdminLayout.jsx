@@ -33,7 +33,6 @@ export default function AdminLayout() {
     { name: "Temples", path: "/admin/temples", icon: FiHome },
 
     { name: "Chadawas", path: "/admin/chadawas", icon: FiCalendar },
-    { name: "Chadawa Items", path: "/admin/chadawa-items", icon: FiSettings },
 
     { name: "Pandits", path: "/admin/pandits", icon: FiBriefcase },
     { name: "Bookings", path: "/admin/bookings", icon: FiCalendar },
