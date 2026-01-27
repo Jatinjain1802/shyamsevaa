@@ -8,8 +8,7 @@ import poojaRoutes from "./routes/poojas.routes.js";
 import poojaVariantsRoutes from "./routes/poojaVariants.routes.js";
 import poojaAddonsRoutes from "./routes/poojaAddons.routes.js";
 import poojaTemplesRoutes from "./routes/poojaTemples.routes.js";
-
-import chadawasRoutes from "./routes/chadawas.routes.js";
+import chadawaRoutes from "./routes/chadawas.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 
 
@@ -22,22 +21,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/admin/temples", templeRoutes);
 app.use("/api/temples", templeRoutes);
+app.use("/api/poojas", poojaRoutes);
 app.use("/api", poojaTemplesRoutes);
 app.use("/api", poojaAddonsRoutes);
 app.use("/api/admin", poojaVariantsRoutes);
 
 // ADMIN
-app.use("/api/admin/poojas", poojaRoutes);
-// USER
-app.use("/api/poojas", poojaRoutes);
-
-app.use("/api/", chadawasRoutes);
-app.use("/api/cart", cartRoutes);
-
+app.use("/api", chadawaRoutes);
+app.use("/api", cartRoutes);
 // Base route
 
 app.get("/", (req, res) => {

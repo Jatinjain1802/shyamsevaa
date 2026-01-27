@@ -42,8 +42,8 @@ export const addChadawaItem = async (chadawaId, d) => {
 
 export const updateChadawaItem = async (id, d) => {
     const [r] = await db.query(
-        `UPDATE chadawa_items SET title=?,description=?,price=? WHERE id=?`,
-        [d.title, d.description, d.price, id]
+        `UPDATE chadawa_items SET title=?,description=?,price=?,chadawa_id=? WHERE id=?`,
+        [d.title, d.description, d.price, d.chadawa_id, id]
     );
     return r.affectedRows;
 };
@@ -75,6 +75,12 @@ export const mapChadawaTemple = async (chadawaId, templeId) => {
         [chadawaId, templeId]
     );
 };
+export const deleteChadawaTemple = async (chadawaId, templeId) => {
+    await db.query(`DELETE FROM chadawa_temples WHERE chadawa_id=? AND temple_id=?`, [
+        chadawaId,
+        templeId,
+    ]);
+};
 
 /* USER FETCH */
 
@@ -88,7 +94,7 @@ export const getChadawaItems = async (id) => {
 
 export const getChadawaBenefits = async (id) => {
     const [r] = await db.query(
-        `SELECT title,description FROM chadawa_benefits WHERE chadawa_id=?`,
+        `SELECT id,title,description FROM chadawa_benefits WHERE chadawa_id=?`,
         [id]
     );
     return r;
@@ -120,5 +126,13 @@ export const getChadawasByTemple = async (templeId) => {
      WHERE ct.temple_id=?`,
         [templeId]
     );
+    return r;
+};
+export const getAllChadawas = async () => {
+    const [r] = await db.query(`
+    SELECT id,title,image,description,chadawa_date
+    FROM chadawas
+    ORDER BY created_at DESC
+  `);
     return r;
 };

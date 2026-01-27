@@ -74,6 +74,16 @@ export const mapChadawaTemple = async (req, res) => {
     res.json({ success: true });
 };
 
+export const removeChadawaTemple = async (req, res) => {
+    await ChadawaModel.deleteChadawaTemple(req.params.chadawaId, req.params.templeId);
+    res.json({ success: true });
+};
+
+export const getLinkedTemples = async (req, res) => {
+    const temples = await ChadawaModel.getChadawaTemples(req.params.chadawaId);
+    res.json({ success: true, data: temples });
+};
+
 /* ================= USER ================= */
 
 export const getChadawaDetail = async (req, res) => {
@@ -99,3 +109,8 @@ export const getChadawasByTemple = async (req, res) => {
     const data = await ChadawaModel.getChadawasByTemple(req.params.templeId);
     res.json({ success: true, data });
 };
+export const getAllChadawas = async (req, res) => {
+    const data = await ChadawaModel.getAllChadawas();
+    res.json({ success: true, data });
+}
+

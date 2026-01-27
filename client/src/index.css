@@ -2,11 +2,15 @@
 
 @layer base {
   :root {
-    --color-primary: #f25d11; /* Vibrant Orange from SevatSatkar */
+    --color-primary: #f25d11;
+    /* Vibrant Orange from SevatSatkar */
     --color-primary-dark: #d14909;
-    --color-secondary: #fff8f0; /* Cream Background */
-    --color-accent: #ffd700; /* Gold */
-    --color-whatsapp: #25d366; /* WhatsApp Green */
+    --color-secondary: #fff8f0;
+    /* Cream Background */
+    --color-accent: #ffd700;
+    /* Gold */
+    --color-whatsapp: #25d366;
+    /* WhatsApp Green */
     --color-text-dark: #2d1810;
     --color-text-light: #555555;
   }
@@ -67,9 +71,11 @@
   .delay-200 {
     animation-delay: 200ms;
   }
+
   .delay-300 {
     animation-delay: 300ms;
   }
+
   .delay-400 {
     animation-delay: 400ms;
   }
@@ -78,6 +84,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -88,6 +95,7 @@
       opacity: 0;
       transform: translateY(var(--tw-translate-y, 0));
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -98,12 +106,15 @@
     0% {
       transform: translate(0px, 0px) scale(1);
     }
+
     33% {
       transform: translate(30px, -50px) scale(1.1);
     }
+
     66% {
       transform: translate(-20px, 20px) scale(0.9);
     }
+
     100% {
       transform: translate(0px, 0px) scale(1);
     }
@@ -115,5 +126,81 @@
 
   .animation-delay-2000 {
     animation-delay: 2s;
+  }
+
+  /* New Animations */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+  }
+
+  @keyframes float-reverse {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(20px) rotate(-5deg);
+    }
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-reverse 7s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  .animate-marquee {
+    display: inline-block;
+    animation: marquee 25s linear infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  /* Glassmorphism Utilities */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }

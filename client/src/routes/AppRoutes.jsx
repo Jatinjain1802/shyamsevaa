@@ -17,9 +17,16 @@ import Poojas from "../pages/admin/Poojas";
 import Temples from "../pages/admin/Temples";
 import Chadawas from "../pages/admin/Chadawas";
 import ChadawaItems from "../pages/admin/ChadawaItems";
+import ChadawaBenefits from "../pages/admin/ChadawaBenefits";
 import TempleDetail from "../pages/users/TempleDetail";
 import Addons from "../pages/admin/Addons";
+import Poojass from "../pages/users/Poojas";
+import Chadawass from "../pages/users/Chadawas";
+import Gallery from "../pages/users/Gallery";
+import About from "../pages/users/About";
 import PoojaDetail from "../pages/users/PoojaDetail";
+import ChadawaDetail from "../pages/users/ChadawaDetail";
+import TempleChadawas from "../pages/users/TempleChadawas";
 
 export default function AppRoutes() {
   return (
@@ -29,7 +36,13 @@ export default function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="/temples" element={<Templess />} />
         <Route path="/temples/:id" element={<TempleDetail />} />
+        <Route path="/poojas" element={<Poojass />} />
         <Route path="/poojas/:poojaId" element={<PoojaDetail />} />
+        <Route path="/chadawas" element={<Chadawass />} />
+        <Route path="/chadawas/:chadawaId" element={<ChadawaDetail />} />
+        <Route path="/temples/:id/chadawas" element={<TempleChadawas />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/about" element={<About />} />
       </Route>
 
       {/* Admin Login Routes */}
@@ -53,7 +66,8 @@ export default function AppRoutes() {
         <Route path="temples" element={<Temples />} />
 
         <Route path="chadawas" element={<Chadawas />} />
-        <Route path="chadawa-items" element={<ChadawaItems />} />
+        <Route path="chadawas/:chadawaId/items" element={<ChadawaItems />} />
+        <Route path="chadawas/:chadawaId/benefits" element={<ChadawaBenefits />} />
 
         <Route path="pandits" element={<Pandits />} />
         <Route path="bookings" element={<Bookings />} />
