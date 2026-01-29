@@ -25,22 +25,24 @@ export default function Temples() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen pt-16">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+      <div className="flex items-center justify-center min-h-screen pt-16 bg-paper-bg">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sindoor"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-4 pb-12">
+    <div className="min-h-screen bg-paper-bg pt-8 pb-12">
+      <div className="hidden md:block toran-border mb-8"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 font-serif">Sacred Temples</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <span className="material-symbols-outlined text-marigold text-5xl mb-2">temple_hindu</span>
+          <h1 className="text-4xl md:text-5xl text-sindoor mb-4 font-serif">Sacred Temples</h1>
+          <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans italic">
             Discover the divine architecture and spiritual sanctity of ancient temples.
           </p>
-          <div className="w-24 h-1 bg-orange-500 mx-auto mt-6 rounded-full"></div>
+          <div className="w-24 h-1 bg-marigold mx-auto mt-6 rounded-full"></div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -57,7 +59,7 @@ export default function Temples() {
         </div>
 
         {temples.length === 0 && (
-          <p className="col-span-full text-center text-gray-500">
+          <p className="col-span-full text-center text-stone-500 font-serif text-xl">
             No temples found
           </p>
         )}

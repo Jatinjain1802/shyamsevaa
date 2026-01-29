@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FiMenu, FiX, FiPhone, FiUser } from "react-icons/fi";
+import { FiMenu, FiX, FiUser, FiSearch, FiBell } from "react-icons/fi";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,117 +9,100 @@ export default function Navbar() {
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Temples", path: "/temples" },
-    { name: "Poojas", path: "/poojas" },
-    { name: "Chadawas", path: "/chadawas" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "About Us", path: "/about" },
+    { name: "TEMPLES", path: "/temples" },
+    { name: "POOJAS", path: "/poojas" },
+    { name: "CHADAWA", path: "/chadawas" },
   ];
 
   return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
-        ? "bg-white/90 backdrop-blur-md shadow-md py-3"
-        : "bg-transparent py-5"
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full bg-linear-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              S
+    <>
+      <div className="flex justify-center gap-1 py-1 bg-sindoor/10 overflow-hidden">
+        {/* Javascript loop for garland decoration not ideal in React, using array map */}
+        {Array.from({ length: 40 }).map((_, i) => (
+          <div key={i} className="garland-decoration"></div>
+        ))}
+      </div>
+      <header className={`relative w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 shadow-md py-2 border-b-4 border-marigold" : "bg-white/90 border-b-4 border-marigold py-4"
+        }`}>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="text-sindoor flex flex-col items-center">
+                <span className="material-symbols-outlined text-4xl leading-none group-hover:scale-110 transition-transform">temple_hindu</span>
+                <div className="h-1 w-full bg-haldi mt-1"></div>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-2xl md:text-3xl text-sindoor leading-tight tracking-wide font-serif">ShyamPoja</h1>
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-marigold -mt-1">Heritage Home</span>
+              </div>
+            </Link>
+            <nav className="hidden xl:flex items-center gap-6 font-bold text-sm">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `hover:text-sindoor transition-colors border-b-2 ${isActive ? "text-sindoor border-marigold" : "border-transparent text-heritage-dark hover:border-marigold"}`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="hidden lg:flex items-center bg-stone-100 rounded-full px-4 py-1.5 border border-marigold/30">
+              <span className="material-symbols-outlined text-marigold text-lg">search</span>
+              <input
+                className="bg-transparent border-none focus:ring-0 text-sm w-32 xl:w-48 focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
+                placeholder="Search rituals..."
+                type="text"
+              />
             </div>
-            <span className={`text-2xl font-bold font-serif ${scrolled ? "text-[var(--color-text-dark)]" : "text-[var(--color-primary-dark)]"
-              } transition-colors`}>
-              ShyamSeva
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `font-medium text-base transition-all duration-300 relative group ${isActive
-                    ? "text-[var(--color-primary)]"
-                    : scrolled ? "text-gray-700 hover:text-[var(--color-primary)]" : "text-gray-800 hover:text-[var(--color-primary)]"
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {link.name}
-                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
-                      }`}></span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-
-            {/* CTA Buttons */}
-            <div className="flex items-center gap-4 ml-4">
+            <div className="flex items-center gap-3">
+              <button className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors hidden sm:block">
+                <span className="material-symbols-outlined">notifications</span>
+              </button>
               <Link
                 to="/login"
-                className="hidden lg:flex items-center gap-2 text-[var(--color-primary)] font-semibold hover:text-[var(--color-primary-dark)] transition-colors"
+                className="bg-sindoor text-white px-4 md:px-6 py-2 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:bg-sindoor/90 transition-all whitespace-nowrap"
               >
-                <FiUser className="w-5 h-5" />
-                Login
+                <span className="material-symbols-outlined text-lg">account_circle</span>
+                <span className="hidden sm:inline">MY ACCOUNT</span>
               </Link>
-              <Link
-                to="/contact"
-                className="btn-primary-custom !px-5 !py-2 !text-sm"
+              <button
+                className="xl:hidden p-2 text-sindoor hover:bg-sindoor/10 rounded-full"
+                onClick={() => setIsOpen(true)}
               >
-                Contact
-              </Link>
+                <FiMenu className="w-6 h-6" />
+              </button>
             </div>
           </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-4">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-[var(--color-text-dark)] p-2 focus:outline-none"
-            >
-              {isOpen ? <FiX className="w-7 h-7" /> : <FiMenu className="w-7 h-7" />}
-            </button>
-          </div>
         </div>
-      </div>
+      </header>
 
       {/* Mobile Menu Overlay */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-        onClick={() => setIsOpen(false)}
-      ></div>
+      {isOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+      )}
 
       {/* Mobile Menu Drawer */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-      >
+      <div className={`fixed top-0 right-0 z-[70] h-full w-80 bg-paper-bg shadow-2xl transform transition-transform duration-300 ease-in-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"
+        }`}>
         <div className="flex flex-col h-full">
-          <div className="flex justify-between items-center p-6 border-b border-gray-100">
-            <span className="text-xl font-bold text-[var(--color-primary)]">Menu</span>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 text-gray-500 hover:text-[var(--color-primary)] transition-colors"
-            >
+          <div className="flex justify-between items-center p-6 border-b border-marigold/20 bg-white">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-3xl text-sindoor">temple_hindu</span>
+              <span className="text-xl font-bold text-sindoor font-serif">ShyamPoja</span>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="text-sindoor hover:bg-sindoor/10 p-2 rounded-full">
               <FiX className="w-6 h-6" />
             </button>
           </div>
@@ -131,9 +114,9 @@ export default function Navbar() {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-3 rounded-xl font-medium transition-all ${isActive
-                    ? "bg-orange-50 text-[var(--color-primary)]"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)]"
+                  `block px-4 py-3 rounded-xl font-bold transition-all ${isActive
+                    ? "bg-sindoor/10 text-sindoor"
+                    : "text-heritage-dark hover:bg-marigold/10 hover:text-sindoor"
                   }`
                 }
               >
@@ -141,36 +124,19 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            <div className="my-6 border-t border-gray-100 pt-6 space-y-4">
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-all"
-              >
-                <FiUser className="w-5 h-5" />
-                Login / Register
-              </Link>
-              <Link
-                to="/donate"
-                onClick={() => setIsOpen(false)}
-                className="w-full btn-primary-custom justify-center"
-              >
-                Donate Now
-              </Link>
-            </div>
-
-            <div className="px-4 pt-4">
-              <div className="bg-[var(--color-secondary)] p-4 rounded-xl">
-                <p className="text-sm text-gray-500 mb-2">Need assistance?</p>
-                <a href="tel:+919876543210" className="flex items-center gap-2 text-[var(--color-primary-dark)] font-semibold hover:underline">
-                  <FiPhone className="w-4 h-4" />
-                  +91 98765 43210
-                </a>
+            <div className="mt-6 pt-6 border-t border-marigold/20">
+              <div className="flex items-center bg-white rounded-full px-4 py-2 border border-marigold/30 mb-6">
+                <span className="material-symbols-outlined text-marigold text-lg">search</span>
+                <input
+                  className="bg-transparent border-none focus:ring-0 text-sm w-full focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
+                  placeholder="Search rituals..."
+                  type="text"
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </nav>
+    </>
   );
 }

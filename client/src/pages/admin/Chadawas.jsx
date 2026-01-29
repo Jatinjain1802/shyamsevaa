@@ -116,7 +116,7 @@ export default function Chadawas() {
     // Fetch all temples if not already
     if (allTemples.length === 0) {
       try {
-        const res = await api.get("/admin/temples");
+        const res = await api.get("/temples");
         setAllTemples(res.data.data || []);
       } catch (err) {
         console.error("Failed to load all temples", err);

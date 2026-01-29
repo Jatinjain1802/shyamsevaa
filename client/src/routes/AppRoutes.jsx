@@ -27,6 +27,7 @@ import About from "../pages/users/About";
 import PoojaDetail from "../pages/users/PoojaDetail";
 import ChadawaDetail from "../pages/users/ChadawaDetail";
 import TempleChadawas from "../pages/users/TempleChadawas";
+import Muhurat from "../pages/users/Muhurat";
 
 export default function AppRoutes() {
   return (
@@ -43,6 +44,7 @@ export default function AppRoutes() {
         <Route path="/temples/:id/chadawas" element={<TempleChadawas />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/about" element={<About />} />
+        <Route path="/muhurat" element={<Muhurat />} />
       </Route>
 
       {/* Admin Login Routes */}

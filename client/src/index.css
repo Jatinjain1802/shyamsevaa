@@ -1,84 +1,33 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --color-primary: #f25d11;
-    /* Vibrant Orange from SevatSatkar */
-    --color-primary-dark: #d14909;
-    --color-secondary: #fff8f0;
-    /* Cream Background */
-    --color-accent: #ffd700;
-    /* Gold */
-    --color-whatsapp: #25d366;
-    /* WhatsApp Green */
-    --color-text-dark: #2d1810;
-    --color-text-light: #555555;
-  }
+@theme {
+  --font-sans: 'Martel', serif;
+  --font-serif: 'Yatra One', cursive;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-cinzel: 'Cinzel', serif;
+  --font-hindi: 'Tiro Devanagari Hindi', serif;
 
-  body {
-    @apply bg-white text-[var(--color-text-dark)] font-sans;
-  }
+  --color-sindoor: #8E1616;
+  --color-marigold: #F39200;
+  --color-haldi: #FFC107;
+  --color-paper-bg: #FCF8F1;
+  --color-heritage-dark: #2D1B1B;
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif text-[var(--color-primary-dark)];
-  }
+  --color-primary: #F25D11;
+  --color-primary-dark: #D14909;
+  --color-secondary: #FFF8F0;
+  --color-accent: #FFD700;
+  --color-whatsapp: #25D366;
+  --color-text-dark: #2D1810;
+  --color-text-light: #555555;
 
-  .font-hindi {
-    font-family: "Tiro Devanagari Hindi", serif;
-  }
-}
-
-@layer components {
-  .btn-primary-custom {
-    @apply bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2;
-  }
-
-  .btn-outline-custom {
-    @apply border-2 border-[var(--color-primary)] text-[var(--color-secondary)] px-6 py-2 rounded-full font-semibold hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300;
-  }
-
-  .card-dharmik {
-    @apply bg-white rounded-xl shadow-lg border border-orange-100/50 p-6 hover:shadow-xl transition-all duration-300;
-  }
-}
-
-@layer utilities {
-  .animate-in {
-    animation-duration: 0.5s;
-    animation-fill-mode: both;
-    animation-timing-function: ease-out;
-  }
-
-  .fade-in {
-    animation-name: fadeIn;
-  }
-
-  .slide-in-from-bottom-4 {
-    --tw-translate-y: 1rem;
-    animation-name: slideInBottom;
-  }
-
-  .slide-in-from-bottom-8 {
-    --tw-translate-y: 2rem;
-    animation-name: slideInBottom;
-  }
-
-  .delay-200 {
-    animation-delay: 200ms;
-  }
-
-  .delay-300 {
-    animation-delay: 300ms;
-  }
-
-  .delay-400 {
-    animation-delay: 400ms;
-  }
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-slide-up: slideUp 0.5s ease-out forwards;
+  --animate-blob: blob 7s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float-reverse 7s ease-in-out infinite 1s;
+  --animate-marquee: marquee 25s linear infinite;
+  --animate-spin-slow: spin-slow 20s linear infinite;
 
   @keyframes fadeIn {
     from {
@@ -90,10 +39,10 @@
     }
   }
 
-  @keyframes slideInBottom {
+  @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(var(--tw-translate-y, 0));
+      transform: translateY(20px);
     }
 
     to {
@@ -120,15 +69,6 @@
     }
   }
 
-  .animate-blob {
-    animation: blob 7s infinite;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  /* New Animations */
   @keyframes float {
 
     0%,
@@ -172,35 +112,74 @@
       transform: rotate(360deg);
     }
   }
+}
 
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-paper-bg);
+    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
+    color: var(--color-heritage-dark);
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
 
-  .animate-float-delayed {
-    animation: float-reverse 7s ease-in-out infinite;
-    animation-delay: 1s;
+  h1,
+  h2,
+  h3,
+  .heading-devanagari {
+    font-family: var(--font-serif);
+  }
+}
+
+@layer components {
+  .toran-border {
+    height: 24px;
+    background-image: radial-gradient(circle at 12px 0, transparent 10px, var(--color-marigold) 11px, var(--color-marigold) 13px, transparent 14px);
+    background-size: 24px 24px;
+    width: 100%;
+    position: relative;
   }
 
-  .animate-marquee {
-    display: inline-block;
-    animation: marquee 25s linear infinite;
+  .toran-border::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--color-sindoor);
   }
 
-  .animate-spin-slow {
-    animation: spin-slow 20s linear infinite;
-  }
-
-  /* Glassmorphism Utilities */
   .glass-card {
     background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(243, 146, 0, 0.2);
   }
 
-  .glass-dark {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .muhurat-badge {
+    background: linear-gradient(135deg, var(--color-sindoor), #5a0e0e);
+  }
+
+  .mandap-gradient {
+    background: linear-gradient(to bottom, rgba(142, 22, 22, 0.9), rgba(142, 22, 22, 0.4));
+  }
+
+  .garland-decoration {
+    background-image: radial-gradient(circle, var(--color-marigold) 30%, var(--color-haldi) 70%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary-custom {
+    @apply bg-sindoor text-white px-6 py-2 rounded-full font-bold text-sm shadow-md hover:bg-sindoor/90 transition-all duration-300 flex items-center justify-center gap-2;
+  }
+
+  .btn-outline-custom {
+    @apply border-2 border-sindoor text-sindoor px-6 py-2 rounded-full font-bold hover:bg-sindoor hover:text-white transition-all duration-300;
   }
 }

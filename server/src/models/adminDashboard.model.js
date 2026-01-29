@@ -16,10 +16,25 @@ export const getStats = async () => {
      FROM bookings WHERE status='pending'`
   );
 
+  const [[temples]] = await db.query(
+    `SELECT COUNT(*) AS totalTemples FROM temples`
+  );
+
+  const [[poojas]] = await db.query(
+    `SELECT COUNT(*) AS totalPoojas FROM poojas`
+  );
+
+  const [[chadawas]] = await db.query(
+    `SELECT COUNT(*) AS totalChadawas FROM chadawas`
+  );
+
   return {
     total_orders: orders.totalOrders,
     total_revenue: revenue.totalRevenue || 0,
     pending_bookings: pendingBookings.pendingBookings,
+    total_temples: temples.totalTemples,
+    total_poojas: poojas.totalPoojas,
+    total_chadawas: chadawas.totalChadawas,
   };
 };
 

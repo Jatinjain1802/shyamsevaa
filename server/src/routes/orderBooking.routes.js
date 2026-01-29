@@ -2,7 +2,7 @@ import express from "express";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 
-import { checkout } from "../controllers/checkout.controller.js";
+import { checkout } from "../controllers/checkout.conrtroller.js";
 
 import {
   getUserOrders,

@@ -15,7 +15,7 @@ export default function Temples() {
 
   const fetchTemples = async () => {
     try {
-      const res = await api.get("/admin/temples");
+      const res = await api.get("/temples");
       setTemples(res.data.data || []);
     } catch (err) {
       console.error("Failed to fetch temples", err);
@@ -54,9 +54,9 @@ export default function Temples() {
 
     try {
       if (editingId) {
-        await api.put(`/admin/temples/${editingId}`, form);
+        await api.put(`/temples/${editingId}`, form);
       } else {
-        await api.post("/admin/temples", form);
+        await api.post("/temples", form);
       }
 
       setShowForm(false);
@@ -70,7 +70,7 @@ export default function Temples() {
     if (!confirm("Are you sure you want to delete this temple?")) return;
 
     try {
-      await api.delete(`/admin/temples/${id}`);
+      await api.delete(`/temples/${id}`);
       fetchTemples();
     } catch (err) {
       alert("Failed to delete temple");
@@ -90,65 +90,65 @@ export default function Temples() {
         </button>
       </div>
 
-     {/* Cards */}
-{loading ? (
-  <p>Loading...</p>
-) : (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {temples.map((t) => (
-      <div
-        key={t.id}
-        className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
-      >
-        {/* Image */}
-        <div className="h-44 bg-gray-100">
-          {t.image ? (
-            <img
-              src={t.image}
-              alt={t.title}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              No Image
+      {/* Cards */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {temples.map((t) => (
+            <div
+              key={t.id}
+              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+            >
+              {/* Image */}
+              <div className="h-44 bg-gray-100">
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt={t.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    No Image
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-1">{t.title}</h3>
+
+                <p className="text-sm text-gray-600 line-clamp-3">
+                  {t.description || "No description available"}
+                </p>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    onClick={() => openEditForm(t)}
+                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(t.id)}
+                    className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {temples.length === 0 && (
+            <div className="col-span-full text-center text-gray-500">
+              No temples found
             </div>
           )}
         </div>
-
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-1">{t.title}</h3>
-
-          <p className="text-sm text-gray-600 line-clamp-3">
-            {t.description || "No description available"}
-          </p>
-
-          {/* Actions */}
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              onClick={() => openEditForm(t)}
-              className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(t.id)}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    ))}
-
-    {temples.length === 0 && (
-      <div className="col-span-full text-center text-gray-500">
-        No temples found
-      </div>
-    )}
-  </div>
-)}
+      )}
 
 
       {/* Modal */}

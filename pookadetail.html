@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ganesh Chaturthi Pooja - Sanatan Heritage</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Yatra+One&amp;family=Martel:wght@300;400;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <style type="text/tailwindcss">
+        :root {
+            --sindoor: #8E1616;
+            --marigold: #F39200;
+            --haldi: #FFC107;
+            --paper-bg: #FCF8F1;
+            --saffron: #FF9933;
+        }
+        @layer base {
+            body {
+                font-family: 'Martel', serif;
+                background-color: var(--paper-bg);
+                background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
+            }
+            h1, h2, h3, h4, .heading-devanagari {
+                font-family: 'Yatra One', cursive;
+            }
+        }
+        .toran-border {
+            height: 24px;
+            background-image: radial-gradient(circle at 12px 0, transparent 10px, var(--marigold) 11px, var(--marigold) 13px, transparent 14px);
+            background-size: 24px 24px;
+            width: 100%;
+            position: relative;
+        }
+        .toran-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--sindoor);
+        }
+        .sticky-card {
+            position: sticky;
+            top: 100px;
+        }
+        .garland-decoration {
+            background-image: radial-gradient(circle, var(--marigold) 30%, var(--haldi) 70%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: var(--marigold);
+            border-radius: 10px;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "sindoor": "#8E1616",
+                        "marigold": "#F39200",
+                        "haldi": "#FFC107",
+                        "saffron": "#FF9933",
+                        "heritage-dark": "#2D1B1B",
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="text-heritage-dark">
+    <div class="flex justify-center gap-1 py-1 bg-sindoor/10 overflow-hidden">
+        <script>
+            for (let i = 0; i < 40; i++) document.write('<div class="garland-decoration"></div>');
+        </script>
+    </div>
+    <header class="relative w-full bg-white/95 sticky top-0 z-50 shadow-sm border-b-4 border-marigold">
+        <!-- <div class="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-10">
+                <div class="flex items-center gap-3">
+                    <div class="text-sindoor flex flex-col items-center">
+                        <span class="material-symbols-outlined text-4xl leading-none">temple_hindu</span>
+                        <div class="h-1 w-full bg-haldi mt-1"></div>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1 class="text-2xl text-sindoor leading-tight tracking-wide">SANATAN</h1>
+                        <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-marigold -mt-1">Heritage
+                            Home</span>
+                    </div>
+                </div>
+                <nav class="hidden lg:flex items-center gap-8 font-bold text-sm">
+                    <a class="hover:text-sindoor transition-colors border-b-2 border-transparent hover:border-marigold"
+                        href="#">SHUBH MUHURAT</a>
+                    <a class="hover:text-sindoor transition-colors border-b-2 border-transparent hover:border-marigold"
+                        href="#">BOOK PANDIT</a>
+                    <a class="hover:text-sindoor transition-colors border-b-2 border-transparent hover:border-marigold"
+                        href="#">GANGA AARTI</a>
+                    <a class="hover:text-sindoor transition-colors border-b-2 border-transparent hover:border-marigold"
+                        href="#">TEMPLES</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <button
+                    class="bg-sindoor text-white px-6 py-2 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:bg-sindoor/90">
+                    <span class="material-symbols-outlined text-lg">account_circle</span>
+                    MY ACCOUNT
+                </button>
+            </div>
+        </div> -->
+    </header>
+    <main>
+        <section class="relative h-[450px] w-full overflow-hidden">
+            <img alt="Lord Ganesha" class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs" />
+            <div class="absolute inset-0 bg-gradient-to-t from-sindoor/90 via-sindoor/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-10 max-w-[1280px] mx-auto text-white">
+                <div class="flex items-center gap-4 mb-4">
+                    <span
+                        class="px-4 py-1 bg-haldi text-sindoor font-bold rounded-full text-xs tracking-widest uppercase">Special
+                        Pooja</span>
+                    <div class="flex items-center text-haldi">
+                        <span class="material-symbols-outlined text-sm">star</span>
+                        <span class="material-symbols-outlined text-sm">star</span>
+                        <span class="material-symbols-outlined text-sm">star</span>
+                        <span class="material-symbols-outlined text-sm">star</span>
+                        <span class="material-symbols-outlined text-sm">star_half</span>
+                        <span class="ml-2 text-xs text-white/80">(1,240 Reviews)</span>
+                    </div>
+                </div>
+                <h2 class="text-5xl md:text-7xl mb-4">Maha Ganesh Chaturthi Seva</h2>
+                <p class="text-xl text-haldi/90 max-w-2xl italic">Invoke the blessings of Vighnaharta for prosperity,
+                    wisdom, and the removal of all obstacles in your life's journey.</p>
+            </div>
+        </section>
+        <div class="toran-border"></div>
+        <section class="max-w-[1280px] mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2 space-y-12">
+                    <div class="prose prose-stone max-w-none">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-symbols-outlined text-4xl text-marigold">menu_book</span>
+                            <h3 class="text-3xl text-sindoor m-0">Significance &amp; Benefits</h3>
+                        </div>
+                        <p class="text-lg leading-relaxed text-stone-700">
+                            Ganesh Chaturthi marks the birth of Lord Ganesha, the lord of wisdom and the destroyer of
+                            obstacles. Performing this pooja with devotion is believed to bring peace, prosperity, and
+                            success to the devotee's household. In the Vedic tradition, Ganesha is worshipped first
+                            before any other deity to ensure the smooth completion of rituals.
+                        </p>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 list-none p-0">
+                            <li
+                                class="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
+                                <span class="material-symbols-outlined text-marigold">check_circle</span>
+                                <span>Removal of karmic obstacles and hurdles.</span>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
+                                <span class="material-symbols-outlined text-marigold">check_circle</span>
+                                <span>Brings wisdom and intellectual growth.</span>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
+                                <span class="material-symbols-outlined text-marigold">check_circle</span>
+                                <span>Attracts financial prosperity and abundance.</span>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
+                                <span class="material-symbols-outlined text-marigold">check_circle</span>
+                                <span>Purifies the home environment from negative energy.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-sindoor/5 p-8 rounded-3xl border-2 border-sindoor/10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-symbols-outlined text-4xl text-sindoor">self_improvement</span>
+                            <h3 class="text-3xl text-sindoor m-0">Pooja Vidhi (Procedure)</h3>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div
+                                    class="flex-shrink-0 w-10 h-10 bg-sindoor text-white rounded-full flex items-center justify-center font-bold">
+                                    1</div>
+                                <div>
+                                    <h4 class="text-xl text-sindoor font-bold mb-1">Ganpati Sthapana</h4>
+                                    <p class="text-stone-600">The ritual begins with the installation of the Ganesha
+                                        idol on a raised platform decorated with flowers and rangoli.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div
+                                    class="flex-shrink-0 w-10 h-10 bg-sindoor text-white rounded-full flex items-center justify-center font-bold">
+                                    2</div>
+                                <div>
+                                    <h4 class="text-xl text-sindoor font-bold mb-1">Prana Pratishtha</h4>
+                                    <p class="text-stone-600">Chanting of sacred Vedic mantras to invoke the divine life
+                                        force into the deity.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div
+                                    class="flex-shrink-0 w-10 h-10 bg-sindoor text-white rounded-full flex items-center justify-center font-bold">
+                                    3</div>
+                                <div>
+                                    <h4 class="text-xl text-sindoor font-bold mb-1">Shodashopachara</h4>
+                                    <p class="text-stone-600">The sixteen ways of paying tribute, including offering
+                                        Durva grass, Modaks, and red flowers.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div
+                                    class="flex-shrink-0 w-10 h-10 bg-sindoor text-white rounded-full flex items-center justify-center font-bold">
+                                    4</div>
+                                <div>
+                                    <h4 class="text-xl text-sindoor font-bold mb-1">Uttar Pooja &amp; Aarti</h4>
+                                    <p class="text-stone-600">The concluding ritual followed by a grand Mangal Aarti and
+                                        distribution of Prasad.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-haldi">
+                            <h4 class="text-2xl text-sindoor mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined">shopping_basket</span> Puja Samagri
+                            </h4>
+                            <ul class="space-y-2 text-stone-600 text-sm italic">
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> 21 Durva Grass Blades</li>
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> Red Hibiscus Flowers</li>
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> Pure Sandalwood Paste</li>
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> Akshata (Sacred Rice)</li>
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> Incense &amp; Camphor</li>
+                                <li class="flex items-center gap-2"><span
+                                        class="w-1.5 h-1.5 bg-marigold rounded-full"></span> Coconut &amp; Betel Leaves
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-haldi">
+                            <h4 class="text-2xl text-sindoor mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined">restaurant</span> Special Bhog
+                            </h4>
+                            <p class="text-stone-600 text-sm mb-4">Included in your booking:</p>
+                            <div class="flex items-center gap-4">
+                                <img alt="Modak" class="w-16 h-16 rounded-lg object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD96DM72oKU3CRA7RWjHI1KySm3Kh3QTHC6QG8mNvAGZz-WD4r0efwWJyRySVeHB1GDd_7xWSFFVUS5WJDQUl2QmAvXhkJQpJ7_GFUhr0mcN3u5GRKijz6kZAuc4fz-nENo-0NOD6IvAbOQlGu_ERcg0-pVCtN_hCQYWLtb9phm3ieYtxCvlbfogIzC22k8ry_K30mBMjGzEPaGzls3MLC618WF6O08DVhMk_0S1p-zBupMXCOyzAnVCdOhv5E4SUuXrVEBXDMQZkc" />
+                                <div>
+                                    <p class="font-bold text-sindoor">21 Steamed Modaks</p>
+                                    <p class="text-xs text-stone-500">Prepared with organic jaggery and fresh coconut.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-1">
+                    <div class="sticky-card bg-white rounded-3xl shadow-2xl border-2 border-haldi p-8">
+                        <div class="mb-6">
+                            <div class="flex justify-between items-end mb-2">
+                                <span class="text-stone-500 font-bold uppercase text-xs tracking-widest">Dakshina</span>
+                                <span class="text-4xl font-black text-sindoor">₹2,501</span>
+                            </div>
+                            <div class="h-1 w-full bg-stone-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-marigold w-1/3"></div>
+                            </div>
+                        </div>
+                        <form class="space-y-6">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">Select
+                                    Date</label>
+                                <input
+                                    class="w-full border-2 border-stone-100 rounded-xl px-4 py-3 focus:border-marigold focus:ring-0"
+                                    type="date" value="2024-09-07" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">Select
+                                    Time Slot</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button
+                                        class="border-2 border-marigold bg-marigold/5 text-marigold font-bold py-2 rounded-xl text-sm"
+                                        type="button">06:00 AM</button>
+                                    <button
+                                        class="border-2 border-stone-100 hover:border-marigold transition-colors py-2 rounded-xl text-sm"
+                                        type="button">09:30 AM</button>
+                                    <button
+                                        class="border-2 border-stone-100 hover:border-marigold transition-colors py-2 rounded-xl text-sm"
+                                        type="button">11:00 AM</button>
+                                    <button
+                                        class="border-2 border-stone-100 hover:border-marigold transition-colors py-2 rounded-xl text-sm"
+                                        type="button">04:30 PM</button>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t border-dashed border-stone-200">
+                                <h4 class="text-lg text-sindoor mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined">edit_note</span> Sankalp Details
+                                </h4>
+                                <div class="space-y-4">
+                                    <input
+                                        class="w-full border-2 border-stone-100 rounded-xl px-4 py-3 focus:border-marigold focus:ring-0 text-sm"
+                                        placeholder="Full Name of Devotee" type="text" />
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <input
+                                            class="w-full border-2 border-stone-100 rounded-xl px-4 py-3 focus:border-marigold focus:ring-0 text-sm"
+                                            placeholder="Gotra" type="text" />
+                                        <select
+                                            class="w-full border-2 border-stone-100 rounded-xl px-4 py-3 focus:border-marigold focus:ring-0 text-sm">
+                                            <option>Select Rashi</option>
+                                            <option>Mesh</option>
+                                            <option>Vrishabha</option>
+                                            <option>Mithun</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full bg-sindoor hover:bg-sindoor/90 text-white font-black py-5 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                                <span class="material-symbols-outlined">calendar_month</span>
+                                BOOK POOJA NOW
+                            </button>
+                            <p class="text-center text-[10px] text-stone-400 italic">Confirmation and Pandit details
+                                will be sent via SMS/Email</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-heritage-dark py-20 mt-12 overflow-hidden relative">
+            <div class="toran-border opacity-30 absolute top-0"></div>
+            <div class="max-w-[1280px] mx-auto px-6">
+                <h3 class="text-4xl text-haldi text-center mb-16">Devotee Experiences</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white/5 p-8 rounded-3xl border border-white/10 relative">
+                        <span
+                            class="material-symbols-outlined text-marigold text-5xl absolute -top-4 -left-2">format_quote</span>
+                        <p class="text-stone-300 italic mb-6 leading-relaxed">"The Pandit ji was very knowledgeable and
+                            explained every mantra. It felt as if we were in a grand temple right at our home. Highly
+                            recommended!"</p>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-marigold/20 border border-marigold flex items-center justify-center text-marigold font-bold text-xl">
+                                R</div>
+                            <div>
+                                <p class="text-white font-bold">Rajesh Khanna</p>
+                                <p class="text-xs text-stone-500">Mumbai, Maharashtra</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 p-8 rounded-3xl border border-white/10 relative">
+                        <span
+                            class="material-symbols-outlined text-marigold text-5xl absolute -top-4 -left-2">format_quote</span>
+                        <p class="text-stone-300 italic mb-6 leading-relaxed">"Booked for my parents' anniversary. The
+                            arrangements for Samagri were perfect. The modaks were fresh and delicious. Extremely
+                            satisfied."</p>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-marigold/20 border border-marigold flex items-center justify-center text-marigold font-bold text-xl">
+                                S</div>
+                            <div>
+                                <p class="text-white font-bold">Sneha Iyer</p>
+                                <p class="text-xs text-stone-500">Bengaluru, Karnataka</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 p-8 rounded-3xl border border-white/10 relative">
+                        <span
+                            class="material-symbols-outlined text-marigold text-5xl absolute -top-4 -left-2">format_quote</span>
+                        <p class="text-stone-300 italic mb-6 leading-relaxed">"Divine experience. Digital booking made
+                            it so easy. The live Sankalp through video call was very emotional and spiritual for us."
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-marigold/20 border border-marigold flex items-center justify-center text-marigold font-bold text-xl">
+                                A</div>
+                            <div>
+                                <p class="text-white font-bold">Amit Sharma</p>
+                                <p class="text-xs text-stone-500">Delhi, NCR</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="toran-border rotate-180 opacity-30 absolute bottom-0"></div>
+        </section>
+        <section class="py-20 px-6 max-w-[1280px] mx-auto">
+            <div class="flex items-center justify-between mb-12">
+                <div>
+                    <h3 class="text-4xl text-sindoor">Similar Sacred Poojas</h3>
+                    <div class="h-1 w-24 bg-marigold mt-2"></div>
+                </div>
+                <a class="text-marigold font-bold flex items-center gap-2 hover:gap-4 transition-all" href="#">
+                    VIEW ALL SEVAS <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border-b-4 border-marigold group">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="Laxmi Puja"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF-AmO5J7i7qBRyubRd6pU8NlefSUtbOUer8TKkIUpNodXdMGSEJeQ1czPjsD4R46L6miPZHVBBlser3Wz6FJ-zRcf8kR_QbfQK34GmnUo6pAWYzQXqnosQmxn1LGeWuKZmo6oGMkM3xWUTV_gBVGrL-nzStMFBkKQ2WUmjIFNypcJsTgH4ZQzDKeOUn6eZKFoSl2moEF3rcyP0gQK3NdRIawD4LT6J4N7kicYnT-JVjPaXSbGWszDQgvnUd0-vUAER8gzo1pb-UI" />
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-xl text-sindoor mb-2">Maha Laxmi Kuber Puja</h4>
+                        <p class="text-xs text-stone-500 mb-4">For Wealth &amp; Prosperity</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-black text-sindoor">₹3,101</span>
+                            <button class="text-marigold font-bold text-sm">EXPLORE</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border-b-4 border-marigold group">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="Havan"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo_r99QLy6pjU6hkjYlEDhMCGyRhArhqoj4upacanZW3z2RwngQWxanY6pND32DDsuCTyNgui4EXPt7EanvEOp-aYK-wqkDdf7qbF4NkCx5Tlefl3Ga71L-mUfHgjbqpKwMLl0LKxIu2RPpHJ3YkZMMwtWV_aSMdbJX8XOcFxcICqf_92OmR0pV1rpFapaVx4NTlYr8-7PRCViBTLHHL8QmcORGcMEhEQ5ICIQXRD3x-2qph6_Ch2nyEzc2ZPQZy0VjfUBQh7Ns2U" />
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-xl text-sindoor mb-2">Navgrah Shanti Havan</h4>
+                        <p class="text-xs text-stone-500 mb-4">Planetary Harmony</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-black text-sindoor">₹5,501</span>
+                            <button class="text-marigold font-bold text-sm">EXPLORE</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border-b-4 border-marigold group">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="Saraswati Puja"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuASVSkB5nRYzgKbBRjgI0Dw1AMk6QXLapUoQdMGiDn60puvb0Jkwr-8KkHdcdQnWAJup2-Hlo0EhI0zNMjoHcNiZIOG26NzGWkyWqIg004FMIpfGhIKlsDob7CnDBzu34MYJ-Buj5fg7XSlmiLFSPrFqwGFjGsL2cd4JhYmkeiG4KloPUMH7Ai9F-4ILhEbg0cSS6Zf3hIUrp55Na0HQhw9i4a-e2twcbX_oB7DRgTVTOZHGdOx7RD5pre5ZZ504wfSiMd3Yrb_PSg" />
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-xl text-sindoor mb-2">Saraswati Vidya Seva</h4>
+                        <p class="text-xs text-stone-500 mb-4">Knowledge &amp; Education</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-black text-sindoor">₹1,501</span>
+                            <button class="text-marigold font-bold text-sm">EXPLORE</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border-b-4 border-marigold group">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="Vastu Puja"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD96DM72oKU3CRA7RWjHI1KySm3Kh3QTHC6QG8mNvAGZz-WD4r0efwWJyRySVeHB1GDd_7xWSFFVUS5WJDQUl2QmAvXhkJQpJ7_GFUhr0mcN3u5GRKijz6kZAuc4fz-nENo-0NOD6IvAbOQlGu_ERcg0-pVCtN_hCQYWLtb9phm3ieYtxCvlbfogIzC22k8ry_K30mBMjGzEPaGzls3MLC618WF6O08DVhMk_0S1p-zBupMXCOyzAnVCdOhv5E4SUuXrVEBXDMQZkc" />
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-xl text-sindoor mb-2">Vastu Shanti Pooja</h4>
+                        <p class="text-xs text-stone-500 mb-4">New Home Blessings</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-black text-sindoor">₹11,000</span>
+                            <button class="text-marigold font-bold text-sm">EXPLORE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-sindoor text-white py-20 relative overflow-hidden border-t-8 border-haldi">
+        <div class="absolute inset-0 opacity-10 pointer-events-none"
+            style="background-image: radial-gradient(circle at 20px 20px, white 2px, transparent 0); background-size: 40px 40px;">
+        </div>
+        <div class="max-w-[1280px] mx-auto px-6 relative">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-white/10 pb-16">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="material-symbols-outlined text-4xl text-haldi">temple_hindu</span>
+                        <h2 class="text-3xl tracking-widest">SANATAN</h2>
+                    </div>
+                    <p class="text-white/60 text-sm leading-relaxed mb-8">
+                        Bridging the sacred traditions of Bharat with the modern world. Every ritual performed with
+                        Vedic authenticity and purity.
+                    </p>
+                    <div class="flex gap-4">
+                        <a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"
+                            href="#"><span class="material-symbols-outlined text-xl">share</span></a>
+                        <a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"
+                            href="#"><span class="material-symbols-outlined text-xl">mail</span></a>
+                        <a class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"
+                            href="#"><span class="material-symbols-outlined text-xl">call</span></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-haldi font-black tracking-widest mb-8">SERVICES</h4>
+                    <ul class="space-y-4 text-sm text-white/70">
+                        <li><a class="hover:text-haldi" href="#">Online Pandit Booking</a></li>
+                        <li><a class="hover:text-haldi" href="#">Temple E-Puja</a></li>
+                        <li><a class="hover:text-haldi" href="#">Festival Special Seva</a></li>
+                        <li><a class="hover:text-haldi" href="#">Vastu &amp; Astrology</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-haldi font-black tracking-widest mb-8">KNOWLEDGE</h4>
+                    <ul class="space-y-4 text-sm text-white/70">
+                        <li><a class="hover:text-haldi" href="#">Panchang 2024</a></li>
+                        <li><a class="hover:text-haldi" href="#">Heritage Blog</a></li>
+                        <li><a class="hover:text-haldi" href="#">Vedic Mantras</a></li>
+                        <li><a class="hover:text-haldi" href="#">Spiritual Yatras</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-haldi font-black tracking-widest mb-8">SUPPORT</h4>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                        <p class="text-xs text-white/40 mb-2 uppercase tracking-widest">Help Desk</p>
+                        <p class="text-2xl font-black text-haldi mb-4">1800-SANATAN</p>
+                        <p class="text-xs text-white/50 italic">"Dharmo Rakshati Rakshitah"</p>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-10 text-center">
+                <p class="text-white/40 text-xs">© 2024 Sanatan Heritage Home. Designed with Devotion in Bharat.</p>
+            </div>
+        </div>
+    </footer>
+    <div class="flex justify-center gap-1 py-1 bg-sindoor overflow-hidden">
+        <script>
+            for (let i = 0; i < 40; i++) document.write('<div class="garland-decoration"></div>');
+        </script>
+    </div>
+
+</body>
+
+</html>

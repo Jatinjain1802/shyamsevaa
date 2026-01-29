@@ -9,7 +9,7 @@ export default function PoojaTemples({ poojaId }) {
     const load = async () => {
         const [t1, t2] = await Promise.all([
             api.get(`/admin/poojas/${poojaId}/temples`),
-            api.get(`/admin/temples`),
+            api.get(`/temples`),
         ]);
 
         setLinked(t1.data.data);

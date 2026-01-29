@@ -23,6 +23,9 @@ import poojaTemplesRoutes from "./routes/poojaTemples.routes.js";
 // Chadawa
 import chadawaRoutes from "./routes/chadawas.routes.js";
 
+// Panchang
+import panchangRoutes from "./routes/panchang.routes.js";
+
 // Cart
 import cartRoutes from "./routes/cart.routes.js";
 
@@ -78,6 +81,9 @@ app.use("/api/admin", poojaVariantsRoutes); // /admin/pooja-variants
 
 // Chadawa
 app.use("/api", chadawaRoutes);
+
+// Panchang
+app.use("/api/panchang", panchangRoutes);
 
 // Cart
 app.use("/api", cartRoutes);
