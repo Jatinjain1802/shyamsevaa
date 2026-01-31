@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiArrowRight, FiCheckCircle, FiStar, FiMapPin, FiCalendar, FiClock, FiUser, FiShare2, FiPhone, FiMail } from "react-icons/fi";
-import { MdTempleHindu, MdMenuBook, MdSelfImprovement, MdShoppingBasket, MdRestaurant, MdEditNote, MdCalendarMonth } from "react-icons/md";
 import api from "../../utils/axios";
 
 export default function PoojaDetail() {
@@ -12,15 +10,6 @@ export default function PoojaDetail() {
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedAddons, setSelectedAddons] = useState([]);
     const [similarPoojas, setSimilarPoojas] = useState([]);
-
-    // Form States
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState("09:30 AM");
-    const [sankalpDetails, setSankalpDetails] = useState([{
-        name: "",
-        gotra: "",
-        rashi: "Select Rashi"
-    }]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -40,26 +29,6 @@ export default function PoojaDetail() {
         }).catch(err => console.error("Failed to load similar poojas", err));
     }, [poojaId]);
 
-    // Update sankalp fields when variant changes (number of persons)
-    useEffect(() => {
-        if (selectedVariant) {
-            const count = Number(selectedVariant.persons) || 1;
-            setSankalpDetails(prev => {
-                const newDetails = [...prev];
-                if (newDetails.length < count) {
-                    // Add more fields if count increased
-                    for (let i = newDetails.length; i < count; i++) {
-                        newDetails.push({ name: "", gotra: "", rashi: "Select Rashi" });
-                    }
-                } else if (newDetails.length > count) {
-                    // Reduce fields if count decreased
-                    newDetails.length = count;
-                }
-                return newDetails;
-            });
-        }
-    }, [selectedVariant]);
-
     if (!data)
         return (
             <div className="min-h-screen flex items-center justify-center bg-paper-bg">
@@ -78,12 +47,6 @@ export default function PoojaDetail() {
         }
     };
 
-    const updateSankalpDetail = (index, field, value) => {
-        const newDetails = [...sankalpDetails];
-        newDetails[index] = { ...newDetails[index], [field]: value };
-        setSankalpDetails(newDetails);
-    };
-
     const totalPrice = () => {
         let total = selectedVariant ? Number(selectedVariant.price) : 0;
         selectedAddons.forEach((a) => {
@@ -99,414 +62,377 @@ export default function PoojaDetail() {
             return;
         }
 
-        // Basic validation
-        for (let i = 0; i < sankalpDetails.length; i++) {
-            if (!sankalpDetails[i].name) {
-                alert(`Please enter the name for Devotee ${i + 1}`);
-                return;
+        // Navigate to booking checkout page with all data
+        navigate('/booking-checkout', {
+            state: {
+                pooja: pooja,
+                selectedVariant: selectedVariant,
+                selectedAddons: selectedAddons,
+                totalPrice: totalPrice()
             }
-        }
-
-        const payload = {
-            poojaId: pooja.id,
-            variantId: selectedVariant.id,
-            addons: selectedAddons.map((a) => a.id),
-            date: selectedDate,
-            time: selectedTimeSlot,
-            sankalp: sankalpDetails,
-            totalAmount: totalPrice(),
-        };
-
-        console.log("BOOKING PAYLOAD", payload);
-        alert(`Proceeding to book for ₹${totalPrice()}! 🚀\n(This would navigate to Checkout)`);
+        });
     };
 
-    return (
-        <div className="bg-paper-bg min-h-screen font-sans text-heritage-dark selection:bg-marigold/30">
-            {/* Top Garland */}
-            <div className="flex justify-center gap-1 py-1 bg-sindoor/10 overflow-hidden">
-                {[...Array(40)].map((_, i) => (
-                    <div key={i} className="garland-decoration shrink-0"></div>
-                ))}
-            </div>
+    // Placeholder images for addons if missing 
+    const addonImages = [
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuC99gj6xmNd98QZXOJVhoPhk_1tZScKwWdEdYyDyi7lxR9HJd599UcHXecmpP8BEgZ3A8-oX0GCerssFDnm0gv3zoYdB_U4XrChcFTubtihPUcnhsX0wZxY6-smWxpF2r-t5edVJx4jrxIrcy9mS4xmCZ4GYOvHcBLZMcJMo1A-hoYOw9LFGDtsFjivGQyBH5nhindi2s-gL_vnLeYrGxc7_KNuevPIT5Ap4yUCgDEx_fKh7Eq34o6eda2WfRfIMwAL1J2aMHINaRw",
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuDAvg-e-B9R7ohFqwAeL3xE3UMlnCfUCStPXoVHf1P83XcWUBUMRD1PqBgZVu8G9TCEviFCAPFFGPYKR6OAwHfUfqZOHoATkcrHRLGUXCq5Ic9eWfPW5I7XAZrfpVOIEvSFjrbSzN92xuJBi9KhRuug61-B-62QmmR-EMQxfVaXYV_uTffyZxUxvxL9IKC6OWdj7694k17Z1FQy-PwQcKRDpynOkmKRVPEGOYibq3oit-SVGFhrMecWz7BfxRZV3rlwmX-pJyV5eog",
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuCGJ-e_FDEwhf8whXyzLxIv7gQbXK2cDpm9ufV_Nv93ekvlfOc7jTDbZt3xUKidZFm4adzgxW7V5FsdTrItCDM1ipywE-2YbjSwTJjVPFB3jy4afaqchX8VnCeEjzdkKbjvC-0Vlj_lpom2N02KdkhIQgtTOdHSqv4eQhRPofwZxU_FI9nA7V1k19knLFdynPp5z0GGmF1beHcvKCEmGTBoRkLzDweYZyovM6qBlqKUqnM6b_raGRMjoUgHytLkK1y6c3Hplbmtzrs",
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuA-z2Wisab7QkOJODO0IfzwBu6fxh9u29pfaXrxZi921BoZ6n87X2VlQ1YazvHKqamnQ662qrvCcn0QJOWFBGoUfhQHazaJsBpX1BXYiHAEpmk1rLKvg2zyujPQXNACPXPkPr0h7Zjw7d4G_I_JzGqZSpyvnkQIkT5Xa6EI6PR-j-HyOLAhzW8en9SKxUCt9rFdxXvj9b1cpc0RDijIIzH8aHvMdqJ_13jqRIqArRKg57m-d0COaAZttJ2qQl-Fr5LJWjG0QmYWEBk"
+    ];
 
-            {/* HERO SECTION */}
-            <section className="relative h-[450px] w-full overflow-hidden">
-                <img
-                    alt={pooja.title}
-                    className="w-full h-full object-cover"
-                    src={pooja.image}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-sindoor/90 via-sindoor/20 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-7xl mx-auto text-white">
-                    <div className="flex flex-wrap items-center gap-4 mb-4">
-                        <span className="px-4 py-1 bg-haldi text-sindoor font-bold rounded-full text-xs tracking-widest uppercase">
-                            Special Pooja
-                        </span>
-                        <div className="flex items-center text-haldi">
-                            {[1, 2, 3, 4].map(star => <FiStar key={star} className="fill-current text-sm" />)}
-                            <FiStar className="text-sm" />
-                            <span className="ml-2 text-xs text-white/80">(1,240 Reviews)</span>
+    return (
+        <div className="flex flex-col min-h-screen pb-24">
+            <main className="flex-grow">
+                {/* Hero Section - Split Layout */}
+                <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] border-b border-marigold/10">
+                    {/* Image Gallery Side */}
+                    <div className="relative overflow-hidden bg-stone-200 h-[500px] lg:h-auto">
+                        <img
+                            alt={pooja.title}
+                            className="w-full h-full object-cover transition-opacity duration-500"
+                            src={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
+                        />
+                    </div>
+
+                    {/* Details Side */}
+                    <div className="p-12 lg:p-20 flex flex-col justify-center bg-white relative">
+                        <div className="absolute inset-0 mandala-bg opacity-5 pointer-events-none"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 text-marigold mb-4 font-bold text-sm tracking-widest uppercase">
+                                <span className="material-symbols-outlined text-lg">star</span>
+                                Most Revered Ritual
+                            </div>
+                            <h1 className="font-serif text-5xl md:text-6xl text-sindoor mb-4 leading-tight">
+                                {pooja.title}
+                            </h1>
+                            {temples && temples.length > 0 && (
+                                <div className="flex items-center gap-3 text-stone-500 mb-8 border-l-2 border-marigold pl-4">
+                                    <span className="material-symbols-outlined text-marigold">location_on</span>
+                                    <span className="text-xl font-medium">{temples[0].title}</span>
+                                </div>
+                            )}
+                            <p className="text-lg text-stone-600 leading-relaxed max-w-lg mb-10 italic">
+                                {pooja.description || "Invoke the blessings of the divine for prosperity, wisdom, and the removal of all obstacles in your life's journey."}
+                            </p>
+                            <div className="flex items-center gap-8">
+                                <div>
+                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Dakshina from</p>
+                                    <p className="text-4xl font-black text-sindoor">
+                                        ₹{variants.length > 0 ? Number(variants[0].price).toLocaleString() : "1,101"}
+                                    </p>
+                                </div>
+                                <div className="h-12 w-px bg-stone-200"></div>
+                                <div>
+                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Next Muhurat</p>
+                                    <p className="text-xl font-bold text-heritage-dark">Available Daily</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <h1 className="text-4xl md:text-7xl mb-4 font-serif font-bold">{pooja.title}</h1>
-                    <p className="text-lg md:text-xl text-haldi/90 max-w-2xl italic">
-                        {temples && temples.length > 0 ? `Perform Seva at ${temples[0].title}` : "Invoke divine blessings for prosperity and peace."}
-                    </p>
-                </div>
-            </section>
+                </section>
 
-            {/* TORAN DIVIDER */}
-            <div className="toran-border"></div>
-
-            {/* MAIN CONTENT */}
-            <section className="max-w-7xl mx-auto px-4 md:px-6 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-
-                    {/* LEFT COLUMN */}
-                    <div className="lg:col-span-2 space-y-12">
-
-                        {/* Significance & Benefits */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-6">
-                                <MdMenuBook className="text-4xl text-marigold" />
-                                <h3 className="text-3xl font-serif font-bold text-sindoor m-0">Significance & Benefits</h3>
+                {/* Sacred Significance */}
+                <section className="py-24 px-6 bg-paper-bg">
+                    <div className="max-w-[1280px] mx-auto">
+                        <div className="flex flex-col md:flex-row gap-16 items-start">
+                            <div className="w-full md:w-1/2">
+                                <h2 className="text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
+                                    <span className="w-12 h-px bg-marigold"></span>
+                                    Sacred Significance
+                                </h2>
+                                <p className="text-lg text-stone-700 leading-relaxed mb-6">
+                                    {pooja.description || "This sacred ritual is performed with strict Vedic protocols to invoke divine blessings and spiritual power. Worshipping at the start of any new venture ensures the removal of karmic hurdles and brings prosperity to your household."}
+                                </p>
+                                <p className="text-lg text-stone-700 leading-relaxed">
+                                    The ritual involves traditional chanting and sacred offerings, creating a powerful spiritual vibration that resonates within the devotee's life.
+                                </p>
                             </div>
-                            <p className="text-lg leading-relaxed text-gray-700">
-                                {pooja.description || "Performing this pooja with devotion is believed to bring peace, prosperity, and success to the devotee's household."}
-                            </p>
-
-                            {/* Benefits List - Extracting from paragraph or showing generic if not structured */}
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                                <li className="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
-                                    <FiCheckCircle className="text-marigold shrink-0 mt-1" />
-                                    <span>Removal of obstacles and hurdles.</span>
-                                </li>
-                                <li className="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
-                                    <FiCheckCircle className="text-marigold shrink-0 mt-1" />
-                                    <span>Brings wisdom and intellectual growth.</span>
-                                </li>
-                                <li className="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
-                                    <FiCheckCircle className="text-marigold shrink-0 mt-1" />
-                                    <span>Attracts financial prosperity.</span>
-                                </li>
-                                <li className="flex items-start gap-3 bg-white p-4 rounded-xl border-l-4 border-marigold shadow-sm">
-                                    <FiCheckCircle className="text-marigold shrink-0 mt-1" />
-                                    <span>Purifies negative energy.</span>
-                                </li>
-                            </ul>
+                            <div className="w-full md:w-1/2">
+                                <h2 className="text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
+                                    Blessings & Fruits
+                                    <span className="w-12 h-px bg-marigold"></span>
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {[
+                                        { icon: 'local_florist', title: 'Vighna Nashak', desc: 'Removal of all unseen obstacles and hurdles in life.' },
+                                        { icon: 'savings', title: 'Riddhi Siddhi', desc: 'Attraction of wealth, wisdom, and overall prosperity.' },
+                                        { icon: 'home', title: 'Griha Shanti', desc: 'Spiritual purification of the home and family bonds.' },
+                                        { icon: 'psychology', title: 'Buddhi Vardhak', desc: 'Enhanced intellectual capacity and decision making.' },
+                                    ].map((item, idx) => (
+                                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-marigold/10 flex flex-col items-center text-center hover:shadow-md transition-all">
+                                            <span className="material-symbols-outlined text-marigold text-4xl mb-4">{item.icon}</span>
+                                            <h4 className="font-bold text-sindoor mb-2">{item.title}</h4>
+                                            <p className="text-sm text-stone-500">{item.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </section>
 
-                        {/* Variants / Packages Selection (Integrated into Left Col) */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-6">
-                                <FiUser className="text-3xl text-marigold" />
-                                <h3 className="text-3xl font-serif font-bold text-sindoor m-0">Select Sankalp (Package)</h3>
+                {/* Choose Participation */}
+                <section className="py-24 px-6 bg-white">
+                    <div className="max-w-[1280px] mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl text-sindoor font-serif mb-4">Choose Participation</h2>
+                            <p className="text-stone-500">Select the number of devotees to be included in the Sankalp</p>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {variants.map((variant, idx) => {
+                                const isSelected = selectedVariant?.id === variant.id;
+                                const isMiddle = idx === 1;
+                                return (
+                                    <div
+                                        key={variant.id}
+                                        onClick={() => setSelectedVariant(variant)}
+                                        className={`relative p-8 rounded-3xl border-2 cursor-pointer transition-all group ${isSelected
+                                            ? 'border-sindoor bg-sindoor/5'
+                                            : 'border-stone-100 hover:border-marigold/50'
+                                            }`}
+                                    >
+                                        {isSelected && (
+                                            <div className="absolute top-4 right-4 text-sindoor">
+                                                <span className="material-symbols-outlined text-3xl">check_circle</span>
+                                            </div>
+                                        )}
+                                        {isMiddle && !isSelected && (
+                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-marigold text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
+                                                Most Chosen
+                                            </div>
+                                        )}
+                                        <span className="material-symbols-outlined text-4xl text-marigold mb-4">
+                                            {variant.persons > 2 ? 'groups' : (variant.persons === 2 ? 'favorite' : 'person')}
+                                        </span>
+                                        <h4 className="text-xl font-bold mb-2">{variant.title}</h4>
+                                        <p className="text-sm text-stone-500 mb-6">
+                                            {variant.description || "Personalized Vedic ritual with complete Sankalp"}
+                                        </p>
+                                        <div className="text-3xl font-black text-sindoor mb-1">₹{Number(variant.price).toLocaleString()}</div>
+                                        <p className="text-[10px] uppercase text-stone-400 tracking-wider">Personalized Seva</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Sacred Offerings */}
+                {addons && addons.length > 0 && (
+                    <section className="py-24 px-6 bg-paper-bg">
+                        <div className="max-w-[1280px] mx-auto">
+                            <div className="flex items-center justify-between mb-16">
+                                <div>
+                                    <h2 className="text-4xl text-sindoor font-serif mb-2">Sacred Offerings (Chadawa)</h2>
+                                    <p className="text-stone-500">Enhance your ritual with these traditional offerings</p>
+                                </div>
+                                <div className="hidden md:block h-px flex-grow mx-10 bg-marigold/20"></div>
                             </div>
-                            <div className="grid md:grid-cols-2 gap-5">
-                                {variants.map((v) => {
-                                    const isSelected = selectedVariant?.id === v.id;
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                                {addons.map((addon, i) => {
+                                    const isSelected = selectedAddons.find(a => a.id === addon.id);
                                     return (
                                         <div
-                                            key={v.id}
-                                            onClick={() => setSelectedVariant(v)}
-                                            className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300
-                                                ${isSelected
-                                                    ? 'border-sindoor bg-orange-50/50 shadow-md ring-1 ring-sindoor'
-                                                    : 'border-gray-200 bg-white hover:border-marigold/50'}
-                                            `}
+                                            key={addon.id}
+                                            className={`bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center group transition-all ${isSelected ? 'border-marigold bg-marigold/5' : 'border-stone-100'
+                                                }`}
                                         >
-                                            <div className="flex justify-between items-start mb-2">
-                                                <h4 className="font-serif text-xl font-bold text-heritage-dark">
-                                                    {v.persons} Person{v.persons > 1 ? "s" : ""}
-                                                </h4>
-                                                {isSelected && <FiCheckCircle className="text-sindoor" size={24} />}
+                                            <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-stone-100 flex items-center justify-center relative">
+                                                {addon.images?.[0] ? (
+                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={addon.images[0]} alt={addon.title} />
+                                                ) : (
+                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={addonImages[i % addonImages.length]} alt={addon.title} />
+                                                )}
+                                                {isSelected && (
+                                                    <div className="absolute top-1 right-1 bg-marigold text-white rounded-full p-0.5">
+                                                        <span className="material-symbols-outlined text-xs">done</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <p className="text-sm text-gray-600 mb-4 h-10 line-clamp-2">
-                                                {v.description || "Includes full rituals, mantra chanting, and prasad delivery."}
+                                            <h5 className="text-sm font-bold text-heritage-dark mb-1 text-center">{addon.title}</h5>
+                                            <p className="text-xs text-stone-400 mb-3 text-center">
+                                                {addon.description ? (addon.description.length > 20 ? addon.description.substring(0, 20) + "..." : addon.description) : "Sacred offering"} • ₹{Number(addon.price).toLocaleString()}
                                             </p>
-                                            <div className="pt-3 border-t border-gray-100 flex justify-between items-end">
-                                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Dakshina</span>
-                                                <span className="text-2xl font-bold text-sindoor">₹{Number(v.price).toLocaleString()}</span>
-                                            </div>
+                                            <button
+                                                onClick={() => toggleAddon(addon)}
+                                                className={`w-full py-2 rounded-lg flex items-center justify-center transition-all ${isSelected
+                                                    ? 'bg-sindoor text-white'
+                                                    : 'bg-stone-50 hover:bg-marigold hover:text-white'
+                                                    }`}
+                                            >
+                                                <span className="material-symbols-outlined text-lg">{isSelected ? 'remove' : 'add'}</span>
+                                            </button>
                                         </div>
-                                    )
+                                    );
                                 })}
                             </div>
                         </div>
+                    </section>
+                )}
 
-                        {/* Pooja Vidhi */}
-                        <div className="bg-sindoor/5 p-6 md:p-8 rounded-3xl border-2 border-sindoor/10">
-                            <div className="flex items-center gap-3 mb-6">
-                                <MdSelfImprovement className="text-4xl text-sindoor" />
-                                <h3 className="text-3xl font-serif font-bold text-sindoor m-0">Pooja Vidhi (Procedure)</h3>
-                            </div>
-                            <div className="space-y-6">
-                                {['Ganpati Sthapana & Invocation', 'Sankalp & Prana Pratishtha', 'Shodashopachara Rituals & Mantras', 'Aarti & Prasad Distribution'].map((step, idx) => (
-                                    <div key={idx} className="flex gap-4">
-                                        <div className="flex-shrink-0 w-10 h-10 bg-sindoor text-white rounded-full flex items-center justify-center font-bold">
-                                            {idx + 1}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-xl text-sindoor font-bold mb-1">{step}</h4>
-                                            <p className="text-gray-600">Vedic rituals performed by experienced Pandits strictly according to scriptures.</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Addons Section mapped to Samagri/Bhog visual style */}
-                        {(addons && addons.length > 0) && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="bg-white p-6 rounded-2xl shadow-md border-t-4 border-haldi">
-                                    <h4 className="text-2xl font-serif text-sindoor mb-4 flex items-center gap-2">
-                                        <MdShoppingBasket /> Add-on Samagri
-                                    </h4>
-                                    <ul className="space-y-3">
-                                        {addons.slice(0, 3).map(addon => (
-                                            <li key={addon.id} className="flex items-center justify-between gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer" onClick={() => toggleAddon(addon)}>
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedAddons.find(a => a.id === addon.id) ? 'border-marigold bg-marigold' : 'border-gray-300'}`}>
-                                                        {selectedAddons.find(a => a.id === addon.id) && <div className="bg-white w-1.5 h-1.5 rounded-full"></div>}
-                                                    </div>
-                                                    <span className="text-gray-700 text-sm">{addon.title}</span>
-                                                </div>
-                                                <span className="font-bold text-sindoor text-sm">+ ₹{Number(addon.price).toLocaleString()}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className="bg-white p-6 rounded-2xl shadow-md border-t-4 border-haldi">
-                                    <h4 className="text-2xl font-serif text-sindoor mb-4 flex items-center gap-2">
-                                        <MdRestaurant /> Special Bhog
-                                    </h4>
-                                    <p className="text-gray-600 text-sm mb-4">Included in Seva:</p>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-lg bg-orange-100 flex items-center justify-center text-marigold">
-                                            <MdRestaurant size={32} />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-sindoor">Panchamrit & Fruits</p>
-                                            <p className="text-xs text-stone-500">Traditional prasadam offerings</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* RIGHT COLUMN - Sticky Card */}
-                    <div className="lg:col-span-1">
-                        <div className="sticky top-24 bg-white rounded-3xl shadow-2xl border-2 border-haldi p-6 md:p-8">
-                            <div className="mb-6">
-                                <div className="flex justify-between items-end mb-2">
-                                    <span className="text-gray-500 font-bold uppercase text-xs tracking-widest">Total Dakshina</span>
-                                    <span className="text-4xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
-                                </div>
-                                <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-marigold w-full"></div>
-                                </div>
-                                {selectedVariant && (
-                                    <p className="text-xs text-right text-gray-400 mt-1">
-                                        {selectedVariant.persons} Person{selectedVariant.persons > 1 ? "s" : ""} • {selectedAddons.length} Addons
-                                    </p>
-                                )}
-                            </div>
-
-                            <form onSubmit={handleBookNow} className="space-y-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Select Date</label>
-                                    <input
-                                        className="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-marigold transition-colors"
-                                        type="date"
-                                        value={selectedDate}
-                                        onChange={(e) => setSelectedDate(e.target.value)}
-                                        min={new Date().toISOString().split('T')[0]}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Select Time Slot</label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {["06:00 AM", "09:30 AM", "11:00 AM", "04:30 PM"].map(time => (
-                                            <button
-                                                key={time}
-                                                type="button"
-                                                onClick={() => setSelectedTimeSlot(time)}
-                                                className={`py-2 rounded-xl text-sm font-medium border-2 transition-all
-                                                    ${selectedTimeSlot === time
-                                                        ? 'border-marigold bg-marigold/5 text-marigold font-bold'
-                                                        : 'border-gray-100 text-gray-600 hover:border-marigold'}`}
-                                            >
-                                                {time}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="pt-4 border-t border-dashed border-gray-200">
-                                    <h4 className="text-lg font-serif text-sindoor mb-4 flex items-center gap-2">
-                                        <MdEditNote /> Sankalp Details
-                                    </h4>
-                                    <div className="space-y-6 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                                        {sankalpDetails.map((detail, index) => (
-                                            <div key={index} className="space-y-4">
-                                                {sankalpDetails.length > 1 && (
-                                                    <div className="flex items-center gap-2 pb-1 border-b border-gray-100">
-                                                        <span className="bg-marigold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{index + 1}</span>
-                                                        <span className="text-xs font-bold text-sindoor uppercase tracking-widest">
-                                                            Devotee {index + 1}
-                                                        </span>
-                                                    </div>
-                                                )}
-
-                                                <input
-                                                    className="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-marigold text-sm"
-                                                    placeholder={`Full Name ${sankalpDetails.length > 1 ? `of Devotee ${index + 1}` : "of Devotee"}`}
-                                                    value={detail.name}
-                                                    onChange={(e) => updateSankalpDetail(index, 'name', e.target.value)}
-                                                    type="text"
-                                                />
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <input
-                                                        className="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-marigold text-sm"
-                                                        placeholder="Gotra"
-                                                        value={detail.gotra}
-                                                        onChange={(e) => updateSankalpDetail(index, 'gotra', e.target.value)}
-                                                        type="text"
-                                                    />
-                                                    <select
-                                                        className="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-marigold text-sm bg-white"
-                                                        value={detail.rashi}
-                                                        onChange={(e) => updateSankalpDetail(index, 'rashi', e.target.value)}
-                                                    >
-                                                        <option>Select Rashi</option>
-                                                        <option>Mesh (Aries)</option>
-                                                        <option>Vrishabha (Taurus)</option>
-                                                        <option>Mithun (Gemini)</option>
-                                                        <option>Kark (Cancer)</option>
-                                                        <option>Simha (Leo)</option>
-                                                        <option>Kanya (Virgo)</option>
-                                                        <option>Tula (Libra)</option>
-                                                        <option>Vrishchik (Scorpio)</option>
-                                                        <option>Dhanu (Sagittarius)</option>
-                                                        <option>Makar (Capricorn)</option>
-                                                        <option>Kumbh (Aquarius)</option>
-                                                        <option>Meen (Pisces)</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="w-full bg-sindoor hover:bg-sindoor/90 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 text-lg"
-                                >
-                                    <MdCalendarMonth size={24} />
-                                    BOOK POOJA NOW
-                                </button>
-                                <p className="text-center text-xs text-gray-400 italic">
-                                    Confirmation and Pandit details will be sent via SMS/Email
-                                </p>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* DEVOTEE EXPERIENCES */}
-            <section className="bg-heritage-dark py-20 mt-12 overflow-hidden relative">
-                <div className="toran-border opacity-30 absolute top-0 w-full"></div>
-                <div className="max-w-7xl mx-auto px-6">
-                    <h3 className="text-4xl font-serif text-haldi text-center mb-16">Devotee Experiences</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { name: "Rajesh Khanna", loc: "Mumbai", text: "The Pandit ji was very knowledgeable and explained every mantra. It felt as if we were in a grand temple right at our home." },
-                            { name: "Sneha Iyer", loc: "Bengaluru", text: "Booked for my parents' anniversary. The arrangements for Samagri were perfect. The modaks were fresh and delicious." },
-                            { name: "Amit Sharma", loc: "Delhi", text: "Divine experience. Digital booking made it so easy. The live Sankalp through video call was very emotional and spiritual for us." }
-                        ].map((rev, i) => (
-                            <div key={i} className="bg-white/5 p-8 rounded-3xl border border-white/10 relative">
-                                <span className="absolute -top-4 -left-2 text-6xl text-marigold/20 font-serif">"</span>
-                                <p className="text-gray-300 italic mb-6 leading-relaxed relative z-10">"{rev.text}"</p>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-marigold/20 border border-marigold flex items-center justify-center text-marigold font-bold text-xl">
-                                        {rev.name[0]}
-                                    </div>
-                                    <div>
-                                        <p className="text-white font-bold">{rev.name}</p>
-                                        <p className="text-xs text-gray-500">{rev.loc}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="toran-border rotate-180 opacity-30 absolute bottom-0 w-full"></div>
-            </section>
-
-            {/* SIMILAR POOJAS (Footer Section in HTML) - Dynamic from DB */}
-            <section className="py-20 px-6 max-w-7xl mx-auto">
-                <div className="flex items-center justify-between mb-12">
-                    <div>
-                        <h3 className="text-4xl font-serif text-sindoor">Similar Sacred Poojas</h3>
-                        <div className="h-1 w-24 bg-marigold mt-2"></div>
-                    </div>
-                    <button className="text-marigold font-bold flex items-center gap-2 hover:gap-4 transition-all" onClick={() => navigate('/poojas')}>
-                        VIEW ALL SEVAS <FiArrowRight />
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {similarPoojas.map((item) => {
-                        // Determine price to display (lowest or first variant)
-                        const displayPrice = (item.variants && item.variants.length > 0)
-                            ? `₹${Number(item.variants[0].price).toLocaleString()}`
-                            : "View Details";
-
-                        return (
-                            <div
-                                key={item.id}
-                                onClick={() => {
-                                    navigate(`/poojas/${item.id}`);
-                                    window.scrollTo(0, 0);
-                                }}
-                                className="bg-white rounded-2xl overflow-hidden shadow-lg border-b-4 border-marigold group cursor-pointer hover:-translate-y-1 transition-all"
-                            >
-                                <div className="h-48 bg-gray-200 relative overflow-hidden">
-                                    {item.image ? (
+                {/* Booking Form Section */}
+                {/* Temple Venue Showcase */}
+                {temples && temples.length > 0 && (
+                    <section className="py-24 px-6 bg-white">
+                        <div className="max-w-[1280px] mx-auto">
+                            <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-stone-200">
+                                <div className="grid grid-cols-1 lg:grid-cols-2">
+                                    {/* Temple Image */}
+                                    <div className="h-[400px] md:h-auto relative">
                                         <img
-                                            src={item.image}
+                                            alt={temples[0].title}
+                                            className="w-full h-full object-cover"
+                                            src={temples[0].image || "https://lh3.googleusercontent.com/aida-public/AB6AXuCNKQD_nvQc4mh-teWAdK6Q5iVGF9dwO-syFh8kptR5ynYxEd18m7mGdjdsp6iMEhUqbGggTgwkmYl6CNCwGXexErLDC6PgaivNRf_35hoVMTjhEMPDzfQK5VJxJ56y3wHN_sb3LiTHHm11674jLnidEZlqOvEzbLOFIo4Su7xhJiyL1IWUyXbN0I_rkhOqC1yKOdxM8jg5T4ZYCDHUBlWXmZIgOdWRrSkcMMFjATg-EIOyUsOlNa-MgMJXSviTWk4K48hwyaZJkx0"}
+                                        />
+                                        <div className="absolute top-8 left-8 bg-sindoor text-white px-5 py-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+                                            <span className="material-symbols-outlined">location_on</span>
+                                            <span className="text-xs font-bold uppercase tracking-[0.2em]">{temples[0].location || "PUNE, MAHARASHTRA"}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Temple Details */}
+                                    <div className="p-10 md:p-16 flex flex-col justify-center bg-white">
+                                        <div className="flex items-center gap-3 mb-8">
+                                            <span className="material-symbols-outlined text-4xl text-sindoor">home_storage</span>
+                                            <h3 className="text-3xl text-sindoor m-0 uppercase tracking-wide font-serif">TEMPLE VENUE</h3>
+                                        </div>
+
+                                        <h4 className="text-2xl text-marigold mb-5 font-bold">{temples[0].title}</h4>
+
+                                        <p className="text-stone-600 leading-relaxed mb-8 italic border-l-2 border-haldi pl-6">
+                                            {temples[0].description || "This ancient temple site has been a center for worship for over 300 years. Known for its powerful spiritual vibrations and authentic Vedic traditions, the sanctuary offers a divine atmosphere where every mantra resonates with celestial energy."}
+                                        </p>
+
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
+                                                <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Established</h6>
+                                                <p className="text-stone-500 text-sm italic">Late 18th Century</p>
+                                            </div>
+                                            <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
+                                                <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Ritual Style</h6>
+                                                <p className="text-stone-500 text-sm italic">Puranokta Vedic Vidhi</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* Stories of Devotion */}
+                <section className="bg-heritage-dark py-24 relative overflow-hidden">
+                    <div className="absolute inset-0 mandala-bg opacity-10"></div>
+                    <div className="max-w-[1280px] mx-auto px-6 relative z-10 text-center">
+                        <h3 className="text-4xl text-haldi font-serif mb-16">Stories of Devotion</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                            {[
+                                { name: "Rajesh Khanna", loc: "Mumbai", text: "The Pandit ji was very knowledgeable and explained every mantra. It felt as if we were in a grand temple right at our home. Highly recommended!", initials: "RK" },
+                                { name: "Sneha Iyer", loc: "Bengaluru", text: "Booked for my parents' anniversary. The arrangements for Samagri were perfect. The modaks were fresh and delicious. Extremely satisfied.", initials: "SI" },
+                                { name: "Amit Sharma", loc: "Delhi", text: "Divine experience. Digital booking made it so easy. The live Sankalp through video call was very emotional and spiritual for us.", initials: "AS" }
+                            ].map((t, idx) => (
+                                <div key={idx} className="text-left group">
+                                    <p className="text-stone-300 italic mb-6 text-lg group-hover:text-white transition-colors">
+                                        "{t.text}"
+                                    </p>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-full bg-marigold flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
+                                            {t.initials}
+                                        </div>
+                                        <div>
+                                            <p className="text-white font-bold">{t.name}</p>
+                                            <p className="text-xs text-stone-500 uppercase tracking-widest">{t.loc}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Similar Poojas */}
+                <section className="py-24 px-6 bg-paper-bg">
+                    <div className="max-w-[1280px] mx-auto">
+                        <div className="flex items-end justify-between mb-16">
+                            <div>
+                                <h3 className="text-4xl text-sindoor uppercase tracking-wide mb-3 font-serif">Similar Sacred Poojas</h3>
+                                <div className="h-1 w-24 bg-marigold"></div>
+                            </div>
+                            <button onClick={() => navigate('/poojas')} className="text-marigold font-bold flex items-center gap-2 hover:gap-4 transition-all tracking-widest text-xs uppercase">
+                                View All Sevas <span className="material-symbols-outlined">arrow_right_alt</span>
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {similarPoojas.map((item) => (
+                                <div
+                                    key={item.id}
+                                    onClick={() => {
+                                        navigate(`/poojas/${item.id}`);
+                                        window.scrollTo(0, 0);
+                                    }}
+                                    className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group cursor-pointer"
+                                >
+                                    <div className="h-52 relative overflow-hidden">
+                                        <img
                                             alt={item.title}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            src={item.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAF-AmO5J7i7qBRyubRd6pU8NlefSUtbOUer8TKkIUpNodXdMGSEJeQ1czPjsD4R46L6miPZHVBBlser3Wz6FJ-zRcf8kR_QbfQK34GmnUo6pAWYzQXqnosQmxn1LGeWuKZmo6oGMkM3xWUTV_gBVGrL-nzStMFBkKQ2WUmjIFNypcJsTgH4ZQzDKeOUn6eZKFoSl2moEF3rcyP0gQK3NdRIawD4LT6J4N7kicYnT-JVjPaXSbGWszDQgvnUd0-vUAER8gzo1pb-UI"}
                                         />
-                                    ) : (
-                                        <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-100">
-                                            <MdTempleHindu size={48} />
+                                        <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-[10px] font-black text-sindoor uppercase">
+                                            Trending
                                         </div>
-                                    )}
-                                </div>
-                                <div className="p-4">
-                                    <h4 className="text-xl font-serif text-sindoor mb-2 line-clamp-1">{item.title}</h4>
-                                    <div className="flex justify-between items-center mt-4">
-                                        <span className={`font-black text-sindoor ${displayPrice.startsWith('₹') ? 'text-lg' : 'text-sm'}`}>
-                                            {displayPrice}
-                                        </span>
-                                        <span className="text-marigold font-bold text-sm">EXPLORE</span>
+                                    </div>
+                                    <div className="p-6">
+                                        <h4 className="text-xl text-sindoor mb-2 font-serif line-clamp-1">{item.title}</h4>
+                                        <p className="text-xs text-stone-500 mb-6 italic line-clamp-1">
+                                            {item.description || "Divine puja service"}
+                                        </p>
+                                        <div className="flex justify-between items-center border-t border-stone-100 pt-4">
+                                            <span className="text-xl font-black text-sindoor">
+                                                ₹{item.variants?.[0]?.price ? Number(item.variants[0].price).toLocaleString() : "1,101"}
+                                            </span>
+                                            <button className="text-marigold font-bold text-sm hover:underline">EXPLORE</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                    {similarPoojas.length === 0 && (
-                        <div className="col-span-full text-center text-gray-400 italic py-10">
-                            No other similar poojas found at the moment.
+                            ))}
                         </div>
-                    )}
+                    </div>
+                </section>
+            </main>
+
+            {/* Sticky Bottom Bar */}
+            <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-stone-200 py-4 px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
+                <div className="max-w-[1280px] mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-8">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-1">Selected Seva</span>
+                            <span className="text-heritage-dark font-bold flex items-center gap-2">
+                                {pooja.title} ({selectedVariant ? selectedVariant.title : "Select Variant"})
+                            </span>
+                        </div>
+                        <div className="h-10 w-px bg-stone-200 hidden sm:block"></div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-1">Total Dakshina</span>
+                            <span className="text-2xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="hidden lg:flex items-center gap-2 text-stone-400 text-xs italic">
+                            <span className="material-symbols-outlined text-sm">verified_user</span>
+                            Secure payment gateway
+                        </div>
+                        <button
+                            onClick={handleBookNow}
+                            className="bg-sindoor text-white px-8 md:px-10 py-3 md:py-4 rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center gap-3"
+                        >
+                            PROCEED TO BOOK
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
                 </div>
-            </section>
+            </div>
         </div>
     );
 }

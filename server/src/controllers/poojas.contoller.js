@@ -13,9 +13,14 @@ export const createPooja = async (req, res) => {
       });
     }
 
+    let imagePath = image;
+    if (req.file) {
+      imagePath = `/uploads/poojas/${req.file.filename}`;
+    }
+
     const poojaId = await PoojaModel.createPooja({
       title,
-      image,
+      image: imagePath,
       description,
       benefits,
     });
@@ -33,9 +38,15 @@ export const createPooja = async (req, res) => {
 
 export const updatePooja = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+
+    if (req.file) {
+      updateData.image = `/uploads/poojas/${req.file.filename}`;
+    }
+
     const updated = await PoojaModel.updatePooja(
       req.params.poojaId,
-      req.body
+      updateData
     );
 
     if (!updated) {

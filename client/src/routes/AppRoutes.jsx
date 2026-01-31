@@ -28,6 +28,7 @@ import PoojaDetail from "../pages/users/PoojaDetail";
 import ChadawaDetail from "../pages/users/ChadawaDetail";
 import TempleChadawas from "../pages/users/TempleChadawas";
 import Muhurat from "../pages/users/Muhurat";
+import BookingCheckout from "../pages/users/BookingCheckout";
 
 export default function AppRoutes() {
   return (
@@ -39,6 +40,7 @@ export default function AppRoutes() {
         <Route path="/temples/:id" element={<TempleDetail />} />
         <Route path="/poojas" element={<Poojass />} />
         <Route path="/poojas/:poojaId" element={<PoojaDetail />} />
+        <Route path="/booking-checkout" element={<BookingCheckout />} />
         <Route path="/chadawas" element={<Chadawass />} />
         <Route path="/chadawas/:chadawaId" element={<ChadawaDetail />} />
         <Route path="/temples/:id/chadawas" element={<TempleChadawas />} />

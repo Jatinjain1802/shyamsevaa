@@ -12,7 +12,8 @@ export default function Poojas() {
 
   const [form, setForm] = useState({
     title: "",
-    image: "",
+    image: "", // This will hold the URL for preview if needed
+    file: null, // This will hold the File object
     description: "",
     benefits: "",
   });
@@ -41,31 +42,59 @@ export default function Poojas() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({
+        ...form,
+        file: file,
+        image: URL.createObjectURL(file), // Preview
+      });
+    }
+  };
+
   const openCreate = () => {
     setEditingId(null);
-    setForm({ title: "", image: "", description: "", benefits: "" });
+    setForm({ title: "", image: "", file: null, description: "", benefits: "" });
     setShowForm(true);
   };
 
   const openEdit = (p) => {
     setEditingId(p.id);
-    setForm(p);
+    setForm({ ...p, file: null }); // Reset file input
     setShowForm(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("benefits", form.benefits);
+
+    // Append image file if selected
+    if (form.file) {
+      formData.append("pooja_image", form.file);
+    }
+    // If no new file, but there's an existing image URL, we might want to send it 
+    // (though backend logic handles update only if file is present usually, 
+    // or preserves old image if not updated. The current controller logic
+    // only updates image if req.file exists, so we don't strictly need to send the old URL string 
+    // unless we modified logic to accept string URLs too. 
+    // For now, only new file triggers update in controller)
+
     try {
       if (editingId) {
-        await api.put(`/admin/poojas/${editingId}`, form);
+        await api.put(`/poojas/${editingId}`, formData);
       } else {
-        await api.post("/admin/poojas", form);
+        await api.post("/poojas", formData);
       }
 
       closeForm();
       fetchPoojas();
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to save pooja");
     }
   };
@@ -74,7 +103,7 @@ export default function Poojas() {
     if (!confirm("Delete this pooja?")) return;
 
     try {
-      await api.delete(`/admin/poojas/${id}`);
+      await api.delete(`/poojas/${id}`);
       fetchPoojas();
     } catch {
       alert("Failed to delete");
@@ -184,13 +213,12 @@ export default function Poojas() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700">
-                      Image URL
+                      Image
                     </label>
                     <input
-                      name="image"
-                      value={form.image}
-                      onChange={handleChange}
-                      placeholder="https://..."
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
                       className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>

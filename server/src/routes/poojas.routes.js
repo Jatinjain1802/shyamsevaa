@@ -10,15 +10,16 @@ import {
 
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 /* ================= ADMIN ================= */
 
 // CREATE
-router.post("/", authMiddleware, adminMiddleware, createPooja);
+router.post("/", authMiddleware, adminMiddleware, upload.single("pooja_image"), createPooja);
 
 // UPDATE
-router.put("/:poojaId", authMiddleware, adminMiddleware, updatePooja);
+router.put("/:poojaId", authMiddleware, adminMiddleware, upload.single("pooja_image"), updatePooja);
 
 // DELETE
 router.delete("/:poojaId", authMiddleware, adminMiddleware, deletePooja);
