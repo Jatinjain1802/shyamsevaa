@@ -20,14 +20,15 @@ import {
 
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 /* ========== ADMIN APIs ========== */
 
 // chadawa CRUD
-router.post("/admin/chadawas", authMiddleware, adminMiddleware, createChadawa);
-router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, updateChadawa);
+router.post("/admin/chadawas", authMiddleware, adminMiddleware, upload.single("chadawa_image"), createChadawa);
+router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, upload.single("chadawa_image"), updateChadawa);
 router.delete("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, deleteChadawa);
 
 // chadawa items

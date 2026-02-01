@@ -10,7 +10,10 @@ export default function Temples() {
   const [form, setForm] = useState({
     title: "",
     image: "",
+    file: null, // For file upload
     description: "",
+    city: "",
+    state: "",
   });
 
   const fetchTemples = async () => {
@@ -33,9 +36,21 @@ export default function Temples() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handle file selection for image upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({
+        ...form,
+        file: file,
+        image: URL.createObjectURL(file), // Preview URL
+      });
+    }
+  };
+
   const openCreateForm = () => {
     setEditingId(null);
-    setForm({ title: "", image: "", description: "" });
+    setForm({ title: "", image: "", file: null, description: "", city: "", state: "" });
     setShowForm(true);
   };
 
@@ -44,7 +59,10 @@ export default function Temples() {
     setForm({
       title: temple.title,
       image: temple.image || "",
+      file: null, // Reset file input when editing
       description: temple.description || "",
+      city: temple.city || "",
+      state: temple.state || "",
     });
     setShowForm(true);
   };
@@ -52,16 +70,29 @@ export default function Temples() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Use FormData to send file along with other data
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("city", form.city);
+    formData.append("state", form.state);
+
+    // Append image file if selected
+    if (form.file) {
+      formData.append("temple_image", form.file);
+    }
+
     try {
       if (editingId) {
-        await api.put(`/temples/${editingId}`, form);
+        await api.put(`/temples/${editingId}`, formData);
       } else {
-        await api.post("/temples", form);
+        await api.post("/temples", formData);
       }
 
       setShowForm(false);
       fetchTemples();
     } catch (err) {
+      console.error("Error saving temple:", err);
       alert("Error saving temple");
     }
   };
@@ -153,52 +184,121 @@ export default function Temples() {
 
       {/* Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-xl rounded p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingId ? "Edit Temple" : "Add Temple"}
-            </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom-8 duration-300">
+            {/* Modal Header */}
+            <div className="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {editingId ? "Edit Temple" : "Add New Temple"}
+              </h2>
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-gray-500 hover:text-red-500 transition-colors text-2xl"
+              >
+                &times;
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                name="title"
-                placeholder="Temple Name"
-                value={form.title}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              />
+            {/* Modal Body */}
+            <div className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Temple Name
+                  </label>
+                  <input
+                    name="title"
+                    placeholder="e.g. Shree Siddhivinayak Temple"
+                    value={form.title}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                    required
+                  />
+                </div>
 
-              <input
-                name="image"
-                placeholder="Image URL"
-                value={form.image}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Temple Image
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                  />
+                </div>
 
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={form.description}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                rows="3"
-              />
+                {/* Image Preview */}
+                {form.image && (
+                  <div className="h-48 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => (e.target.style.display = "none")}
+                    />
+                  </div>
+                )}
 
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2 border rounded"
-                >
-                  Cancel
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded">
-                  Save
-                </button>
-              </div>
-            </form>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    placeholder="Brief description of the temple..."
+                    value={form.description}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all resize-y"
+                    rows="3"
+                  />
+                </div>
+
+                {/* City and State Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      City
+                    </label>
+                    <input
+                      name="city"
+                      placeholder="e.g. Mumbai"
+                      value={form.city}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      State
+                    </label>
+                    <input
+                      name="state"
+                      placeholder="e.g. Maharashtra"
+                      value={form.state}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-linear-to-r from-orange-600 to-orange-700 text-white font-medium rounded-lg hover:shadow-lg transition-all transform active:scale-95"
+                  >
+                    {editingId ? "Update Temple" : "Create Temple"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

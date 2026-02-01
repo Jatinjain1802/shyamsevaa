@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FiMenu, FiX, FiUser, FiSearch, FiBell } from "react-icons/fi";
+import { useCart } from "../../context/CartContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { cartCount } = useCart();
 
   // Handle scroll effect
   useEffect(() => {
@@ -70,6 +72,18 @@ export default function Navbar() {
               <button className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors hidden sm:block">
                 <span className="material-symbols-outlined">notifications</span>
               </button>
+              {/* Cart Icon with Badge */}
+              <Link
+                to="/cart"
+                className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors relative"
+              >
+                <span className="material-symbols-outlined">shopping_cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-marigold text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
+                )}
+              </Link>
               <Link
                 to="/login"
                 className="bg-sindoor text-white px-4 md:px-6 py-2 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:bg-sindoor/90 transition-all whitespace-nowrap"

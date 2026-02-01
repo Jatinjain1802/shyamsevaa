@@ -1,40 +1,127 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../utils/axios";
+import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+
+// LEARNING: Custom hook for toast notifications
+// This is a simple implementation - in production, use libraries like react-hot-toast or react-toastify
+const useToast = () => {
+    const [toasts, setToasts] = useState([]);
+
+    const showToast = (message, type = 'info') => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, message, type }]);
+        setTimeout(() => {
+            setToasts(prev => prev.filter(t => t.id !== id));
+        }, 3000);
+    };
+
+    return { toasts, showToast };
+};
 
 export default function PoojaDetail() {
-    const { poojaId } = useParams();
-    const navigate = useNavigate();
+    // LEARNING: Get slug from URL and extract ID from it
+    const { slug } = useParams();  // Changed from 'poojaId' to 'slug'
+    const poojaId = extractIdFromSlug(slug);  // Extract numeric ID from slug
 
+    const navigate = useNavigate();
+    const { toasts, showToast } = useToast();
+
+    // STATE MANAGEMENT
     const [data, setData] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedAddons, setSelectedAddons] = useState([]);
     const [similarPoojas, setSimilarPoojas] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [similarLoading, setSimilarLoading] = useState(true);
 
+    // LEARNING: useEffect with dependency array [poojaId]
+    // This runs when component mounts AND when poojaId changes
     useEffect(() => {
         window.scrollTo(0, 0);
-        api.get(`/poojas/${poojaId}`).then((res) => {
+        fetchPoojaDetails();
+        fetchSimilarPoojas();
+    }, [poojaId]);
+
+    // LEARNING: Separate async functions for better error handling and reusability
+    const fetchPoojaDetails = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await api.get(`/poojas/${poojaId}`);
             setData(res.data.data);
+
+            // Auto-select first variant if available
             if (res.data.data.variants && res.data.data.variants.length > 0) {
                 setSelectedVariant(res.data.data.variants[0]);
             }
-        });
+        } catch (err) {
+            console.error("Failed to load pooja details", err);
+            setError(err.response?.data?.message || "Failed to load pooja details. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        // Fetch similar poojas (all poojas excluding current)
-        api.get("/poojas").then((res) => {
+    const fetchSimilarPoojas = async () => {
+        try {
+            setSimilarLoading(true);
+            const res = await api.get("/poojas");
             if (res.data.data) {
                 const others = res.data.data.filter(p => p.id !== poojaId).slice(0, 4);
                 setSimilarPoojas(others);
             }
-        }).catch(err => console.error("Failed to load similar poojas", err));
-    }, [poojaId]);
+        } catch (err) {
+            console.error("Failed to load similar poojas", err);
+            // Don't show error for similar poojas - it's not critical
+        } finally {
+            setSimilarLoading(false);
+        }
+    };
 
-    if (!data)
+    // LOADING STATE
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-paper-bg">
-                <div className="animate-spin h-12 w-12 border-4 border-marigold border-t-sindoor rounded-full"></div>
+                <div className="text-center">
+                    <div className="animate-spin h-16 w-16 border-4 border-marigold border-t-sindoor rounded-full mx-auto mb-4"></div>
+                    <p className="text-stone-600 font-sans italic">Loading divine details...</p>
+                </div>
             </div>
         );
+    }
+
+    // ERROR STATE
+    if (error || !data) {
+        return (
+            <div className="min-h-screen bg-paper-bg pt-8 pb-12 flex items-center justify-center">
+                <div className="text-center max-w-md mx-auto px-4">
+                    <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="material-symbols-outlined text-red-500 text-4xl">error</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">Unable to Load Pooja Details</h3>
+                    <p className="text-stone-600 mb-6 italic">{error || "Pooja not found"}</p>
+                    <div className="flex gap-4 justify-center">
+                        <button
+                            onClick={fetchPoojaDetails}
+                            className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined">refresh</span>
+                            Try Again
+                        </button>
+                        <button
+                            onClick={() => navigate('/poojas')}
+                            className="bg-stone-200 text-stone-700 px-6 py-3 rounded-xl font-bold hover:bg-stone-300 transition-all flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            Back to Poojas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     const { pooja, variants, addons, temples } = data;
 
@@ -55,10 +142,15 @@ export default function PoojaDetail() {
         return total;
     };
 
+    // LEARNING: Better UX with toast notifications instead of alerts
     const handleBookNow = (e) => {
         e.preventDefault();
+
+        // Validation with user-friendly feedback
         if (!selectedVariant) {
-            alert("Please select a Sankalp option to proceed.");
+            showToast("Please select a Sankalp option to proceed.", 'warning');
+            // Scroll to variants section
+            document.getElementById('variants-section')?.scrollIntoView({ behavior: 'smooth' });
             return;
         }
 
@@ -73,6 +165,32 @@ export default function PoojaDetail() {
         });
     };
 
+    // LEARNING: Share functionality using Web Share API
+    const handleShare = async () => {
+        const shareData = {
+            title: pooja.title,
+            text: `Check out this divine pooja: ${pooja.title}`,
+            url: window.location.href
+        };
+
+        try {
+            // Check if Web Share API is supported
+            if (navigator.share) {
+                await navigator.share(shareData);
+                showToast('Shared successfully!', 'success');
+            } else {
+                // Fallback: Copy to clipboard
+                await navigator.clipboard.writeText(window.location.href);
+                showToast('Link copied to clipboard!', 'success');
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('Error sharing:', err);
+                showToast('Failed to share', 'error');
+            }
+        }
+    };
+
     // Placeholder images for addons if missing 
     const addonImages = [
         "https://lh3.googleusercontent.com/aida-public/AB6AXuC99gj6xmNd98QZXOJVhoPhk_1tZScKwWdEdYyDyi7lxR9HJd599UcHXecmpP8BEgZ3A8-oX0GCerssFDnm0gv3zoYdB_U4XrChcFTubtihPUcnhsX0wZxY6-smWxpF2r-t5edVJx4jrxIrcy9mS4xmCZ4GYOvHcBLZMcJMo1A-hoYOw9LFGDtsFjivGQyBH5nhindi2s-gL_vnLeYrGxc7_KNuevPIT5Ap4yUCgDEx_fKh7Eq34o6eda2WfRfIMwAL1J2aMHINaRw",
@@ -83,7 +201,47 @@ export default function PoojaDetail() {
 
     return (
         <div className="flex flex-col min-h-screen pb-24">
+            {/* LEARNING: Toast Notifications Component */}
+            {/* Position fixed to show notifications on top of everything */}
+            <div className="fixed top-20 right-4 z-[70] space-y-2">
+                {toasts.map(toast => (
+                    <div
+                        key={toast.id}
+                        className={`px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm animate-slide-in-right flex items-center gap-3 ${toast.type === 'success' ? 'bg-green-500 text-white' :
+                            toast.type === 'error' ? 'bg-red-500 text-white' :
+                                toast.type === 'warning' ? 'bg-yellow-500 text-white' :
+                                    'bg-blue-500 text-white'
+                            }`}
+                    >
+                        <span className="material-symbols-outlined">
+                            {toast.type === 'success' ? 'check_circle' :
+                                toast.type === 'error' ? 'error' :
+                                    toast.type === 'warning' ? 'warning' : 'info'}
+                        </span>
+                        {toast.message}
+                    </div>
+                ))}
+            </div>
+
             <main className="flex-grow">
+                {/* LEARNING: Breadcrumb Navigation for better UX */}
+                <div className="bg-paper-bg border-b border-marigold/10 py-4">
+                    <div className="max-w-[1280px] mx-auto px-6">
+                        <nav className="flex items-center gap-2 text-sm text-stone-500 font-medium" aria-label="Breadcrumb">
+                            <Link to="/" className="hover:text-sindoor transition-colors flex items-center gap-1">
+                                <span className="material-symbols-outlined text-sm">home</span>
+                                Home
+                            </Link>
+                            <span className="material-symbols-outlined text-xs">chevron_right</span>
+                            <Link to="/poojas" className="hover:text-sindoor transition-colors">
+                                Poojas
+                            </Link>
+                            <span className="material-symbols-outlined text-xs">chevron_right</span>
+                            <span className="text-sindoor font-bold truncate max-w-xs">{pooja.title}</span>
+                        </nav>
+                    </div>
+                </div>
+
                 {/* Hero Section - Split Layout */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] border-b border-marigold/10">
                     {/* Image Gallery Side */}
@@ -93,6 +251,14 @@ export default function PoojaDetail() {
                             className="w-full h-full object-cover transition-opacity duration-500"
                             src={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
                         />
+                        {/* LEARNING: Share button overlay */}
+                        <button
+                            onClick={handleShare}
+                            className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-all group"
+                            aria-label="Share this pooja"
+                        >
+                            <span className="material-symbols-outlined text-sindoor group-hover:scale-110 transition-transform">share</span>
+                        </button>
                     </div>
 
                     {/* Details Side */}
@@ -173,7 +339,8 @@ export default function PoojaDetail() {
                 </section>
 
                 {/* Choose Participation */}
-                <section className="py-24 px-6 bg-white">
+                {/* LEARNING: ID attribute for smooth scrolling from validation */}
+                <section id="variants-section" className="py-24 px-6 bg-white">
                     <div className="max-w-[1280px] mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl text-sindoor font-serif mb-4">Choose Participation</h2>
@@ -273,6 +440,7 @@ export default function PoojaDetail() {
 
                 {/* Booking Form Section */}
                 {/* Temple Venue Showcase */}
+                {/* LEARNING: Using actual temple data from API instead of hardcoded values */}
                 {temples && temples.length > 0 && (
                     <section className="py-24 px-6 bg-white">
                         <div className="max-w-[1280px] mx-auto">
@@ -285,10 +453,19 @@ export default function PoojaDetail() {
                                             className="w-full h-full object-cover"
                                             src={temples[0].image || "https://lh3.googleusercontent.com/aida-public/AB6AXuCNKQD_nvQc4mh-teWAdK6Q5iVGF9dwO-syFh8kptR5ynYxEd18m7mGdjdsp6iMEhUqbGggTgwkmYl6CNCwGXexErLDC6PgaivNRf_35hoVMTjhEMPDzfQK5VJxJ56y3wHN_sb3LiTHHm11674jLnidEZlqOvEzbLOFIo4Su7xhJiyL1IWUyXbN0I_rkhOqC1yKOdxM8jg5T4ZYCDHUBlWXmZIgOdWRrSkcMMFjATg-EIOyUsOlNa-MgMJXSviTWk4K48hwyaZJkx0"}
                                         />
-                                        <div className="absolute top-8 left-8 bg-sindoor text-white px-5 py-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-                                            <span className="material-symbols-outlined">location_on</span>
-                                            <span className="text-xs font-bold uppercase tracking-[0.2em]">{temples[0].location || "PUNE, MAHARASHTRA"}</span>
-                                        </div>
+                                        {/* LEARNING: Combining city and state fields for location display */}
+                                        {(temples[0].city || temples[0].state) && (
+                                            <div className="absolute top-8 left-8 bg-sindoor text-white px-5 py-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+                                                <span className="material-symbols-outlined">location_on</span>
+                                                <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                                                    {/* LEARNING: Conditional string building - combine city and state if both exist */}
+                                                    {temples[0].city && temples[0].state
+                                                        ? `${temples[0].city}, ${temples[0].state}`
+                                                        : temples[0].city || temples[0].state
+                                                    }
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Temple Details */}
@@ -300,20 +477,38 @@ export default function PoojaDetail() {
 
                                         <h4 className="text-2xl text-marigold mb-5 font-bold">{temples[0].title}</h4>
 
-                                        <p className="text-stone-600 leading-relaxed mb-8 italic border-l-2 border-haldi pl-6">
-                                            {temples[0].description || "This ancient temple site has been a center for worship for over 300 years. Known for its powerful spiritual vibrations and authentic Vedic traditions, the sanctuary offers a divine atmosphere where every mantra resonates with celestial energy."}
-                                        </p>
+                                        {/* LEARNING: Check multiple possible field names for description */}
+                                        {/* Backend might use 'description', 'desc', 'about', or 'details' */}
+                                        {(temples[0].description || temples[0].desc || temples[0].about || temples[0].details) && (
+                                            <p className="text-stone-600 leading-relaxed mb-8 italic border-l-2 border-haldi pl-6">
+                                                {temples[0].description || temples[0].desc || temples[0].about || temples[0].details}
+                                            </p>
+                                        )}
 
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
-                                                <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Established</h6>
-                                                <p className="text-stone-500 text-sm italic">Late 18th Century</p>
+                                        {/* LEARNING: Conditional rendering - only show metadata if it exists */}
+                                        {(temples[0].established || temples[0].ritual_style || temples[0].founded_year || temples[0].tradition) && (
+                                            <div className="grid grid-cols-2 gap-6">
+                                                {/* Show "Established" if data exists */}
+                                                {(temples[0].established || temples[0].founded_year) && (
+                                                    <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
+                                                        <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Established</h6>
+                                                        <p className="text-stone-500 text-sm italic">
+                                                            {temples[0].established || temples[0].founded_year}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Show "Ritual Style" if data exists */}
+                                                {(temples[0].ritual_style || temples[0].tradition) && (
+                                                    <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
+                                                        <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Ritual Style</h6>
+                                                        <p className="text-stone-500 text-sm italic">
+                                                            {temples[0].ritual_style || temples[0].tradition}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="bg-haldi/5 p-5 rounded-2xl border border-haldi/10">
-                                                <h6 className="text-sindoor font-bold text-sm mb-1 uppercase tracking-wider">Ritual Style</h6>
-                                                <p className="text-stone-500 text-sm italic">Puranokta Vedic Vidhi</p>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -363,41 +558,61 @@ export default function PoojaDetail() {
                                 View All Sevas <span className="material-symbols-outlined">arrow_right_alt</span>
                             </button>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {similarPoojas.map((item) => (
-                                <div
-                                    key={item.id}
-                                    onClick={() => {
-                                        navigate(`/poojas/${item.id}`);
-                                        window.scrollTo(0, 0);
-                                    }}
-                                    className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group cursor-pointer"
-                                >
-                                    <div className="h-52 relative overflow-hidden">
-                                        <img
-                                            alt={item.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                            src={item.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAF-AmO5J7i7qBRyubRd6pU8NlefSUtbOUer8TKkIUpNodXdMGSEJeQ1czPjsD4R46L6miPZHVBBlser3Wz6FJ-zRcf8kR_QbfQK34GmnUo6pAWYzQXqnosQmxn1LGeWuKZmo6oGMkM3xWUTV_gBVGrL-nzStMFBkKQ2WUmjIFNypcJsTgH4ZQzDKeOUn6eZKFoSl2moEF3rcyP0gQK3NdRIawD4LT6J4N7kicYnT-JVjPaXSbGWszDQgvnUd0-vUAER8gzo1pb-UI"}
-                                        />
-                                        <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-[10px] font-black text-sindoor uppercase">
-                                            Trending
+
+                        {/* LEARNING: Conditional rendering - show skeleton while loading */}
+                        {similarLoading ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 animate-pulse">
+                                        <div className="h-52 bg-stone-200"></div>
+                                        <div className="p-6">
+                                            <div className="h-6 bg-stone-200 rounded mb-3"></div>
+                                            <div className="h-4 bg-stone-200 rounded mb-6 w-3/4"></div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="h-6 bg-stone-200 rounded w-20"></div>
+                                                <div className="h-4 bg-stone-200 rounded w-16"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="p-6">
-                                        <h4 className="text-xl text-sindoor mb-2 font-serif line-clamp-1">{item.title}</h4>
-                                        <p className="text-xs text-stone-500 mb-6 italic line-clamp-1">
-                                            {item.description || "Divine puja service"}
-                                        </p>
-                                        <div className="flex justify-between items-center border-t border-stone-100 pt-4">
-                                            <span className="text-xl font-black text-sindoor">
-                                                ₹{item.variants?.[0]?.price ? Number(item.variants[0].price).toLocaleString() : "1,101"}
-                                            </span>
-                                            <button className="text-marigold font-bold text-sm hover:underline">EXPLORE</button>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {similarPoojas.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        onClick={() => {
+                                            navigate(`/poojas/${item.id}`);
+                                            window.scrollTo(0, 0);
+                                        }}
+                                        className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group cursor-pointer"
+                                    >
+                                        <div className="h-52 relative overflow-hidden">
+                                            <img
+                                                alt={item.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                src={item.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAF-AmO5J7i7qBRyubRd6pU8NlefSUtbOUer8TKkIUpNodXdMGSEJeQ1czPjsD4R46L6miPZHVBBlser3Wz6FJ-zRcf8kR_QbfQK34GmnUo6pAWYzQXqnosQmxn1LGeWuKZmo6oGMkM3xWUTV_gBVGrL-nzStMFBkKQ2WUmjIFNypcJsTgH4ZQzDKeOUn6eZKFoSl2moEF3rcyP0gQK3NdRIawD4LT6J4N7kicYnT-JVjPaXSbGWszDQgvnUd0-vUAER8gzo1pb-UI"}
+                                            />
+                                            <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-[10px] font-black text-sindoor uppercase">
+                                                Trending
+                                            </div>
+                                        </div>
+                                        <div className="p-6">
+                                            <h4 className="text-xl text-sindoor mb-2 font-serif line-clamp-1">{item.title}</h4>
+                                            <p className="text-xs text-stone-500 mb-6 italic line-clamp-1">
+                                                {item.description || "Divine puja service"}
+                                            </p>
+                                            <div className="flex justify-between items-center border-t border-stone-100 pt-4">
+                                                <span className="text-xl font-black text-sindoor">
+                                                    ₹{item.variants?.[0]?.price ? Number(item.variants[0].price).toLocaleString() : "1,101"}
+                                                </span>
+                                                <button className="text-marigold font-bold text-sm hover:underline">EXPLORE</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </section>
             </main>

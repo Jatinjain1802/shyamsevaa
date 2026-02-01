@@ -20,6 +20,7 @@ export default function Chadawas() {
   const [form, setForm] = useState({
     title: "",
     image: "",
+    file: null, // For file upload
     description: "",
     benefits: "",
     chadawa_date: "",
@@ -48,11 +49,24 @@ export default function Chadawas() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Handle file selection for image upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({
+        ...form,
+        file: file,
+        image: URL.createObjectURL(file), // Preview URL
+      });
+    }
+  };
+
   const openCreate = () => {
     setEditingId(null);
     setForm({
       title: "",
       image: "",
+      file: null,
       description: "",
       benefits: "",
       chadawa_date: "",
@@ -65,6 +79,7 @@ export default function Chadawas() {
     setForm({
       title: c.title || "",
       image: c.image || "",
+      file: null, // Reset file input when editing
       description: c.description || "",
       benefits: c.benefits || "",
       chadawa_date: c.chadawa_date?.slice(0, 10) || "",
@@ -75,17 +90,29 @@ export default function Chadawas() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Use FormData to send file along with other data
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("benefits", form.benefits);
+    formData.append("chadawa_date", form.chadawa_date);
+
+    // Append image file if selected
+    if (form.file) {
+      formData.append("chadawa_image", form.file);
+    }
+
     try {
       if (editingId) {
-        await api.put(`/admin/chadawas/${editingId}`, form);
+        await api.put(`/admin/chadawas/${editingId}`, formData);
       } else {
-        await api.post("/admin/chadawas", form);
+        await api.post("/admin/chadawas", formData);
       }
 
       setShowForm(false);
       fetchChadawas();
     } catch (err) {
-      console.error(err);
+      console.error("Error saving chadawa:", err);
       alert("Failed to save chadawa");
     }
   };
@@ -263,13 +290,29 @@ export default function Chadawas() {
                 required
               />
 
-              <input
-                name="image"
-                placeholder="Image URL"
-                value={form.image}
-                onChange={handleChange}
-                className="w-full border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-shadow bg-gray-50/50"
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  Chadawa Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-shadow bg-gray-50/50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                />
+              </div>
+
+              {/* Image Preview */}
+              {form.image && (
+                <div className="h-40 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                  <img
+                    src={form.image}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                </div>
+              )}
 
               <textarea
                 name="description"

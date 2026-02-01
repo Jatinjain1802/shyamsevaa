@@ -3,23 +3,46 @@ import * as ChadawaModel from "../models/chadawas.model.js";
 /* ================= CHADAWA ================= */
 
 export const createChadawa = async (req, res) => {
-    const { title, image, description, benefits, chadawa_date } = req.body;
+    try {
+        const { title, image, description, benefits, chadawa_date } = req.body;
 
-    const chadawaId = await ChadawaModel.createChadawa({
-        title,
-        image,
-        description,
-        benefits,
-        chadawa_date,
-    });
+        // Handle file upload - if file is uploaded, use file path; otherwise use URL from body
+        let imagePath = image;
+        if (req.file) {
+            imagePath = `/uploads/chadawas/${req.file.filename}`;
+        }
 
-    res.status(201).json({ success: true, chadawaId });
+        const chadawaId = await ChadawaModel.createChadawa({
+            title,
+            image: imagePath,
+            description,
+            benefits,
+            chadawa_date,
+        });
+
+        res.status(201).json({ success: true, chadawaId });
+    } catch (error) {
+        console.error("Create chadawa error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const updateChadawa = async (req, res) => {
-    const updated = await ChadawaModel.updateChadawa(req.params.chadawaId, req.body);
-    if (!updated) return res.status(404).json({ success: false });
-    res.json({ success: true });
+    try {
+        const updateData = { ...req.body };
+
+        // Handle file upload - if file is uploaded, use file path
+        if (req.file) {
+            updateData.image = `/uploads/chadawas/${req.file.filename}`;
+        }
+
+        const updated = await ChadawaModel.updateChadawa(req.params.chadawaId, updateData);
+        if (!updated) return res.status(404).json({ success: false, message: "Chadawa not found" });
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Update chadawa error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const deleteChadawa = async (req, res) => {

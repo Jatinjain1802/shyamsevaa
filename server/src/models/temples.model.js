@@ -1,12 +1,12 @@
 import db from "../config/db.js";
 
-export const createTemple = async ({ title, image, description }) => {
+export const createTemple = async ({ title, image, description, city, state }) => {
   const [result] = await db.query(
     `
-    INSERT INTO temples (title, image, description)
-    VALUES (?, ?, ?)
+    INSERT INTO temples (title, image, description, city, state)
+    VALUES (?, ?, ?, ?, ?)
     `,
-    [title, image, description]
+    [title, image, description, city, state]
   );
   return result.insertId;
 };
@@ -14,7 +14,7 @@ export const createTemple = async ({ title, image, description }) => {
 export const getAllTemples = async () => {
   const [rows] = await db.query(
     `
-    SELECT id, title, image, description, created_at
+    SELECT id, title, image, description, city, state, created_at
     FROM temples
     ORDER BY created_at DESC
     `
@@ -25,7 +25,7 @@ export const getAllTemples = async () => {
 export const getTempleById = async (id) => {
   const [rows] = await db.query(
     `
-    SELECT id, title, image, description
+    SELECT id, title, image, description, city, state
     FROM temples
     WHERE id = ?
     `,
@@ -34,14 +34,14 @@ export const getTempleById = async (id) => {
   return rows[0];
 };
 
-export const updateTemple = async (id, { title, image, description }) => {
+export const updateTemple = async (id, { title, image, description, city, state }) => {
   const [result] = await db.query(
     `
     UPDATE temples
-    SET title = ?, image = ?, description = ?
+    SET title = ?, image = ?, description = ?, city = ?, state = ?
     WHERE id = ?
     `,
-    [title, image, description, id]
+    [title, image, description, city, state, id]
   );
   return result.affectedRows;
 };

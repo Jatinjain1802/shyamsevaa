@@ -29,6 +29,7 @@ import ChadawaDetail from "../pages/users/ChadawaDetail";
 import TempleChadawas from "../pages/users/TempleChadawas";
 import Muhurat from "../pages/users/Muhurat";
 import BookingCheckout from "../pages/users/BookingCheckout";
+import Cart from "../pages/users/Cart";
 
 export default function AppRoutes() {
   return (
@@ -37,16 +38,18 @@ export default function AppRoutes() {
       <Route path="/" element={<UserLayout />}>
         <Route index element={<Home />} />
         <Route path="/temples" element={<Templess />} />
-        <Route path="/temples/:id" element={<TempleDetail />} />
+        {/* LEARNING: Using :slug parameter for SEO-friendly URLs */}
+        <Route path="/temples/:slug" element={<TempleDetail />} />
         <Route path="/poojas" element={<Poojass />} />
-        <Route path="/poojas/:poojaId" element={<PoojaDetail />} />
+        <Route path="/poojas/:slug" element={<PoojaDetail />} />
         <Route path="/booking-checkout" element={<BookingCheckout />} />
         <Route path="/chadawas" element={<Chadawass />} />
-        <Route path="/chadawas/:chadawaId" element={<ChadawaDetail />} />
-        <Route path="/temples/:id/chadawas" element={<TempleChadawas />} />
+        <Route path="/chadawas/:slug" element={<ChadawaDetail />} />
+        <Route path="/temples/:slug/chadawas" element={<TempleChadawas />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/about" element={<About />} />
         <Route path="/muhurat" element={<Muhurat />} />
+        <Route path="/cart" element={<Cart />} />
       </Route>
 
       {/* Admin Login Routes */}

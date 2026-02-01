@@ -9,6 +9,7 @@ import {
 
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
@@ -21,10 +22,10 @@ router.get("/public", getAllTemples);
 router.get("/public/:id", getTempleById);
 
 // Admin-only CRUD
-router.post("/", authMiddleware, adminMiddleware, createTemple);
+router.post("/", authMiddleware, adminMiddleware, upload.single("temple_image"), createTemple);
 router.get("/", authMiddleware, adminMiddleware, getAllTemples);
 router.get("/:id", authMiddleware, adminMiddleware, getTempleById);
-router.put("/:id", authMiddleware, adminMiddleware, updateTemple);
+router.put("/:id", authMiddleware, adminMiddleware, upload.single("temple_image"), updateTemple);
 router.delete("/:id", authMiddleware, adminMiddleware, deleteTemple);
 
 export default router;

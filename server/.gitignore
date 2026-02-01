@@ -6,6 +6,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.gemini
+.agent
+.agent/
+.gemini/
+.cursor
+.cursor/
+.cursor
+.cursor/
 
 # ===============================
 # Environment variables

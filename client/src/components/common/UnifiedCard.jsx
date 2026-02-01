@@ -8,15 +8,17 @@ export default function UnifiedCard({
     link,
     price,
     tag,
+    location, // LEARNING: New prop for displaying location
     buttonText = "View Details",
     className = "",
 }) {
     return (
         <Link
             to={link}
+            // LEARNING: overflow-hidden is crucial to maintain rounded corners on hover
             className={`group bg-white rounded-t-[40px] rounded-b-xl overflow-hidden shadow-xl border-b-4 border-sindoor hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full ${className}`}
         >
-            {/* Image Container */}
+            {/* Image Container - LEARNING: overflow-hidden here too prevents image from breaking rounded corners */}
             <div className="relative h-64 overflow-hidden bg-gray-100">
                 {image ? (
                     <img
@@ -31,20 +33,28 @@ export default function UnifiedCard({
                     </div>
                 )}
 
-                {/* Overlay (Visible on Hover) */}
-                <div className="absolute inset-0 bg-transparent flex items-end">
+                {/* LEARNING: Gradient overlay for better text visibility on images */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none">
                 </div>
 
-                {/* Price Tag (if provided) */}
+                {/* LEARNING: Location Badge - Improved design with better visibility */}
+                {location && (
+                    <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-sindoor px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg flex items-center gap-1.5 border border-sindoor/20">
+                        <span className="material-symbols-outlined text-base">location_on</span>
+                        <span className="max-w-[200px] truncate">{location}</span>
+                    </div>
+                )}
+
+                {/* Price Tag (if provided) - Top right */}
                 {price && (
-                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-sindoor shadow-sm">
+                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold text-sindoor shadow-lg border border-sindoor/20">
                         ₹{price.toLocaleString()}
                     </div>
                 )}
 
-                {/* Optional Tag/Category */}
+                {/* Optional Tag/Category - Top left */}
                 {tag && (
-                    <div className="absolute top-4 left-4 bg-sindoor text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                    <div className="absolute top-4 left-4 bg-sindoor text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
                         {tag}
                     </div>
                 )}
