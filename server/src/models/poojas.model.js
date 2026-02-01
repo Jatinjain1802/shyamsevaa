@@ -1,6 +1,5 @@
 import db from "../config/db.js";
-const [rows] = await db.query("SELECT DATABASE() as db");
-console.log(rows);
+
 
 /* POOJA */
 
