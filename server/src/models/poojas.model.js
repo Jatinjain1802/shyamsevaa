@@ -13,11 +13,28 @@ export const createPooja = async ({ title, image, description, benefits }) => {
 };
 
 export const updatePooja = async (id, data) => {
+  const fields = [];
+  const values = [];
+
+  if (data.title !== undefined) fields.push("title=?");
+  if (data.title !== undefined) values.push(data.title);
+
+  if (data.image !== undefined) fields.push("image=?");
+  if (data.image !== undefined) values.push(data.image);
+
+  if (data.description !== undefined) fields.push("description=?");
+  if (data.description !== undefined) values.push(data.description);
+
+  if (data.benefits !== undefined) fields.push("benefits=?");
+  if (data.benefits !== undefined) values.push(data.benefits);
+
+  if (fields.length === 0) return 0;
+
+  values.push(id);
+
   const [res] = await db.query(
-    `UPDATE poojas
-     SET title=?, image=?, description=?, benefits=?
-     WHERE id=?`,
-    [data.title, data.image, data.description, data.benefits, id]
+    `UPDATE poojas SET ${fields.join(", ")} WHERE id=?`,
+    values
   );
   return res.affectedRows;
 };
@@ -106,7 +123,7 @@ export const getReviewsByPooja = async (poojaId) => {
 export const getTemplesByPooja = async (poojaId) => {
   const [rows] = await db.query(
     `
-    SELECT t.id, t.title, t.image
+    SELECT t.id, t.title, t.image, t.description, t.city, t.state
     FROM pooja_temples pt
     JOIN temples t ON t.id = pt.temple_id
     WHERE pt.pooja_id = ?
@@ -114,4 +131,27 @@ export const getTemplesByPooja = async (poojaId) => {
     [poojaId]
   );
   return rows;
+};
+
+/* GALLERY */
+
+export const addPoojaImage = async (poojaId, imageUrl, description = "") => {
+  const [res] = await db.query(
+    `INSERT INTO pooja_gallery (pooja_id, image_url, description) VALUES (?, ?, ?)`,
+    [poojaId, imageUrl, description]
+  );
+  return res.insertId;
+};
+
+export const getPoojaImages = async (poojaId) => {
+  const [rows] = await db.query(
+    `SELECT id, image_url, description FROM pooja_gallery WHERE pooja_id = ?`,
+    [poojaId]
+  );
+  return rows;
+};
+
+export const deletePoojaImage = async (id) => {
+  const [res] = await db.query(`DELETE FROM pooja_gallery WHERE id = ?`, [id]);
+  return res.affectedRows;
 };

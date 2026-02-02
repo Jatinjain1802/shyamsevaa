@@ -13,8 +13,8 @@ export default function BookingCheckout() {
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("09:30 AM");
     const [sankalpDetails, setSankalpDetails] = useState([{
         name: "",
-        gotra: "",
-        rashi: "Select Rashi"
+        name: "",
+        gotra: ""
     }]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,7 +29,7 @@ export default function BookingCheckout() {
         const count = Number(bookingData.selectedVariant.persons) || 1;
         const initialDetails = [];
         for (let i = 0; i < count; i++) {
-            initialDetails.push({ name: "", gotra: "", rashi: "Select Rashi" });
+            initialDetails.push({ name: "", gotra: "" });
         }
         setSankalpDetails(initialDetails);
     }, [bookingData, navigate]);
@@ -57,10 +57,6 @@ export default function BookingCheckout() {
             }
             if (!sankalpDetails[i].gotra.trim()) {
                 alert(`Please enter the gotra for Devotee ${i + 1}`);
-                return;
-            }
-            if (sankalpDetails[i].rashi === "Select Rashi") {
-                alert(`Please select the rashi for Devotee ${i + 1}`);
                 return;
             }
         }

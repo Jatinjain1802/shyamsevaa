@@ -11,6 +11,7 @@ const folderMap = {
   temple_image: "temples",
   blog_image: "blogs",
   addon_image: "addons",
+  gallery: "poojas",
 };
 
 // ===============================

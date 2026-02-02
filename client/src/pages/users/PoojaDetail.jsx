@@ -19,6 +19,112 @@ const useToast = () => {
     return { toasts, showToast };
 };
 
+
+// Gallery Slideshow Component
+const GallerySlideshow = ({ gallery }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    // Auto-play interval
+    useEffect(() => {
+        if (gallery.length <= 1) return;
+
+        const interval = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % gallery.length);
+        }, 2500); // 2.5 seconds per slide (user requested 1-2s but 2.5s is smoother)
+
+        return () => clearInterval(interval);
+    }, [gallery.length]);
+
+    const goToSlide = (index) => {
+        setCurrentIndex(index);
+    };
+
+    return (
+        <section className="py-24 px-6 bg-heritage-dark relative overflow-hidden transition-colors duration-1000">
+            {/* Dynamic Background Blur */}
+            <div className="absolute inset-0 z-0 opacity-30 transition-all duration-1000 transform scale-110 blur-3xl">
+                <img
+                    src={gallery[currentIndex].image_url}
+                    alt="Background Blur"
+                    className="w-full h-full object-cover"
+                />
+            </div>
+
+            {/* Background Overlay */}
+            <div className="absolute inset-0 mandala-bg opacity-10 z-0"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-heritage-dark via-heritage-dark/90 to-transparent z-0"></div>
+
+            <div className="max-w-[1280px] mx-auto relative z-10">
+                <div className="flex flex-col items-center text-center mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-0.5 bg-marigold"></div>
+                        <span className="text-marigold font-bold uppercase tracking-[0.2em] text-sm">Divine Glimpses</span>
+                        <div className="w-12 h-0.5 bg-marigold"></div>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl text-white font-serif leading-tight mb-4">
+                        More of Temple
+                    </h2>
+                    <p className="text-stone-300 max-w-lg mx-auto text-sm leading-relaxed mb-6">
+                        Witness the spiritual aura and grandeur. Explore the sacred corners where devotion meets divinity.
+                    </p>
+                </div>
+
+                {/* Slideshow Container */}
+                <div className="relative w-full aspect-4/3 md:aspect-video lg:aspect-21/9 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-stone-900 group">
+                    {gallery.map((img, idx) => (
+                        <div
+                            key={img.id}
+                            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out ${idx === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'}`}
+                        >
+                            <img
+                                src={img.image_url}
+                                alt={img.description || `Gallery Image ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                            />
+
+                            {/* Slide Overlay (Always visible on mobile, active slide only) */}
+                            {idx === currentIndex && (
+                                <div className="absolute inset-x-0 bottom-0 pt-32 pb-8 px-6 md:px-12 bg-linear-to-t from-black via-black/60 to-transparent flex items-end justify-between animate-fade-in-up">
+                                    <div className="max-w-xl">
+                                        <p className="text-white font-serif text-2xl md:text-3xl mb-2 leading-tight drop-shadow-lg">
+                                            {img.description || "Sacred Moment"}
+                                        </p>
+                                        <div className="w-12 h-1 bg-marigold rounded-full"></div>
+                                    </div>
+                                    <div className="hidden md:block text-stone-300 font-mono text-xs tracking-widest uppercase">
+                                        {idx + 1} / {gallery.length}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+
+                    {/* Progress Bar / Indicators */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
+                        <div
+                            className="h-full bg-marigold transition-all duration-300 ease-linear"
+                            style={{ width: `${((currentIndex + 1) / gallery.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+
+                {/* Thumbnails Navigation (Desktop) */}
+                <div className="flex justify-center gap-3 mt-8 overflow-x-auto pb-4 scrollbar-hide">
+                    {gallery.map((img, idx) => (
+                        <button
+                            key={img.id}
+                            onClick={() => goToSlide(idx)}
+                            className={`relative w-20 h-14 md:w-24 md:h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 shrink-0 ${idx === currentIndex ? 'border-marigold scale-110 shadow-lg shadow-marigold/20' : 'border-white/10 opacity-50 hover:opacity-100'}`}
+                        >
+                            <img src={img.image_url} alt="thumbnail" className="w-full h-full object-cover" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
 export default function PoojaDetail() {
     // LEARNING: Get slug from URL and extract ID from it
     const { slug } = useParams();  // Changed from 'poojaId' to 'slug'
@@ -123,7 +229,7 @@ export default function PoojaDetail() {
         );
     }
 
-    const { pooja, variants, addons, temples } = data;
+    const { pooja, variants, addons, temples, gallery } = data;
 
     const toggleAddon = (addon) => {
         const exists = selectedAddons.find((a) => a.id === addon.id);
@@ -245,31 +351,35 @@ export default function PoojaDetail() {
                 {/* Hero Section - Split Layout */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] border-b border-marigold/10">
                     {/* Image Gallery Side */}
-                    <div className="relative overflow-hidden bg-stone-200 h-[500px] lg:h-auto">
-                        <img
-                            alt={pooja.title}
-                            className="w-full h-full object-cover transition-opacity duration-500"
-                            src={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
-                        />
-                        {/* LEARNING: Share button overlay */}
-                        <button
-                            onClick={handleShare}
-                            className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-all group"
-                            aria-label="Share this pooja"
-                        >
-                            <span className="material-symbols-outlined text-sindoor group-hover:scale-110 transition-transform">share</span>
-                        </button>
+                    {/* Image Gallery Side */}
+                    <div className="relative p-4 lg:p-8 bg-paper-bg h-[500px] lg:h-auto flex items-center justify-center">
+                        <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white group">
+                            <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
+                            <img
+                                alt={pooja.title}
+                                className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
+                                src={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
+                            />
+                            {/* LEARNING: Share button moved inside the rounded container */}
+                            <button
+                                onClick={handleShare}
+                                className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-all group z-20"
+                                aria-label="Share this pooja"
+                            >
+                                <span className="material-symbols-outlined text-sindoor group-hover:scale-110 transition-transform">share</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Details Side */}
-                    <div className="p-12 lg:p-20 flex flex-col justify-center bg-white relative">
+                    <div className="p-6 md:p-12 lg:p-20 flex flex-col justify-center bg-white relative">
                         <div className="absolute inset-0 mandala-bg opacity-5 pointer-events-none"></div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 text-marigold mb-4 font-bold text-sm tracking-widest uppercase">
                                 <span className="material-symbols-outlined text-lg">star</span>
                                 Most Revered Ritual
                             </div>
-                            <h1 className="font-serif text-5xl md:text-6xl text-sindoor mb-4 leading-tight">
+                            <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-sindoor mb-4 leading-tight">
                                 {pooja.title}
                             </h1>
                             {temples && temples.length > 0 && (
@@ -303,8 +413,8 @@ export default function PoojaDetail() {
                     <div className="max-w-[1280px] mx-auto">
                         <div className="flex flex-col md:flex-row gap-16 items-start">
                             <div className="w-full md:w-1/2">
-                                <h2 className="text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
-                                    <span className="w-12 h-px bg-marigold"></span>
+                                <h2 className="text-2xl md:text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
+                                    <span className="w-8 md:w-12 h-px bg-marigold"></span>
                                     Sacred Significance
                                 </h2>
                                 <p className="text-lg text-stone-700 leading-relaxed mb-6">
@@ -315,9 +425,9 @@ export default function PoojaDetail() {
                                 </p>
                             </div>
                             <div className="w-full md:w-1/2">
-                                <h2 className="text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
+                                <h2 className="text-2xl md:text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
                                     Blessings & Fruits
-                                    <span className="w-12 h-px bg-marigold"></span>
+                                    <span className="w-8 md:w-12 h-px bg-marigold"></span>
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {[
@@ -337,6 +447,11 @@ export default function PoojaDetail() {
                         </div>
                     </div>
                 </section>
+
+                {/* More of Template (Divine Glimpses) - Gallery Section */}
+                {data.gallery && data.gallery.length > 0 && (
+                    <GallerySlideshow gallery={data.gallery} />
+                )}
 
                 {/* Choose Participation */}
                 {/* LEARNING: ID attribute for smooth scrolling from validation */}

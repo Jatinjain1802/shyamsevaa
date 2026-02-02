@@ -22,20 +22,22 @@ export const createAddon = async ({
 };
 
 export const updateAddon = async (id, data) => {
+    const fields = [];
+    const values = [];
+
+    if (data.title !== undefined) { fields.push("title=?"); values.push(data.title); }
+    if (data.image !== undefined) { fields.push("image=?"); values.push(data.image); }
+    if (data.description !== undefined) { fields.push("description=?"); values.push(data.description); }
+    if (data.price !== undefined) { fields.push("price=?"); values.push(data.price); }
+    if (data.is_common !== undefined) { fields.push("is_common=?"); values.push(data.is_common ? 1 : 0); }
+
+    if (fields.length === 0) return 0;
+
+    values.push(id);
+
     const [res] = await db.query(
-        `
-    UPDATE addons
-    SET title=?, image=?, description=?, price=?, is_common=?
-    WHERE id=?
-    `,
-        [
-            data.title,
-            data.image,
-            data.description,
-            data.price,
-            data.is_common ? 1 : 0,
-            id,
-        ]
+        `UPDATE addons SET ${fields.join(", ")} WHERE id=?`,
+        values
     );
     return res.affectedRows;
 };

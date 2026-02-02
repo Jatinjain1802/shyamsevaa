@@ -34,14 +34,25 @@ export const getTempleById = async (id) => {
   return rows[0];
 };
 
-export const updateTemple = async (id, { title, image, description, city, state }) => {
+export const updateTemple = async (id, data) => {
+  const fields = [];
+  const values = [];
+
+  const { title, image, description, city, state } = data;
+
+  if (title !== undefined) { fields.push("title = ?"); values.push(title); }
+  if (image !== undefined) { fields.push("image = ?"); values.push(image); }
+  if (description !== undefined) { fields.push("description = ?"); values.push(description); }
+  if (city !== undefined) { fields.push("city = ?"); values.push(city); }
+  if (state !== undefined) { fields.push("state = ?"); values.push(state); }
+
+  if (fields.length === 0) return 0;
+
+  values.push(id);
+
   const [result] = await db.query(
-    `
-    UPDATE temples
-    SET title = ?, image = ?, description = ?, city = ?, state = ?
-    WHERE id = ?
-    `,
-    [title, image, description, city, state, id]
+    `UPDATE temples SET ${fields.join(", ")} WHERE id = ?`,
+    values
   );
   return result.affectedRows;
 };

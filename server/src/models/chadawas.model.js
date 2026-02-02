@@ -12,9 +12,22 @@ export const createChadawa = async (d) => {
 };
 
 export const updateChadawa = async (id, d) => {
+    const fields = [];
+    const values = [];
+
+    if (d.title !== undefined) { fields.push("title=?"); values.push(d.title); }
+    if (d.image !== undefined) { fields.push("image=?"); values.push(d.image); }
+    if (d.description !== undefined) { fields.push("description=?"); values.push(d.description); }
+    if (d.benefits !== undefined) { fields.push("benefits=?"); values.push(d.benefits); }
+    if (d.chadawa_date !== undefined) { fields.push("chadawa_date=?"); values.push(d.chadawa_date); }
+
+    if (fields.length === 0) return 0;
+
+    values.push(id);
+
     const [r] = await db.query(
-        `UPDATE chadawas SET title=?,image=?,description=?,benefits=?,chadawa_date=? WHERE id=?`,
-        [d.title, d.image, d.description, d.benefits, d.chadawa_date, id]
+        `UPDATE chadawas SET ${fields.join(", ")} WHERE id=?`,
+        values
     );
     return r.affectedRows;
 };
