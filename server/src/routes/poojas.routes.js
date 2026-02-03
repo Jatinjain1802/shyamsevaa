@@ -17,10 +17,10 @@ const router = express.Router();
 /* ================= ADMIN ================= */
 
 // CREATE
-router.post("/", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'gallery', maxCount: 10 }]), createPooja);
+router.post("/", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), createPooja);
 
 // UPDATE
-router.put("/:poojaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'gallery', maxCount: 10 }]), updatePooja);
+router.put("/:poojaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), updatePooja);
 
 // DELETE
 router.delete("/:poojaId", authMiddleware, adminMiddleware, deletePooja);

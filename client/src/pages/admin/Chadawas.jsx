@@ -24,7 +24,10 @@ export default function Chadawas() {
     description: "",
     benefits: "",
     chadawa_date: "",
+    gallery: [], // Existing gallery images
   });
+
+  const [galleryFiles, setGalleryFiles] = useState([]); // [{ file: File, description: '', preview: string }]
 
   /* ================= FETCH ================= */
 
@@ -61,6 +64,25 @@ export default function Chadawas() {
     }
   };
 
+  const handleGalleryFilesChange = (e) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).map(file => ({
+        file: file,
+        description: '',
+        preview: URL.createObjectURL(file)
+      }));
+      setGalleryFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const updateGalleryFileDescription = (index, value) => {
+    setGalleryFiles(prev => prev.map((item, i) => i === index ? { ...item, description: value } : item));
+  };
+
+  const removeGalleryFile = (index) => {
+    setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const openCreate = () => {
     setEditingId(null);
     setForm({
@@ -70,11 +92,13 @@ export default function Chadawas() {
       description: "",
       benefits: "",
       chadawa_date: "",
+      gallery: [],
     });
+    setGalleryFiles([]);
     setShowForm(true);
   };
 
-  const openEdit = (c) => {
+  const openEdit = async (c) => {
     setEditingId(c.id);
     setForm({
       title: c.title || "",
@@ -83,8 +107,21 @@ export default function Chadawas() {
       description: c.description || "",
       benefits: c.benefits || "",
       chadawa_date: c.chadawa_date?.slice(0, 10) || "",
+      gallery: [],
     });
+    setGalleryFiles([]);
     setShowForm(true);
+
+    // Fetch full details including gallery using public API
+    try {
+      const res = await api.get(`/chadawas/${c.id}`);
+      if (res.data.success) {
+        // The structure is success:true, data: { chadawa: {}, gallery: [], ... }
+        setForm(prev => ({ ...prev, gallery: res.data.data.gallery || [] }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch chadawa details", err);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -100,6 +137,14 @@ export default function Chadawas() {
     // Append image file if selected
     if (form.file) {
       formData.append("chadawa_image", form.file);
+    }
+
+    // Append gallery files and descriptions
+    if (galleryFiles.length > 0) {
+      galleryFiles.forEach((item) => {
+        formData.append("chadawa_gallery", item.file);
+        formData.append("gallery_description", item.description);
+      });
     }
 
     try {
@@ -125,6 +170,20 @@ export default function Chadawas() {
       fetchChadawas();
     } catch {
       alert("Failed to delete chadawa");
+    }
+  };
+
+  const handleDeleteGalleryImage = async (imageId) => {
+    if (!confirm("Delete this image?")) return;
+    try {
+      await api.delete(`/admin/chadawas/gallery/${imageId}`);
+      setForm(prev => ({
+        ...prev,
+        gallery: prev.gallery.filter(img => img.id !== imageId)
+      }));
+    } catch (err) {
+      console.error("Failed to delete image", err);
+      alert("Failed to delete image");
     }
   };
 
@@ -341,6 +400,84 @@ export default function Chadawas() {
                 className="w-full border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-shadow bg-gray-50/50"
                 required
               />
+
+              {/* GALLERY SECTION */}
+              <div className="space-y-4 pt-4 border-t border-gray-100">
+                <label className="text-sm font-semibold text-gray-700">
+                  Gallery Images
+                </label>
+
+                {/* Upload Button */}
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryFilesChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="w-full border-2 border-dashed border-gray-200 rounded-lg p-6 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                    <span className="material-symbols-outlined text-3xl mb-2">add_photo_alternate</span>
+                    <span className="text-sm font-medium">Click to upload images</span>
+                  </div>
+                </div>
+
+                {/* Existing Gallery */}
+                {form.gallery && form.gallery.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Existing Images</p>
+                    <div className="grid grid-cols-1 gap-4">
+                      {form.gallery.map(img => (
+                        <div key={img.id} className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <img src={img.image_url} alt="Gallery" className="w-20 h-20 object-cover rounded-md" />
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-600 mb-1 line-clamp-2">{img.description || "No description"}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteGalleryImage(img.id)}
+                            className="text-red-500 hover:bg-red-50 p-2 rounded-full h-10 w-10 flex items-center justify-center hover:shadow-sm transition-all"
+                          >
+                            <span className="material-symbols-outlined">delete</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pending Uploads */}
+                {galleryFiles.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-bold text-green-600 uppercase tracking-wider">New Uploads ({galleryFiles.length})</p>
+                    <div className="space-y-3">
+                      {galleryFiles.map((item, index) => (
+                        <div key={index} className="flex gap-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                          <div className="w-20 h-20 relative shrink-0">
+                            <img src={item.preview} alt="Preview" className="w-full h-full object-cover rounded-md" />
+                            <button
+                              type="button"
+                              onClick={() => removeGalleryFile(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-sm hover:scale-110 transition-transform"
+                            >
+                              <span className="material-symbols-outlined text-xs">close</span>
+                            </button>
+                          </div>
+                          <div className="flex-1">
+                            <input
+                              type="text"
+                              placeholder="Enter image description..."
+                              value={item.description}
+                              onChange={(e) => updateGalleryFileDescription(index, e.target.value)}
+                              className="w-full h-full bg-white border border-gray-200 rounded px-3 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400 outline-none"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <div className="flex justify-end gap-3 pt-2">
                 <button

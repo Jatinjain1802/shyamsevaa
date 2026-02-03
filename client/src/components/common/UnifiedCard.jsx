@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FiArrowRight, FiImage } from "react-icons/fi";
+import { ArrowRight, Image as ImageIcon, MapPin } from "lucide-react";
 
 export default function UnifiedCard({
     image,
@@ -8,17 +8,15 @@ export default function UnifiedCard({
     link,
     price,
     tag,
-    location, // LEARNING: New prop for displaying location
+    location,
     buttonText = "View Details",
     className = "",
 }) {
     return (
         <Link
             to={link}
-            // LEARNING: overflow-hidden is crucial to maintain rounded corners on hover
             className={`group bg-white rounded-t-[40px] rounded-b-xl overflow-hidden shadow-xl border-b-4 border-sindoor hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full ${className}`}
         >
-            {/* Image Container - LEARNING: overflow-hidden here too prevents image from breaking rounded corners */}
             <div className="relative h-64 overflow-hidden bg-gray-100">
                 {image ? (
                     <img
@@ -28,31 +26,27 @@ export default function UnifiedCard({
                     />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 p-4">
-                        <span className="material-symbols-outlined text-4xl mb-2 opacity-50">image</span>
+                        <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
                         <span className="text-sm">No Image Available</span>
                     </div>
                 )}
 
-                {/* LEARNING: Gradient overlay for better text visibility on images */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none">
                 </div>
 
-                {/* LEARNING: Location Badge - Improved design with better visibility */}
                 {location && (
                     <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-sindoor px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg flex items-center gap-1.5 border border-sindoor/20">
-                        <span className="material-symbols-outlined text-base">location_on</span>
+                        <MapPin className="w-4 h-4" />
                         <span className="max-w-[200px] truncate">{location}</span>
                     </div>
                 )}
 
-                {/* Price Tag (if provided) - Top right */}
                 {price && (
                     <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold text-sindoor shadow-lg border border-sindoor/20">
                         ₹{price.toLocaleString()}
                     </div>
                 )}
 
-                {/* Optional Tag/Category - Top left */}
                 {tag && (
                     <div className="absolute top-4 left-4 bg-sindoor text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
                         {tag}
@@ -60,7 +54,6 @@ export default function UnifiedCard({
                 )}
             </div>
 
-            {/* Content */}
             <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-serif text-sindoor group-hover:text-marigold transition-colors mb-2 line-clamp-1">
                     {title}
@@ -70,7 +63,6 @@ export default function UnifiedCard({
                     {description || "No description available."}
                 </p>
 
-                {/* Footer Line / Button */}
                 <div className="w-full bg-marigold text-white font-bold py-3 rounded-xl group-hover:bg-sindoor transition-colors shadow-lg text-center mt-auto flex items-center justify-center gap-2">
                     {buttonText.toUpperCase()}
                 </div>

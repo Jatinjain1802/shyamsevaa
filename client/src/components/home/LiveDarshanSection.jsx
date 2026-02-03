@@ -1,52 +1,120 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import {
+    Clock,
+    CirclePlay,
+    Radio
+} from "lucide-react";
+import UnifiedCard from "../common/UnifiedCard";
 
-const LiveDarshanSection = () => {
+export default function LiveDarshanSection() {
+    const liveEvents = [
+        {
+            id: 1,
+            title: "Morning Aarti - Kashi Vishwanath",
+            image: "https://images.unsplash.com/photo-1561361513-35e6e9033242?auto=format&fit=crop&q=80",
+            status: "Live Now",
+            viewers: "12.5k",
+            startTime: "Started 10 mins ago"
+        },
+        {
+            id: 2,
+            title: "Evening Aarti - Prem Mandir",
+            image: "https://vridam.com/wp-content/uploads/2022/07/prem-mandir-vrindavan-1.jpg",
+            status: "Scheduled",
+            viewers: "Waiting",
+            startTime: "Starts at 6:30 PM"
+        },
+        {
+            id: 3,
+            title: "Special Puja - Somnath Temple",
+            image: "https://cdn.zeebiz.com/sites/default/files/styles/zeebiz_850x478/public/2022/12/12/215777-somnath-temple.jpg",
+            status: "Live Now",
+            viewers: "8.2k",
+            startTime: "Started 25 mins ago"
+        }
+    ];
+
     return (
-        <section className="relative bg-heritage-dark text-white overflow-hidden py-24">
-            <div className="absolute top-0 w-full h-4 bg-sindoor"></div>
-            <div className="toran-border opacity-50 absolute top-4"></div>
-            <div className="max-w-[1280px] mx-auto px-6 md:px-10 relative">
-                <div className="flex flex-col lg:flex-row items-center gap-16">
-                    <div className="w-full lg:w-1/2 space-y-8">
-                        <div className="inline-flex items-center gap-3 px-4 py-2 bg-sindoor/30 rounded-full text-haldi border border-haldi/30">
-                            <span className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
-                            </span>
-                            <span className="text-xs font-bold tracking-[0.2em]">GANGA AARTI LIVE</span>
-                        </div>
-                        <h2 className="text-5xl md:text-7xl leading-tight font-serif">Divine Experience From Varanasi</h2>
-                        <p className="text-stone-400 text-lg leading-relaxed font-sans">
-                            Witness the majestic Ganga Aarti live from the ghats of Kashi. Participate digitally by offering
-                            a virtual 'Deep Daan' and 'Sankalp' through our priest.
-                        </p>
-                        <div className="flex flex-wrap gap-4 pt-4">
-                            <button className="bg-haldi text-sindoor font-black px-10 py-5 rounded-2xl flex items-center gap-3 hover:bg-marigold hover:text-white transition-all shadow-[0_10px_30px_rgba(255,193,7,0.3)]">
-                                <span className="material-symbols-outlined text-3xl">play_circle</span>
-                                WATCH LIVE DARSHAN
-                            </button>
-                            <button className="border-2 border-white/20 hover:bg-white/10 px-10 py-5 rounded-2xl font-bold flex items-center gap-3 transition-all">
-                                <span className="material-symbols-outlined">schedule</span>
-                                TIMINGS & CALENDAR
-                            </button>
-                        </div>
+        <section className="py-20 relative overflow-hidden bg-orange-50/50">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-marigold/50 to-transparent"></div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-16">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <span className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                        <span className="text-red-500 font-bold tracking-widest uppercase text-sm">Live Broadcasts</span>
                     </div>
-                    <div className="w-full lg:w-1/2 grid grid-cols-2 gap-4">
-                        <div className="aspect-square bg-cover bg-center rounded-[2rem] border-4 border-marigold/30 overflow-hidden group shadow-2xl"
-                            style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3zG0ZywU3AdT_hCtPA9BKo0nce9Un6-yUmMfVbG2HoxaHA5hV7140EhXwfMP8xrC8nFV6rkj-eaZLzWkOhMTtgY5hEmueMW89KKIpOsMLr9Kq3Q0KIBJ9USkhe3_IHcdT_dqkGctGQZGaSYW_8K1qYsUDpqiXoHSCweMh0PcBspJpoIs9ZsiMqJp6m8i0uV6_241Y9sElQmwE_EMqp4joZ1RIvnFBJTjkROTTonSnCDkTGnVNYnt5Y5x07yxH836cQz8p-cwjW80")' }}>
-                            <div className="h-full w-full bg-sindoor/20 group-hover:bg-transparent transition-all"></div>
+                    <h2 className="text-4xl md:text-5xl font-serif text-sindoor mb-6">
+                        Live Darshan & Aartis
+                    </h2>
+                    <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans italic">
+                        Experience the divinity from anywhere in the world. Watch live Aartis and Darshans from India's most sacred temples.
+                    </p>
+                    <div className="w-24 h-1 bg-marigold mx-auto mt-8 rounded-full"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {liveEvents.map((event) => (
+                        <div key={event.id} className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-marigold/10">
+                            {/* Image Container */}
+                            <div className="relative h-56 overflow-hidden">
+                                <img
+                                    src={event.image}
+                                    alt={event.title}
+                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                                {/* Status Badge */}
+                                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md ${event.status === 'Live Now'
+                                        ? 'bg-red-500 text-white animate-pulse'
+                                        : 'bg-stone-900/50 text-white'
+                                    }`}>
+                                    {event.status === 'Live Now' && (
+                                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+                                    )}
+                                    <Radio className="w-3 h-3" />
+                                    {event.status}
+                                </div>
+
+                                {/* Play Button Overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <button className="bg-white/20 backdrop-blur-md p-4 rounded-full text-white hover:bg-white/30 transition-all transform hover:scale-110">
+                                        <CirclePlay className="w-8 h-8 fill-current" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="p-6">
+                                <h3 className="text-xl font-bold text-sindoor mb-2 font-serif group-hover:text-marigold transition-colors">
+                                    {event.title}
+                                </h3>
+
+                                <div className="space-y-2">
+                                    <div className="flex items-center text-stone-500 text-sm">
+                                        <Clock className="w-4 h-4 mr-2 text-marigold" />
+                                        {event.startTime}
+                                    </div>
+                                    <div className="flex items-center text-stone-500 text-sm">
+                                        <div className="w-4 flex justify-center mr-2">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${event.status === 'Live Now' ? 'bg-red-500' : 'bg-stone-300'}`}></div>
+                                        </div>
+                                        {event.viewers} watching
+                                    </div>
+                                </div>
+
+                                <button className="w-full mt-6 py-3 rounded-xl border-2 border-marigold text-marigold font-bold hover:bg-marigold hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+                                    Watch Now
+                                    <CirclePlay className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
                         </div>
-                        <div className="aspect-square bg-cover bg-center rounded-[2rem] border-4 border-marigold/30 overflow-hidden group shadow-2xl mt-12"
-                            style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7kETH2PyTUsCNO2bmIiuYHpB5Lr6Vmf9M10aNWaJNNaotXI3MYQ11btJIKjeyM0q_hsi1i-jpSXFniVftmkNH_vC-pY6_dc8J49Ocwrbb9zHMl-S8WlskHDRQOBdRA5rLg5kYn8h32VYlZQorikY4Xqa_wz5rkYJZfJlczt3SeT1DQ3fSlEAF-3omyPYMgG5sE27gMzlqPvdINEAC7f8xryT0TYPXOdm0dyvm_6ojo6Z9-sFlLuv_qxnp_lsPOWnH4Eg0Vb7_itg")' }}>
-                            <div className="h-full w-full bg-sindoor/20 group-hover:bg-transparent transition-all"></div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
-            <div className="toran-border opacity-50 absolute bottom-0 rotate-180"></div>
         </section>
     );
-};
-
-export default LiveDarshanSection;
+}

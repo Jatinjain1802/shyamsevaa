@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Calendar, RefreshCw, Sunrise, Sunset, ArrowRight } from "lucide-react";
+import { MdSelfImprovement, MdTempleHindu } from "react-icons/md";
 import api from "../../utils/axios";
 
 const PanchangSection = () => {
@@ -32,7 +34,7 @@ const PanchangSection = () => {
                         {/* Panchang Card */}
                         <div className="w-full md:w-1/3 glass-card p-8 rounded-3xl border-2 border-haldi shadow-inner flex flex-col justify-center">
                             <div className="flex items-center gap-4 mb-6">
-                                <span className="material-symbols-outlined text-4xl text-sindoor">calendar_today</span>
+                                <Calendar className="text-4xl text-sindoor" />
                                 <h3 className="text-3xl text-sindoor font-serif">Panchang Today</h3>
                             </div>
 
@@ -59,11 +61,11 @@ const PanchangSection = () => {
                                     </div>
                                     <div className="flex justify-between items-center pt-2">
                                         <div className="flex items-center gap-1 text-sm text-stone-500">
-                                            <span className="material-symbols-outlined text-marigold text-lg">wb_sunny</span>
+                                            <Sunrise className="text-marigold w-5 h-5" />
                                             {panchang.sunrise}
                                         </div>
                                         <div className="flex items-center gap-1 text-sm text-stone-500">
-                                            <span className="material-symbols-outlined text-sindoor text-lg">wb_twilight</span>
+                                            <Sunset className="text-sindoor w-5 h-5" />
                                             {panchang.sunset}
                                         </div>
                                     </div>
@@ -95,14 +97,14 @@ const PanchangSection = () => {
 
                                 <div className="relative z-10">
                                     <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 text-haldi border border-white/20">
-                                        <span className="material-symbols-outlined text-3xl">self_improvement</span>
+                                        <MdSelfImprovement className="text-3xl" />
                                     </div>
                                     <h4 className="text-3xl text-white mb-2 font-serif">Book a Puja</h4>
                                     <p className="text-sm text-stone-300 mb-6 italic leading-relaxed font-sans">
                                         Perform sacred rituals with certified Vedic Pandits for divine blessings at your home or online.
                                     </p>
                                     <Link to="/poojas" className="text-haldi font-black flex items-center gap-2 group-hover:gap-4 transition-all uppercase tracking-wider text-xs">
-                                        EXPLORE POOJAS <span className="material-symbols-outlined text-lg">arrow_right_alt</span>
+                                        EXPLORE POOJAS <ArrowRight className="w-5 h-5" />
                                     </Link>
                                 </div>
                             </div>
@@ -120,14 +122,14 @@ const PanchangSection = () => {
 
                                 <div className="relative z-10">
                                     <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 text-haldi border border-white/20">
-                                        <span className="material-symbols-outlined text-3xl">temple_hindu</span>
+                                        <MdTempleHindu className="text-3xl" />
                                     </div>
                                     <h4 className="text-3xl text-white mb-2 font-serif">Visit Temple</h4>
                                     <p className="text-sm text-stone-300 mb-6 italic leading-relaxed font-sans">
                                         Experience divine darshan at India's most spirited and ancient temples. Plan your pilgrimage.
                                     </p>
                                     <Link to="/temples" className="text-haldi font-black flex items-center gap-2 group-hover:gap-4 transition-all uppercase tracking-wider text-xs">
-                                        EXPLORE TEMPLES <span className="material-symbols-outlined text-lg">arrow_right_alt</span>
+                                        EXPLORE TEMPLES <ArrowRight className="w-5 h-5" />
                                     </Link>
                                 </div>
                             </div>

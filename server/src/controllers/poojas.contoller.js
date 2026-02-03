@@ -26,8 +26,8 @@ export const createPooja = async (req, res) => {
     });
 
     // Handle Gallery Images
-    if (req.files && req.files['gallery']) {
-      const galleryFiles = req.files['gallery'];
+    if (req.files && req.files['pooja_gallery']) {
+      const galleryFiles = req.files['pooja_gallery'];
       let galleryDescriptions = req.body.gallery_description || [];
 
       if (!Array.isArray(galleryDescriptions)) {
@@ -67,8 +67,8 @@ export const updatePooja = async (req, res) => {
     );
 
     // Append Gallery Images
-    if (req.files && req.files['gallery']) {
-      const galleryFiles = req.files['gallery'];
+    if (req.files && req.files['pooja_gallery']) {
+      const galleryFiles = req.files['pooja_gallery'];
       let galleryDescriptions = req.body.gallery_description || [];
 
       if (!Array.isArray(galleryDescriptions)) {

@@ -11,7 +11,10 @@ const folderMap = {
   temple_image: "temples",
   blog_image: "blogs",
   addon_image: "addons",
-  gallery: "poojas",
+  addon_image: "addons",
+  pooja_gallery: "poojas",
+  temple_gallery: "temples",
+  chadawa_gallery: "chadawas",
 };
 
 // ===============================

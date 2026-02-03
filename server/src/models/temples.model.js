@@ -66,3 +66,26 @@ export const deleteTemple = async (id) => {
   );
   return result.affectedRows;
 };
+
+/* GALLERY */
+
+export const addTempleImage = async (templeId, imageUrl, description = "") => {
+  const [res] = await db.query(
+    `INSERT INTO temple_gallery(temple_id, image_url, description) VALUES(?, ?, ?)`,
+    [templeId, imageUrl, description]
+  );
+  return res.insertId;
+};
+
+export const getTempleImages = async (templeId) => {
+  const [rows] = await db.query(
+    `SELECT id, image_url, description FROM temple_gallery WHERE temple_id = ? `,
+    [templeId]
+  );
+  return rows;
+};
+
+export const deleteTempleImage = async (id) => {
+  const [res] = await db.query(`DELETE FROM temple_gallery WHERE id = ? `, [id]);
+  return res.affectedRows;
+};

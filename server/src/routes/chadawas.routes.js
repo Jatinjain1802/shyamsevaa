@@ -16,6 +16,7 @@ import {
     mapChadawaTemple,
     removeChadawaTemple,
     getLinkedTemples,
+    deleteChadawaGalleryImage,
 } from "../controllers/chadawas.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
@@ -27,9 +28,11 @@ const router = express.Router();
 /* ========== ADMIN APIs ========== */
 
 // chadawa CRUD
-router.post("/admin/chadawas", authMiddleware, adminMiddleware, upload.single("chadawa_image"), createChadawa);
-router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, upload.single("chadawa_image"), updateChadawa);
+// chadawa CRUD
+router.post("/admin/chadawas", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), createChadawa);
+router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), updateChadawa);
 router.delete("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, deleteChadawa);
+router.delete("/admin/chadawas/gallery/:imageId", authMiddleware, adminMiddleware, deleteChadawaGalleryImage);
 
 // chadawa items
 router.post("/admin/chadawas/:chadawaId/items", authMiddleware, adminMiddleware, addChadawaItem);

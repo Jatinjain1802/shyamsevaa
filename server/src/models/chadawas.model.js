@@ -149,3 +149,26 @@ export const getAllChadawas = async () => {
   `);
     return r;
 };
+
+/* GALLERY */
+
+export const addChadawaImage = async (chadawaId, imageUrl, description = "") => {
+    const [res] = await db.query(
+        `INSERT INTO chadawa_gallery (chadawa_id, image_url, description) VALUES (?, ?, ?)`,
+        [chadawaId, imageUrl, description]
+    );
+    return res.insertId;
+};
+
+export const getChadawaImages = async (chadawaId) => {
+    const [rows] = await db.query(
+        `SELECT id, image_url, description FROM chadawa_gallery WHERE chadawa_id = ?`,
+        [chadawaId]
+    );
+    return rows;
+};
+
+export const deleteChadawaImage = async (id) => {
+    const [res] = await db.query(`DELETE FROM chadawa_gallery WHERE id = ?`, [id]);
+    return res.affectedRows;
+};

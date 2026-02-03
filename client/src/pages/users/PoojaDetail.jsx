@@ -2,6 +2,35 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../utils/axios";
 import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import {
+    ChevronRight,
+    Home,
+    Share2,
+    Plus,
+    Minus,
+    Check,
+    CheckCircle,
+    AlertCircle,
+    Star,
+    MapPin,
+    Calendar,
+    Clock,
+    ShieldCheck,
+    ArrowRight,
+    Flower,
+    ArrowLeft,
+    Coins,
+    Brain,
+    RefreshCw,
+    AlertTriangle,
+    Info,
+    LayoutDashboard,
+    Landmark,
+    Users,
+    Heart,
+    User
+} from "lucide-react";
+import { MdTempleHindu, MdVolunteerActivism, MdSelfImprovement } from "react-icons/md";
 
 // LEARNING: Custom hook for toast notifications
 // This is a simple implementation - in production, use libraries like react-hot-toast or react-toastify
@@ -20,108 +49,106 @@ const useToast = () => {
 };
 
 
-// Gallery Slideshow Component
-const GallerySlideshow = ({ gallery }) => {
+// Hero Slideshow Component
+const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
+    // Determine images to show: prefer gallery, fallback to mainImage
+    const hasGallery = gallery && gallery.length > 0;
+    // Ensure we have a standard format for images
+    const images = hasGallery
+        ? gallery
+        : [{ id: 'main', image_url: mainImage }];
+
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Auto-play interval
     useEffect(() => {
-        if (gallery.length <= 1) return;
+        if (images.length <= 1) return;
 
         const interval = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % gallery.length);
-        }, 2500); // 2.5 seconds per slide (user requested 1-2s but 2.5s is smoother)
+            setCurrentIndex(prev => (prev + 1) % images.length);
+        }, 2500); // 2.5 seconds per slide
 
         return () => clearInterval(interval);
-    }, [gallery.length]);
+    }, [images.length]);
 
-    const goToSlide = (index) => {
-        setCurrentIndex(index);
+    // Touch handling for swipe support
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Minimum swipe distance (in px)
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            // Next Slide
+            setCurrentIndex(prev => (prev + 1) % images.length);
+        }
+        if (isRightSwipe) {
+            // Previous Slide
+            setCurrentIndex(prev => (prev - 1 + images.length) % images.length);
+        }
     };
 
     return (
-        <section className="py-24 px-6 bg-heritage-dark relative overflow-hidden transition-colors duration-1000">
-            {/* Dynamic Background Blur */}
-            <div className="absolute inset-0 z-0 opacity-30 transition-all duration-1000 transform scale-110 blur-3xl">
-                <img
-                    src={gallery[currentIndex].image_url}
-                    alt="Background Blur"
-                    className="w-full h-full object-cover"
-                />
-            </div>
+        <div
+            className="relative w-full h-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white group transform transition-all duration-500 hover:shadow-marigold/20 bg-stone-900"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-20 pointer-events-none"></div>
 
-            {/* Background Overlay */}
-            <div className="absolute inset-0 mandala-bg opacity-10 z-0"></div>
-            <div className="absolute inset-0 bg-linear-to-t from-heritage-dark via-heritage-dark/90 to-transparent z-0"></div>
-
-            <div className="max-w-[1280px] mx-auto relative z-10">
-                <div className="flex flex-col items-center text-center mb-12">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-0.5 bg-marigold"></div>
-                        <span className="text-marigold font-bold uppercase tracking-[0.2em] text-sm">Divine Glimpses</span>
-                        <div className="w-12 h-0.5 bg-marigold"></div>
-                    </div>
-                    <h2 className="text-4xl md:text-5xl text-white font-serif leading-tight mb-4">
-                        More of Temple
-                    </h2>
-                    <p className="text-stone-300 max-w-lg mx-auto text-sm leading-relaxed mb-6">
-                        Witness the spiritual aura and grandeur. Explore the sacred corners where devotion meets divinity.
-                    </p>
+            {images.map((img, idx) => (
+                <div
+                    key={img.id || idx}
+                    className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                >
+                    <img
+                        src={img.image_url || img.image} // Handle both gallery object and fallback string/object
+                        alt={img.description || title}
+                        className={`w-full h-full object-cover transform transition-transform duration-[2000ms] ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
+                    />
                 </div>
+            ))}
 
-                {/* Slideshow Container */}
-                <div className="relative w-full aspect-4/3 md:aspect-video lg:aspect-21/9 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-stone-900 group">
-                    {gallery.map((img, idx) => (
+            {/* Share button - kept from original design */}
+            <button
+                onClick={onShare}
+                className="absolute top-4 right-4 md:top-6 md:right-6 bg-white/90 backdrop-blur-sm p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition-all group z-30"
+                aria-label="Share this pooja"
+            >
+                <Share2 className="text-sindoor group-hover:scale-110 transition-transform w-5 h-5" />
+            </button>
+
+            {/* Slide Indicators (only if multiple images) */}
+            {images.length > 1 && (
+                <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    {images.map((_, idx) => (
                         <div
-                            key={img.id}
-                            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out ${idx === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'}`}
-                        >
-                            <img
-                                src={img.image_url}
-                                alt={img.description || `Gallery Image ${idx + 1}`}
-                                className="w-full h-full object-cover"
-                            />
-
-                            {/* Slide Overlay (Always visible on mobile, active slide only) */}
-                            {idx === currentIndex && (
-                                <div className="absolute inset-x-0 bottom-0 pt-32 pb-8 px-6 md:px-12 bg-linear-to-t from-black via-black/60 to-transparent flex items-end justify-between animate-fade-in-up">
-                                    <div className="max-w-xl">
-                                        <p className="text-white font-serif text-2xl md:text-3xl mb-2 leading-tight drop-shadow-lg">
-                                            {img.description || "Sacred Moment"}
-                                        </p>
-                                        <div className="w-12 h-1 bg-marigold rounded-full"></div>
-                                    </div>
-                                    <div className="hidden md:block text-stone-300 font-mono text-xs tracking-widest uppercase">
-                                        {idx + 1} / {gallery.length}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-
-                    {/* Progress Bar / Indicators */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
-                        <div
-                            className="h-full bg-marigold transition-all duration-300 ease-linear"
-                            style={{ width: `${((currentIndex + 1) / gallery.length) * 100}%` }}
-                        ></div>
-                    </div>
-                </div>
-
-                {/* Thumbnails Navigation (Desktop) */}
-                <div className="flex justify-center gap-3 mt-8 overflow-x-auto pb-4 scrollbar-hide">
-                    {gallery.map((img, idx) => (
-                        <button
-                            key={img.id}
-                            onClick={() => goToSlide(idx)}
-                            className={`relative w-20 h-14 md:w-24 md:h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 shrink-0 ${idx === currentIndex ? 'border-marigold scale-110 shadow-lg shadow-marigold/20' : 'border-white/10 opacity-50 hover:opacity-100'}`}
-                        >
-                            <img src={img.image_url} alt="thumbnail" className="w-full h-full object-cover" />
-                        </button>
+                            key={idx}
+                            className={`h-1 md:h-1.5 rounded-full transition-all duration-500 cursor-pointer ${idx === currentIndex ? 'w-5 md:w-6 bg-marigold' : 'w-1 md:w-1.5 bg-white/70'}`}
+                            onClick={(e) => {
+                                e.stopPropagation(); // Prevent triggering other clicks
+                                setCurrentIndex(idx);
+                            }}
+                        />
                     ))}
                 </div>
-            </div>
-        </section>
+            )}
+        </div>
     );
 };
 
@@ -204,7 +231,7 @@ export default function PoojaDetail() {
             <div className="min-h-screen bg-paper-bg pt-8 pb-12 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-4">
                     <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="material-symbols-outlined text-red-500 text-4xl">error</span>
+                        <AlertCircle className="text-red-500 w-10 h-10" />
                     </div>
                     <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">Unable to Load Pooja Details</h3>
                     <p className="text-stone-600 mb-6 italic">{error || "Pooja not found"}</p>
@@ -213,14 +240,14 @@ export default function PoojaDetail() {
                             onClick={fetchPoojaDetails}
                             className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2"
                         >
-                            <span className="material-symbols-outlined">refresh</span>
+                            <RefreshCw className="w-5 h-5" />
                             Try Again
                         </button>
                         <button
                             onClick={() => navigate('/poojas')}
                             className="bg-stone-200 text-stone-700 px-6 py-3 rounded-xl font-bold hover:bg-stone-300 transition-all flex items-center gap-2"
                         >
-                            <span className="material-symbols-outlined">arrow_back</span>
+                            <ArrowLeft className="w-5 h-5" />
                             Back to Poojas
                         </button>
                     </div>
@@ -319,11 +346,9 @@ export default function PoojaDetail() {
                                     'bg-blue-500 text-white'
                             }`}
                     >
-                        <span className="material-symbols-outlined">
-                            {toast.type === 'success' ? 'check_circle' :
-                                toast.type === 'error' ? 'error' :
-                                    toast.type === 'warning' ? 'warning' : 'info'}
-                        </span>
+                        {toast.type === 'success' ? <CheckCircle className="w-5 h-5" /> :
+                            toast.type === 'error' ? <AlertCircle className="w-5 h-5" /> :
+                                toast.type === 'warning' ? <AlertTriangle className="w-5 h-5" /> : <Info className="w-5 h-5" />}
                         {toast.message}
                     </div>
                 ))}
@@ -335,14 +360,14 @@ export default function PoojaDetail() {
                     <div className="max-w-[1280px] mx-auto px-6">
                         <nav className="flex items-center gap-2 text-sm text-stone-500 font-medium" aria-label="Breadcrumb">
                             <Link to="/" className="hover:text-sindoor transition-colors flex items-center gap-1">
-                                <span className="material-symbols-outlined text-sm">home</span>
+                                <Home className="w-3 h-3" />
                                 Home
                             </Link>
-                            <span className="material-symbols-outlined text-xs">chevron_right</span>
+                            <ChevronRight className="w-3 h-3" />
                             <Link to="/poojas" className="hover:text-sindoor transition-colors">
                                 Poojas
                             </Link>
-                            <span className="material-symbols-outlined text-xs">chevron_right</span>
+                            <ChevronRight className="w-3 h-3" />
                             <span className="text-sindoor font-bold truncate max-w-xs">{pooja.title}</span>
                         </nav>
                     </div>
@@ -352,23 +377,13 @@ export default function PoojaDetail() {
                 <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] border-b border-marigold/10">
                     {/* Image Gallery Side */}
                     {/* Image Gallery Side */}
-                    <div className="relative p-4 lg:p-8 bg-paper-bg h-[500px] lg:h-auto flex items-center justify-center">
-                        <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white group">
-                            <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
-                            <img
-                                alt={pooja.title}
-                                className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
-                                src={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
-                            />
-                            {/* LEARNING: Share button moved inside the rounded container */}
-                            <button
-                                onClick={handleShare}
-                                className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-all group z-20"
-                                aria-label="Share this pooja"
-                            >
-                                <span className="material-symbols-outlined text-sindoor group-hover:scale-110 transition-transform">share</span>
-                            </button>
-                        </div>
+                    <div className="relative p-4 lg:p-8 bg-paper-bg h-[400px] sm:h-[500px] lg:h-auto flex items-center justify-center">
+                        <HeroSlideshow
+                            gallery={data.gallery}
+                            mainImage={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
+                            title={pooja.title}
+                            onShare={handleShare}
+                        />
                     </div>
 
                     {/* Details Side */}
@@ -376,7 +391,7 @@ export default function PoojaDetail() {
                         <div className="absolute inset-0 mandala-bg opacity-5 pointer-events-none"></div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 text-marigold mb-4 font-bold text-sm tracking-widest uppercase">
-                                <span className="material-symbols-outlined text-lg">star</span>
+                                <Star className="w-4 h-4 fill-current" />
                                 Most Revered Ritual
                             </div>
                             <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-sindoor mb-4 leading-tight">
@@ -384,7 +399,7 @@ export default function PoojaDetail() {
                             </h1>
                             {temples && temples.length > 0 && (
                                 <div className="flex items-center gap-3 text-stone-500 mb-8 border-l-2 border-marigold pl-4">
-                                    <span className="material-symbols-outlined text-marigold">location_on</span>
+                                    <MapPin className="text-marigold w-5 h-5" />
                                     <span className="text-xl font-medium">{temples[0].title}</span>
                                 </div>
                             )}
@@ -431,13 +446,13 @@ export default function PoojaDetail() {
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {[
-                                        { icon: 'local_florist', title: 'Vighna Nashak', desc: 'Removal of all unseen obstacles and hurdles in life.' },
-                                        { icon: 'savings', title: 'Riddhi Siddhi', desc: 'Attraction of wealth, wisdom, and overall prosperity.' },
-                                        { icon: 'home', title: 'Griha Shanti', desc: 'Spiritual purification of the home and family bonds.' },
-                                        { icon: 'psychology', title: 'Buddhi Vardhak', desc: 'Enhanced intellectual capacity and decision making.' },
+                                        { icon: Flower, title: 'Vighna Nashak', desc: 'Removal of all unseen obstacles and hurdles in life.' },
+                                        { icon: Coins, title: 'Riddhi Siddhi', desc: 'Attraction of wealth, wisdom, and overall prosperity.' },
+                                        { icon: Home, title: 'Griha Shanti', desc: 'Spiritual purification of the home and family bonds.' },
+                                        { icon: Brain, title: 'Buddhi Vardhak', desc: 'Enhanced intellectual capacity and decision making.' },
                                     ].map((item, idx) => (
                                         <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-marigold/10 flex flex-col items-center text-center hover:shadow-md transition-all">
-                                            <span className="material-symbols-outlined text-marigold text-4xl mb-4">{item.icon}</span>
+                                            <item.icon className="text-marigold w-10 h-10 mb-4" />
                                             <h4 className="font-bold text-sindoor mb-2">{item.title}</h4>
                                             <p className="text-sm text-stone-500">{item.desc}</p>
                                         </div>
@@ -449,9 +464,7 @@ export default function PoojaDetail() {
                 </section>
 
                 {/* More of Template (Divine Glimpses) - Gallery Section */}
-                {data.gallery && data.gallery.length > 0 && (
-                    <GallerySlideshow gallery={data.gallery} />
-                )}
+
 
                 {/* Choose Participation */}
                 {/* LEARNING: ID attribute for smooth scrolling from validation */}
@@ -476,7 +489,7 @@ export default function PoojaDetail() {
                                     >
                                         {isSelected && (
                                             <div className="absolute top-4 right-4 text-sindoor">
-                                                <span className="material-symbols-outlined text-3xl">check_circle</span>
+                                                <CheckCircle className="w-8 h-8" />
                                             </div>
                                         )}
                                         {isMiddle && !isSelected && (
@@ -484,9 +497,9 @@ export default function PoojaDetail() {
                                                 Most Chosen
                                             </div>
                                         )}
-                                        <span className="material-symbols-outlined text-4xl text-marigold mb-4">
-                                            {variant.persons > 2 ? 'groups' : (variant.persons === 2 ? 'favorite' : 'person')}
-                                        </span>
+                                        <div className="text-marigold mb-4">
+                                            {variant.persons > 2 ? <Users className="w-10 h-10" /> : (variant.persons === 2 ? <Heart className="w-10 h-10" /> : <User className="w-10 h-10" />)}
+                                        </div>
                                         <h4 className="text-xl font-bold mb-2">{variant.title}</h4>
                                         <p className="text-sm text-stone-500 mb-6">
                                             {variant.description || "Personalized Vedic ritual with complete Sankalp"}
@@ -528,7 +541,7 @@ export default function PoojaDetail() {
                                                 )}
                                                 {isSelected && (
                                                     <div className="absolute top-1 right-1 bg-marigold text-white rounded-full p-0.5">
-                                                        <span className="material-symbols-outlined text-xs">done</span>
+                                                        <Check className="w-3 h-3" />
                                                     </div>
                                                 )}
                                             </div>
@@ -543,7 +556,7 @@ export default function PoojaDetail() {
                                                     : 'bg-stone-50 hover:bg-marigold hover:text-white'
                                                     }`}
                                             >
-                                                <span className="material-symbols-outlined text-lg">{isSelected ? 'remove' : 'add'}</span>
+                                                {isSelected ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                                             </button>
                                         </div>
                                     );
@@ -571,7 +584,7 @@ export default function PoojaDetail() {
                                         {/* LEARNING: Combining city and state fields for location display */}
                                         {(temples[0].city || temples[0].state) && (
                                             <div className="absolute top-8 left-8 bg-sindoor text-white px-5 py-2.5 rounded-2xl flex items-center gap-2 shadow-2xl">
-                                                <span className="material-symbols-outlined">location_on</span>
+                                                <MapPin className="w-5 h-5" />
                                                 <span className="text-xs font-bold uppercase tracking-[0.2em]">
                                                     {/* LEARNING: Conditional string building - combine city and state if both exist */}
                                                     {temples[0].city && temples[0].state
@@ -586,7 +599,7 @@ export default function PoojaDetail() {
                                     {/* Temple Details */}
                                     <div className="p-10 md:p-16 flex flex-col justify-center bg-white">
                                         <div className="flex items-center gap-3 mb-8">
-                                            <span className="material-symbols-outlined text-4xl text-sindoor">home_storage</span>
+                                            <Landmark className="w-10 h-10 text-sindoor" />
                                             <h3 className="text-3xl text-sindoor m-0 uppercase tracking-wide font-serif">TEMPLE VENUE</h3>
                                         </div>
 
@@ -670,7 +683,7 @@ export default function PoojaDetail() {
                                 <div className="h-1 w-24 bg-marigold"></div>
                             </div>
                             <button onClick={() => navigate('/poojas')} className="text-marigold font-bold flex items-center gap-2 hover:gap-4 transition-all tracking-widest text-xs uppercase">
-                                View All Sevas <span className="material-symbols-outlined">arrow_right_alt</span>
+                                View All Sevas <ArrowRight className="w-5 h-5" />
                             </button>
                         </div>
 
@@ -750,7 +763,7 @@ export default function PoojaDetail() {
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="hidden lg:flex items-center gap-2 text-stone-400 text-xs italic">
-                            <span className="material-symbols-outlined text-sm">verified_user</span>
+                            <ShieldCheck className="w-4 h-4" />
                             Secure payment gateway
                         </div>
                         <button
@@ -758,7 +771,7 @@ export default function PoojaDetail() {
                             className="bg-sindoor text-white px-8 md:px-10 py-3 md:py-4 rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center gap-3"
                         >
                             PROCEED TO BOOK
-                            <span className="material-symbols-outlined">arrow_forward</span>
+                            <ArrowRight className="w-5 h-5" />
                         </button>
                     </div>
                 </div>

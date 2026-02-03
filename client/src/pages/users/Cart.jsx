@@ -1,6 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import {
+    ShoppingBag,
+    ShoppingCart,
+    Frown,
+    ArrowLeft,
+    MapPin,
+    Plus,
+    Minus,
+    Trash2,
+    PlusCircle,
+    Receipt,
+    ArrowRight,
+    ShieldCheck,
+    Truck,
+    Headphones,
+    Video
+} from "lucide-react";
+import { MdSelfImprovement, MdVolunteerActivism } from "react-icons/md";
 
 export default function Cart() {
     const navigate = useNavigate();
@@ -45,11 +63,11 @@ export default function Cart() {
     const getProductTypeIcon = (type) => {
         switch (type) {
             case "pooja_variant":
-                return "self_improvement";
+                return <MdSelfImprovement className="text-2xl text-marigold" />;
             case "chadawa_item":
-                return "volunteer_activism";
+                return <MdVolunteerActivism className="text-2xl text-marigold" />;
             default:
-                return "shopping_bag";
+                return <ShoppingBag className="text-2xl text-marigold" />;
         }
     };
 
@@ -68,17 +86,12 @@ export default function Cart() {
         return (
             <div className="min-h-screen bg-paper-bg py-16 px-6">
                 <div className="max-w-[800px] mx-auto text-center">
-                    {/* Empty Cart Illustration */}
                     <div className="relative mb-8">
                         <div className="w-40 h-40 bg-marigold/10 rounded-full mx-auto flex items-center justify-center">
-                            <span className="material-symbols-outlined text-8xl text-marigold/50">
-                                shopping_cart
-                            </span>
+                            <ShoppingCart className="w-20 h-20 text-marigold/50" />
                         </div>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <span className="material-symbols-outlined text-6xl text-sindoor animate-bounce">
-                                sentiment_sad
-                            </span>
+                            <Frown className="w-16 h-16 text-sindoor animate-bounce" />
                         </div>
                     </div>
 
@@ -95,14 +108,14 @@ export default function Cart() {
                             onClick={() => navigate("/poojas")}
                             className="bg-sindoor text-white px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all shadow-lg"
                         >
-                            <span className="material-symbols-outlined">self_improvement</span>
+                            <MdSelfImprovement className="text-xl" />
                             Explore Poojas
                         </button>
                         <button
                             onClick={() => navigate("/chadawas")}
                             className="bg-marigold text-white px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-marigold/90 transition-all shadow-lg"
                         >
-                            <span className="material-symbols-outlined">volunteer_activism</span>
+                            <MdVolunteerActivism className="text-xl" />
                             Explore Chadawa
                         </button>
                     </div>
@@ -113,7 +126,6 @@ export default function Cart() {
 
     return (
         <div className="min-h-screen bg-paper-bg pb-32">
-            {/* Header */}
             <div className="bg-white border-b border-stone-100 sticky top-0 z-40">
                 <div className="max-w-[1280px] mx-auto px-6 py-6">
                     <div className="flex items-center justify-between">
@@ -122,9 +134,7 @@ export default function Cart() {
                                 onClick={() => navigate(-1)}
                                 className="p-2 hover:bg-stone-100 rounded-full transition-colors"
                             >
-                                <span className="material-symbols-outlined text-stone-600">
-                                    arrow_back
-                                </span>
+                                <ArrowLeft className="text-stone-600 w-6 h-6" />
                             </button>
                             <div>
                                 <h1 className="text-2xl font-serif text-sindoor">Sacred Cart</h1>
@@ -135,9 +145,7 @@ export default function Cart() {
                             </div>
                         </div>
                         <div className="hidden md:flex items-center gap-2 text-stone-400 text-sm">
-                            <span className="material-symbols-outlined text-lg">
-                                verified_user
-                            </span>
+                            <ShieldCheck className="w-5 h-5" />
                             Secure & Blessed
                         </div>
                     </div>
@@ -146,7 +154,6 @@ export default function Cart() {
 
             <div className="max-w-[1280px] mx-auto px-6 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Cart Items */}
                     <div className="lg:col-span-2 space-y-4">
                         {cartItems.map((item) => (
                             <div
@@ -154,17 +161,12 @@ export default function Cart() {
                                 className={`bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all ${removing === item.id ? "opacity-50 scale-98" : ""
                                     }`}
                             >
-                                {/* Item Header */}
                                 <div className="p-6 border-b border-stone-50">
                                     <div className="flex items-start gap-4">
-                                        {/* Type Icon */}
                                         <div className="w-14 h-14 bg-marigold/10 rounded-xl flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-2xl text-marigold">
-                                                {getProductTypeIcon(item.product_type)}
-                                            </span>
+                                            {getProductTypeIcon(item.product_type)}
                                         </div>
 
-                                        {/* Item Details */}
                                         <div className="grow">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div>
@@ -178,15 +180,12 @@ export default function Cart() {
                                                     </h3>
                                                     {item.temple_id && (
                                                         <p className="text-sm text-stone-500 flex items-center gap-1 mt-1">
-                                                            <span className="material-symbols-outlined text-sm">
-                                                                location_on
-                                                            </span>
+                                                            <MapPin className="w-4 h-4" />
                                                             Temple #{item.temple_id}
                                                         </p>
                                                     )}
                                                 </div>
 
-                                                {/* Price */}
                                                 <div className="text-right">
                                                     <p className="text-2xl font-black text-sindoor">
                                                         ₹{Number(item.base_price * (item.quantity || 1)).toLocaleString()}
@@ -200,9 +199,7 @@ export default function Cart() {
                                     </div>
                                 </div>
 
-                                {/* Quantity & Actions */}
                                 <div className="p-4 bg-stone-50/50 flex items-center justify-between">
-                                    {/* Quantity Controls */}
                                     <div className="flex items-center gap-3">
                                         <span className="text-sm text-stone-500 font-medium">Qty:</span>
                                         <div className="flex items-center bg-white rounded-lg border border-stone-200 overflow-hidden">
@@ -213,9 +210,7 @@ export default function Cart() {
                                                 disabled={(item.quantity || 1) <= 1}
                                                 className="p-2 hover:bg-stone-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                             >
-                                                <span className="material-symbols-outlined text-lg">
-                                                    remove
-                                                </span>
+                                                <Minus className="w-4 h-4" />
                                             </button>
                                             <span className="px-4 py-2 font-bold text-heritage-dark min-w-[40px] text-center">
                                                 {item.quantity || 1}
@@ -226,27 +221,23 @@ export default function Cart() {
                                                 }
                                                 className="p-2 hover:bg-stone-100 transition-colors"
                                             >
-                                                <span className="material-symbols-outlined text-lg">
-                                                    add
-                                                </span>
+                                                <Plus className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
 
-                                    {/* Remove Button */}
                                     <button
                                         onClick={() => handleRemove(item.id)}
                                         disabled={removing === item.id}
                                         className="flex items-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
                                     >
-                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                        <Trash2 className="w-5 h-5" />
                                         <span className="text-sm font-medium hidden sm:inline">
                                             Remove
                                         </span>
                                     </button>
                                 </div>
 
-                                {/* Addons */}
                                 {item.addons && item.addons.length > 0 && (
                                     <div className="p-4 border-t border-stone-100 bg-haldi/5">
                                         <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3">
@@ -259,9 +250,7 @@ export default function Cart() {
                                                     className="flex items-center justify-between bg-white p-3 rounded-lg"
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        <span className="material-symbols-outlined text-marigold">
-                                                            add_circle
-                                                        </span>
+                                                        <PlusCircle className="text-marigold w-5 h-5" />
                                                         <span className="text-sm font-medium">
                                                             Addon #{addon.addon_id}
                                                         </span>
@@ -283,22 +272,16 @@ export default function Cart() {
                         ))}
                     </div>
 
-                    {/* Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 sticky top-32">
-                            {/* Summary Header */}
                             <div className="p-6 border-b border-stone-100">
                                 <h2 className="text-xl font-serif text-sindoor flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-marigold">
-                                        receipt_long
-                                    </span>
+                                    <Receipt className="text-marigold w-6 h-6" />
                                     Order Summary
                                 </h2>
                             </div>
 
-                            {/* Summary Details */}
                             <div className="p-6 space-y-4">
-                                {/* Items Subtotal */}
                                 <div className="flex justify-between text-stone-600">
                                     <span>Subtotal ({cartItems.length} items)</span>
                                     <span className="font-medium">
@@ -306,13 +289,11 @@ export default function Cart() {
                                     </span>
                                 </div>
 
-                                {/* Dakshina */}
                                 <div className="flex justify-between text-stone-600">
                                     <span>Pandit Dakshina</span>
                                     <span className="text-green-600 font-medium">Included</span>
                                 </div>
 
-                                {/* Delivery */}
                                 <div className="flex justify-between text-stone-600">
                                     <span>Prasad Delivery</span>
                                     <span className="text-green-600 font-medium">Free</span>
@@ -320,7 +301,6 @@ export default function Cart() {
 
                                 <div className="h-px bg-stone-100"></div>
 
-                                {/* Total */}
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold text-heritage-dark">
                                         Total Dakshina
@@ -330,39 +310,29 @@ export default function Cart() {
                                     </span>
                                 </div>
 
-                                {/* Checkout Button */}
                                 <button
                                     onClick={() => navigate("/checkout")}
                                     className="w-full bg-sindoor text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all shadow-lg shadow-sindoor/20 mt-4"
                                 >
                                     Proceed to Checkout
-                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                    <ArrowRight className="w-5 h-5" />
                                 </button>
 
-                                {/* Trust Badges */}
                                 <div className="grid grid-cols-2 gap-3 mt-6">
                                     <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <span className="material-symbols-outlined text-green-500 text-lg">
-                                            verified_user
-                                        </span>
+                                        <ShieldCheck className="text-green-500 w-5 h-5" />
                                         Secure Payment
                                     </div>
                                     <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <span className="material-symbols-outlined text-marigold text-lg">
-                                            local_shipping
-                                        </span>
+                                        <Truck className="text-marigold w-5 h-5" />
                                         Prasad Delivery
                                     </div>
                                     <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <span className="material-symbols-outlined text-sindoor text-lg">
-                                            support_agent
-                                        </span>
+                                        <Headphones className="text-sindoor w-5 h-5" />
                                         24/7 Support
                                     </div>
                                     <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <span className="material-symbols-outlined text-haldi text-lg">
-                                            videocam
-                                        </span>
+                                        <Video className="text-haldi w-5 h-5" />
                                         Live Darshan
                                     </div>
                                 </div>
@@ -372,7 +342,6 @@ export default function Cart() {
                 </div>
             </div>
 
-            {/* Mobile Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 lg:hidden z-50">
                 <div className="flex items-center justify-between gap-4">
                     <div>
@@ -388,7 +357,7 @@ export default function Cart() {
                         className="flex-1 bg-sindoor text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all"
                     >
                         Checkout
-                        <span className="material-symbols-outlined">arrow_forward</span>
+                        <ArrowRight className="w-5 h-5" />
                     </button>
                 </div>
             </div>

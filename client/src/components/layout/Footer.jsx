@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { Share2, Mail, Phone } from "lucide-react";
+import { MdTempleHindu } from "react-icons/md";
 
 export default function Footer() {
   return (
@@ -13,7 +15,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-white/10 pb-16">
             <div className="col-span-1 md:col-span-1">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-4xl text-haldi">temple_hindu</span>
+                <MdTempleHindu className="text-4xl text-haldi" />
                 <h2 className="text-3xl tracking-widest font-serif">ShyamPoja</h2>
               </div>
               <p className="text-white/60 text-sm leading-relaxed mb-8">
@@ -21,9 +23,9 @@ export default function Footer() {
                 through authentic heritage services.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><span className="material-symbols-outlined text-xl">share</span></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><span className="material-symbols-outlined text-xl">mail</span></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><span className="material-symbols-outlined text-xl">call</span></a>
+                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><Share2 className="text-xl" /></a>
+                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><Mail className="text-xl" /></a>
+                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-haldi hover:text-sindoor transition-all"><Phone className="text-xl" /></a>
               </div>
             </div>
             <div>

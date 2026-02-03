@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { getPanchangam, Observer, tithiNames, nakshatraNames, yogaNames, karanaNames } from '@ishubhamx/panchangam-js';
+import {
+    Sun,
+    Sparkles,
+    Calendar,
+    Moon,
+    BookOpen,
+    Sunset,
+    ShieldCheck,
+    Ban,
+    Bell,
+    CheckCircle,
+    Clock
+} from "lucide-react";
+import { MdSelfImprovement } from "react-icons/md";
 
 const Muhurat = () => {
     const [panchangData, setPanchangData] = useState(null);
@@ -73,7 +87,7 @@ const Muhurat = () => {
         return (
             <div className="min-h-screen bg-paper-bg flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <span className="material-symbols-outlined text-4xl text-marigold animate-spin">sunny</span>
+                    <Sun className="text-4xl text-marigold animate-spin w-10 h-10" />
                     <p className="text-sindoor font-bold tracking-widest">CALCULATING MUHURAT...</p>
                 </div>
             </div>
@@ -88,9 +102,9 @@ const Muhurat = () => {
             {/* Header Section */}
             <div className="relative pt-12 pb-8 text-center">
                 <div className="flex justify-center items-center gap-4 mb-4">
-                    <span className="material-symbols-outlined text-4xl text-sindoor">flare</span>
+                    <Sparkles className="text-4xl text-sindoor w-10 h-10" />
                     <div className="w-16 h-1 bg-sindoor rounded-full"></div>
-                    <span className="material-symbols-outlined text-4xl text-sindoor">flare</span>
+                    <Sparkles className="text-4xl text-sindoor w-10 h-10" />
                 </div>
                 <h1 className="text-5xl md:text-7xl text-sindoor mb-4 drop-shadow-sm">Shubh Muhurat</h1>
                 <p className="text-xl text-heritage-dark/70 font-medium mb-2">{currentDate}</p>
@@ -110,7 +124,7 @@ const Muhurat = () => {
 
                         <div className="flex items-center gap-4 mb-8">
                             <div className="w-12 h-12 rounded-full bg-sindoor/10 flex items-center justify-center text-sindoor">
-                                <span className="material-symbols-outlined text-2xl">calendar_month</span>
+                                <Calendar className="w-6 h-6" />
                             </div>
                             <h2 className="text-2xl text-sindoor border-b-2 border-marigold/30 pb-1 w-full">Panchang Today</h2>
                         </div>
@@ -121,7 +135,7 @@ const Muhurat = () => {
                                     <span className="text-xs text-stone-500 uppercase tracking-widest font-bold">Tithi</span>
                                     <span className="text-heritage-dark font-medium text-lg">{panchangData?.tithi}</span>
                                 </div>
-                                <span className="material-symbols-outlined text-marigold opacity-50">dark_mode</span>
+                                <Moon className="text-marigold opacity-50 w-5 h-5" />
                             </div>
 
                             <div className="flex justify-between items-center group/item hover:bg-white/40 p-2 rounded-lg transition-colors">
@@ -129,7 +143,7 @@ const Muhurat = () => {
                                     <span className="text-xs text-stone-500 uppercase tracking-widest font-bold">Nakshatra</span>
                                     <span className="text-heritage-dark font-medium text-lg">{panchangData?.nakshatra}</span>
                                 </div>
-                                <span className="material-symbols-outlined text-marigold opacity-50">stars</span>
+                                <Sparkles className="text-marigold opacity-50 w-5 h-5" />
                             </div>
 
                             <div className="flex justify-between items-center group/item hover:bg-white/40 p-2 rounded-lg transition-colors">
@@ -137,7 +151,7 @@ const Muhurat = () => {
                                     <span className="text-xs text-stone-500 uppercase tracking-widest font-bold">Yoga</span>
                                     <span className="text-heritage-dark font-medium text-lg">{panchangData?.yoga}</span>
                                 </div>
-                                <span className="material-symbols-outlined text-marigold opacity-50">self_improvement</span>
+                                <MdSelfImprovement className="text-marigold opacity-50 text-xl" />
                             </div>
 
                             <div className="flex justify-between items-center group/item hover:bg-white/40 p-2 rounded-lg transition-colors">
@@ -145,7 +159,7 @@ const Muhurat = () => {
                                     <span className="text-xs text-stone-500 uppercase tracking-widest font-bold">Karan</span>
                                     <span className="text-heritage-dark font-medium text-lg">{panchangData?.karan}</span>
                                 </div>
-                                <span className="material-symbols-outlined text-marigold opacity-50">history_edu</span>
+                                <BookOpen className="text-marigold opacity-50 w-5 h-5" />
                             </div>
                         </div>
                     </div>
@@ -156,29 +170,29 @@ const Muhurat = () => {
 
                         <div className="flex items-center gap-4 mb-8">
                             <div className="w-12 h-12 rounded-full bg-sindoor/10 flex items-center justify-center text-sindoor">
-                                <span className="material-symbols-outlined text-2xl">schedule</span>
+                                <Clock className="w-6 h-6" />
                             </div>
                             <h2 className="text-2xl text-sindoor border-b-2 border-marigold/30 pb-1 w-full">Solar & Lunar</h2>
                         </div>
 
                         <div className="grid grid-cols-2 gap-6">
                             <div className="bg-white/60 p-4 rounded-2xl flex flex-col items-center text-center border border-marigold/20 hover:border-marigold transition-colors">
-                                <span className="material-symbols-outlined text-3xl text-marigold mb-2">wb_sunny</span>
+                                <Sun className="text-3xl text-marigold mb-2 w-8 h-8" />
                                 <span className="text-xs text-stone-500 uppercase font-bold">Sunrise</span>
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.sunrise}</span>
                             </div>
                             <div className="bg-white/60 p-4 rounded-2xl flex flex-col items-center text-center border border-marigold/20 hover:border-marigold transition-colors">
-                                <span className="material-symbols-outlined text-3xl text-sindoor mb-2">wb_twilight</span>
+                                <Sunset className="text-3xl text-sindoor mb-2 w-8 h-8" />
                                 <span className="text-xs text-stone-500 uppercase font-bold">Sunset</span>
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.sunset}</span>
                             </div>
                             <div className="bg-white/60 p-4 rounded-2xl flex flex-col items-center text-center border border-marigold/20 hover:border-marigold transition-colors">
-                                <span className="material-symbols-outlined text-3xl text-heritage-dark mb-2">bedtime</span>
+                                <Moon className="text-3xl text-heritage-dark mb-2 w-8 h-8" />
                                 <span className="text-xs text-stone-500 uppercase font-bold">Moonrise</span>
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.moonrise}</span>
                             </div>
                             <div className="bg-white/60 p-4 rounded-2xl flex flex-col items-center text-center border border-marigold/20 hover:border-marigold transition-colors">
-                                <span className="material-symbols-outlined text-3xl text-stone-400 mb-2">wb_twilight</span>
+                                <Sunset className="text-3xl text-stone-400 mb-2 w-8 h-8 text-stone-400" />
                                 <span className="text-xs text-stone-500 uppercase font-bold">Moonset</span>
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.moonset}</span>
                             </div>
@@ -200,7 +214,7 @@ const Muhurat = () => {
                                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                                         Abhijit Muhurat
                                     </span>
-                                    <span className="material-symbols-outlined text-green-600">verified</span>
+                                    <ShieldCheck className="text-green-600 w-5 h-5" />
                                 </div>
                                 <div className="text-3xl font-black text-green-900 leading-tight">
                                     {panchangData?.abhijit.start} <span className="text-base font-medium text-green-700 block text-right md:inline">to {panchangData?.abhijit.end}</span>
@@ -215,7 +229,7 @@ const Muhurat = () => {
                                         <span className="w-2 h-2 rounded-full bg-red-500"></span>
                                         Rahu Kaalam
                                     </span>
-                                    <span className="material-symbols-outlined text-red-600">block</span>
+                                    <Ban className="text-red-600 w-5 h-5" />
                                 </div>
                                 <div className="text-3xl font-black text-red-900 leading-tight">
                                     {panchangData?.rahu.start} <span className="text-base font-medium text-red-700 block text-right md:inline">to {panchangData?.rahu.end}</span>
@@ -243,15 +257,15 @@ const Muhurat = () => {
                             </p>
                             <ul className="space-y-4">
                                 <li className="flex items-center gap-4">
-                                    <span className="material-symbols-outlined text-marigold bg-marigold/10 p-2 rounded-full">check_circle</span>
+                                    <CheckCircle className="text-marigold bg-marigold/10 p-1 rounded-full w-8 h-8" />
                                     <span className="text-heritage-dark font-medium">Enhances positive energy for new beginnings</span>
                                 </li>
                                 <li className="flex items-center gap-4">
-                                    <span className="material-symbols-outlined text-marigold bg-marigold/10 p-2 rounded-full">check_circle</span>
+                                    <CheckCircle className="text-marigold bg-marigold/10 p-1 rounded-full w-8 h-8" />
                                     <span className="text-heritage-dark font-medium">Mitigates negative planetary influences</span>
                                 </li>
                                 <li className="flex items-center gap-4">
-                                    <span className="material-symbols-outlined text-marigold bg-marigold/10 p-2 rounded-full">check_circle</span>
+                                    <CheckCircle className="text-marigold bg-marigold/10 p-1 rounded-full w-8 h-8" />
                                     <span className="text-heritage-dark font-medium">Aligns human efforts with universal timing</span>
                                 </li>
                             </ul>
@@ -259,7 +273,7 @@ const Muhurat = () => {
                         <div className="w-full md:w-1/3">
                             <div className="bg-heritage-dark rounded-3xl p-8 text-white text-center relative overflow-hidden">
                                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
-                                <span className="material-symbols-outlined text-6xl text-haldi mb-4">notifications_active</span>
+                                <Bell className="text-6xl text-haldi mb-4 mx-auto w-16 h-16" />
                                 <h4 className="text-2xl font-bold mb-2">Get Daily Alerts</h4>
                                 <p className="text-white/60 mb-6 text-sm">Receive Abhijit Muhurat timings on your WhatsApp every morning.</p>
                                 <button className="bg-haldi text-sindoor w-full py-3 rounded-xl font-black shadow-lg hover:bg-white hover:text-sindoor transition-all">SUBSCRIBE NOW</button>

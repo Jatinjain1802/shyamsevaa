@@ -145,7 +145,7 @@ export default function Poojas() {
     // Append gallery files and descriptions
     if (galleryFiles.length > 0) {
       galleryFiles.forEach((item) => {
-        formData.append("gallery", item.file);
+        formData.append("pooja_gallery", item.file);
         formData.append("gallery_description", item.description);
       });
     }

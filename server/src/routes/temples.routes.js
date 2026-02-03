@@ -3,8 +3,10 @@ import {
   createTemple,
   getAllTemples,
   getTempleById,
+  // updateTemple,
   updateTemple,
   deleteTemple,
+  deleteTempleGalleryImage,
 } from "../controllers/temples.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
@@ -22,10 +24,11 @@ router.get("/public", getAllTemples);
 router.get("/public/:id", getTempleById);
 
 // Admin-only CRUD
-router.post("/", authMiddleware, adminMiddleware, upload.single("temple_image"), createTemple);
+router.post("/", authMiddleware, adminMiddleware, upload.fields([{ name: 'temple_image', maxCount: 1 }, { name: 'temple_gallery', maxCount: 10 }]), createTemple);
 router.get("/", authMiddleware, adminMiddleware, getAllTemples);
 router.get("/:id", authMiddleware, adminMiddleware, getTempleById);
-router.put("/:id", authMiddleware, adminMiddleware, upload.single("temple_image"), updateTemple);
+router.put("/:id", authMiddleware, adminMiddleware, upload.fields([{ name: 'temple_image', maxCount: 1 }, { name: 'temple_gallery', maxCount: 10 }]), updateTemple);
 router.delete("/:id", authMiddleware, adminMiddleware, deleteTemple);
+router.delete("/gallery/:imageId", authMiddleware, adminMiddleware, deleteTempleGalleryImage);
 
 export default router;

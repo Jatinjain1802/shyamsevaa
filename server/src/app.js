@@ -87,7 +87,7 @@ app.use("/api", chadawaRoutes);
 app.use("/api/panchang", panchangRoutes);
 
 // Cart
-app.use("/api", cartRoutes);
+app.use("/api/cart", cartRoutes);
 
 // Checkout + Orders + Bookings
 app.use("/api", orderBookingRoutes);

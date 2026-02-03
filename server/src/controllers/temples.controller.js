@@ -11,9 +11,11 @@ export const createTemple = async (req, res) => {
       });
     }
 
-    // Handle file upload - if file is uploaded, use file path; otherwise use URL from body
+    // Handle file upload
     let imagePath = image;
-    if (req.file) {
+    if (req.files && req.files['temple_image']) {
+      imagePath = `/uploads/temples/${req.files['temple_image'][0].filename}`;
+    } else if (req.file) {
       imagePath = `/uploads/temples/${req.file.filename}`;
     }
 
@@ -24,6 +26,23 @@ export const createTemple = async (req, res) => {
       city,
       state,
     });
+
+    // Handle Gallery Images
+    if (req.files && req.files['temple_gallery']) {
+      const galleryFiles = req.files['temple_gallery'];
+      let galleryDescriptions = req.body.gallery_description || [];
+
+      if (!Array.isArray(galleryDescriptions)) {
+        galleryDescriptions = [galleryDescriptions];
+      }
+
+      for (let i = 0; i < galleryFiles.length; i++) {
+        const file = galleryFiles[i];
+        const description = galleryDescriptions[i] || "";
+        const galleryPath = `/uploads/temples/${file.filename}`;
+        await TempleModel.addTempleImage(id, galleryPath, description);
+      }
+    }
 
     return res.status(201).json({
       success: true,
@@ -59,6 +78,10 @@ export const getTempleById = async (req, res) => {
       });
     }
 
+    // Fetch gallery images
+    const gallery = await TempleModel.getTempleImages(req.params.id);
+    temple.gallery = gallery;
+
     return res.json({ success: true, data: temple });
   } catch {
     return res.status(500).json({ success: false, message: "Server error" });
@@ -69,8 +92,10 @@ export const updateTemple = async (req, res) => {
   try {
     const updateData = { ...req.body };
 
-    // Handle file upload - if file is uploaded, use file path
-    if (req.file) {
+    // Handle file upload
+    if (req.files && req.files['temple_image']) {
+      updateData.image = `/uploads/temples/${req.files['temple_image'][0].filename}`;
+    } else if (req.file) {
       updateData.image = `/uploads/temples/${req.file.filename}`;
     }
 
@@ -79,12 +104,29 @@ export const updateTemple = async (req, res) => {
       updateData
     );
 
-    if (!updated) {
-      return res.status(404).json({
-        success: false,
-        message: "Temple not found",
-      });
+    // Append Gallery Images
+    if (req.files && req.files['temple_gallery']) {
+      const galleryFiles = req.files['temple_gallery'];
+      let galleryDescriptions = req.body.gallery_description || [];
+
+      if (!Array.isArray(galleryDescriptions)) {
+        galleryDescriptions = [galleryDescriptions];
+      }
+
+      for (let i = 0; i < galleryFiles.length; i++) {
+        const file = galleryFiles[i];
+        const description = galleryDescriptions[i] || "";
+        const galleryPath = `/uploads/temples/${file.filename}`;
+        await TempleModel.addTempleImage(req.params.id, galleryPath, description);
+      }
     }
+
+    // if (!updated) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "Temple not found",
+    //   });
+    // }
 
     return res.json({
       success: true,
@@ -93,6 +135,20 @@ export const updateTemple = async (req, res) => {
   } catch (error) {
     console.error("Update temple error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const deleteTempleGalleryImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const deleted = await TempleModel.deleteTempleImage(imageId);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Image not found" });
+    }
+    res.json({ success: true, message: "Image deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

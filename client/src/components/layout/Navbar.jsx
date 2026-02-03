@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FiMenu, FiX, FiUser, FiSearch, FiBell } from "react-icons/fi";
+import { Menu, X, Search, Bell, ShoppingBag, User } from "lucide-react";
+import { MdTempleHindu } from "react-icons/md";
 import { useCart } from "../../context/CartContext";
 
 export default function Navbar() {
@@ -37,7 +38,7 @@ export default function Navbar() {
           <div className="flex items-center gap-10">
             <Link to="/" className="flex items-center gap-3 group">
               <div className="text-sindoor flex flex-col items-center">
-                <span className="material-symbols-outlined text-4xl leading-none group-hover:scale-110 transition-transform">temple_hindu</span>
+                <MdTempleHindu className="text-4xl leading-none group-hover:scale-110 transition-transform" />
                 <div className="h-1 w-full bg-haldi mt-1"></div>
               </div>
               <div className="flex flex-col">
@@ -61,7 +62,7 @@ export default function Navbar() {
           </div>
           <div className="flex items-center gap-4 md:gap-6">
             <div className="hidden lg:flex items-center bg-stone-100 rounded-full px-4 py-1.5 border border-marigold/30">
-              <span className="material-symbols-outlined text-marigold text-lg">search</span>
+              <Search className="text-marigold w-5 h-5" />
               <input
                 className="bg-transparent border-none focus:ring-0 text-sm w-32 xl:w-48 focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
                 placeholder="Search rituals..."
@@ -70,14 +71,14 @@ export default function Navbar() {
             </div>
             <div className="flex items-center gap-3">
               <button className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors hidden sm:block">
-                <span className="material-symbols-outlined">notifications</span>
+                <Bell className="w-5 h-5" />
               </button>
               {/* Cart Icon with Badge */}
               <Link
                 to="/cart"
                 className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors relative"
               >
-                <span className="material-symbols-outlined">shopping_cart</span>
+                <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-marigold text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
                     {cartCount > 9 ? "9+" : cartCount}
@@ -88,14 +89,14 @@ export default function Navbar() {
                 to="/login"
                 className="bg-sindoor text-white px-4 md:px-6 py-2 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:bg-sindoor/90 transition-all whitespace-nowrap"
               >
-                <span className="material-symbols-outlined text-lg">account_circle</span>
+                <User className="w-5 h-5" />
                 <span className="hidden sm:inline">MY ACCOUNT</span>
               </Link>
               <button
                 className="xl:hidden p-2 text-sindoor hover:bg-sindoor/10 rounded-full"
                 onClick={() => setIsOpen(true)}
               >
-                <FiMenu className="w-6 h-6" />
+                <Menu className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -113,11 +114,11 @@ export default function Navbar() {
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center p-6 border-b border-marigold/20 bg-white">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-3xl text-sindoor">temple_hindu</span>
+              <MdTempleHindu className="text-3xl text-sindoor" />
               <span className="text-xl font-bold text-sindoor font-serif">ShyamPoja</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-sindoor hover:bg-sindoor/10 p-2 rounded-full">
-              <FiX className="w-6 h-6" />
+              <X className="w-6 h-6" />
             </button>
           </div>
 
@@ -140,7 +141,7 @@ export default function Navbar() {
 
             <div className="mt-6 pt-6 border-t border-marigold/20">
               <div className="flex items-center bg-white rounded-full px-4 py-2 border border-marigold/30 mb-6">
-                <span className="material-symbols-outlined text-marigold text-lg">search</span>
+                <Search className="text-marigold w-5 h-5" />
                 <input
                   className="bg-transparent border-none focus:ring-0 text-sm w-full focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
                   placeholder="Search rituals..."

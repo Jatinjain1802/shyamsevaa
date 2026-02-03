@@ -6,9 +6,11 @@ export const createChadawa = async (req, res) => {
     try {
         const { title, image, description, benefits, chadawa_date } = req.body;
 
-        // Handle file upload - if file is uploaded, use file path; otherwise use URL from body
+        // Handle file upload
         let imagePath = image;
-        if (req.file) {
+        if (req.files && req.files['chadawa_image']) {
+            imagePath = `/uploads/chadawas/${req.files['chadawa_image'][0].filename}`;
+        } else if (req.file) {
             imagePath = `/uploads/chadawas/${req.file.filename}`;
         }
 
@@ -19,6 +21,23 @@ export const createChadawa = async (req, res) => {
             benefits,
             chadawa_date,
         });
+
+        // Handle Gallery Images
+        if (req.files && req.files['chadawa_gallery']) {
+            const galleryFiles = req.files['chadawa_gallery'];
+            let galleryDescriptions = req.body.gallery_description || [];
+
+            if (!Array.isArray(galleryDescriptions)) {
+                galleryDescriptions = [galleryDescriptions];
+            }
+
+            for (let i = 0; i < galleryFiles.length; i++) {
+                const file = galleryFiles[i];
+                const description = galleryDescriptions[i] || "";
+                const galleryPath = `/uploads/chadawas/${file.filename}`;
+                await ChadawaModel.addChadawaImage(chadawaId, galleryPath, description);
+            }
+        }
 
         res.status(201).json({ success: true, chadawaId });
     } catch (error) {
@@ -31,16 +50,51 @@ export const updateChadawa = async (req, res) => {
     try {
         const updateData = { ...req.body };
 
-        // Handle file upload - if file is uploaded, use file path
-        if (req.file) {
+        // Handle file upload
+        if (req.files && req.files['chadawa_image']) {
+            updateData.image = `/uploads/chadawas/${req.files['chadawa_image'][0].filename}`;
+        } else if (req.file) {
             updateData.image = `/uploads/chadawas/${req.file.filename}`;
         }
 
         const updated = await ChadawaModel.updateChadawa(req.params.chadawaId, updateData);
-        if (!updated) return res.status(404).json({ success: false, message: "Chadawa not found" });
+
+        // Append Gallery Images
+        if (req.files && req.files['chadawa_gallery']) {
+            const galleryFiles = req.files['chadawa_gallery'];
+            let galleryDescriptions = req.body.gallery_description || [];
+
+            if (!Array.isArray(galleryDescriptions)) {
+                galleryDescriptions = [galleryDescriptions];
+            }
+
+            for (let i = 0; i < galleryFiles.length; i++) {
+                const file = galleryFiles[i];
+                const description = galleryDescriptions[i] || "";
+                const galleryPath = `/uploads/chadawas/${file.filename}`;
+                await ChadawaModel.addChadawaImage(req.params.chadawaId, galleryPath, description);
+            }
+        }
+
+        // if (!updated) return res.status(404).json({ success: false, message: "Chadawa not found" });
+        // Allowing update even if only gallery images are added (update might return 0)
         res.json({ success: true });
     } catch (error) {
         console.error("Update chadawa error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+export const deleteChadawaGalleryImage = async (req, res) => {
+    try {
+        const { imageId } = req.params;
+        const deleted = await ChadawaModel.deleteChadawaImage(imageId);
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Image not found" });
+        }
+        res.json({ success: true, message: "Image deleted" });
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ success: false, message: "Server error" });
     }
 };
@@ -115,16 +169,17 @@ export const getChadawaDetail = async (req, res) => {
     const chadawa = await ChadawaModel.getChadawaById(chadawaId);
     if (!chadawa) return res.status(404).json({ success: false });
 
-    const [items, benefits, temples, reviews] = await Promise.all([
+    const [items, benefits, temples, reviews, gallery] = await Promise.all([
         ChadawaModel.getChadawaItems(chadawaId),
         ChadawaModel.getChadawaBenefits(chadawaId),
         ChadawaModel.getChadawaTemples(chadawaId),
         ChadawaModel.getChadawaReviews(chadawaId),
+        ChadawaModel.getChadawaImages(chadawaId),
     ]);
 
     res.json({
         success: true,
-        data: { chadawa, items, benefits, temples, reviews },
+        data: { chadawa, items, benefits, temples, reviews, gallery },
     });
 };
 
