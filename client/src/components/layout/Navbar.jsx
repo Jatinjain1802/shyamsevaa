@@ -42,7 +42,7 @@ export default function Navbar() {
                 <div className="h-1 w-full bg-haldi mt-1"></div>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-2xl md:text-3xl text-sindoor leading-tight tracking-wide font-serif">ShyamPoja</h1>
+                <h1 className="text-2xl md:text-3xl text-sindoor leading-tight tracking-wide font-serif">ShyamPuja</h1>
                 <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-marigold -mt-1">Heritage Home</span>
               </div>
             </Link>
