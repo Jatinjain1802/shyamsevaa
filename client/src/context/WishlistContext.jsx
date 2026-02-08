@@ -3,31 +3,32 @@ import api from "../utils/axios";
 
 // Generate or retrieve session ID for guest users
 const getSessionId = () => {
-    let sessionId = localStorage.getItem("cart_session_id");
+    let sessionId = localStorage.getItem("wishlist_session_id");
     if (!sessionId) {
-        sessionId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem("cart_session_id", sessionId);
+        // Fallback to cart_session_id if it exists to preserve old carts during migration
+        sessionId = localStorage.getItem("cart_session_id") || `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem("wishlist_session_id", sessionId);
     }
     return sessionId;
 };
 
-const CartContext = createContext();
+const WishlistContext = createContext();
 
-export const useCart = () => {
-    const context = useContext(CartContext);
+export const useWishlist = () => {
+    const context = useContext(WishlistContext);
     if (!context) {
-        throw new Error("useCart must be used within a CartProvider");
+        throw new Error("useWishlist must be used within a WishlistProvider");
     }
     return context;
 };
 
-export function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState([]);
+export function WishlistProvider({ children }) {
+    const [wishlistItems, setWishlistItems] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [cartCount, setCartCount] = useState(0);
+    const [wishlistCount, setWishlistCount] = useState(0);
 
-    // Fetch cart data
-    const fetchCart = useCallback(async () => {
+    // Fetch wishlist data (still uses /cart endpoint)
+    const fetchWishlist = useCallback(async () => {
         try {
             setLoading(true);
             const sessionId = getSessionId();
@@ -35,23 +36,23 @@ export function CartProvider({ children }) {
                 headers: { "x-session-id": sessionId },
             });
             const items = res.data.data || [];
-            setCartItems(items);
+            setWishlistItems(items);
 
             // Calculate total count (items + addon quantities)
             const count = items.reduce((total, item) => {
                 const addonCount = item.addons?.reduce((sum, a) => sum + (a.quantity || 1), 0) || 0;
                 return total + (item.quantity || 1) + addonCount;
             }, 0);
-            setCartCount(count);
+            setWishlistCount(count);
         } catch (err) {
-            console.error("Failed to fetch cart:", err);
+            console.error("Failed to fetch wishlist:", err);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    // Add pooja to cart
-    const addPoojaToCart = async ({ pooja_variant_id, temple_id, addons = [] }) => {
+    // Add pooja to wishlist (via /cart/pooja)
+    const addPoojaToWishlist = async ({ pooja_variant_id, temple_id, addons = [] }) => {
         try {
             const sessionId = getSessionId();
             await api.post(
@@ -59,16 +60,16 @@ export function CartProvider({ children }) {
                 { pooja_variant_id, temple_id, addons },
                 { headers: { "x-session-id": sessionId } }
             );
-            await fetchCart();
+            await fetchWishlist();
             return { success: true };
         } catch (err) {
-            console.error("Failed to add pooja to cart:", err);
+            console.error("Failed to add pooja to wishlist:", err);
             return { success: false, error: err.message };
         }
     };
 
-    // Add chadawa to cart
-    const addChadawaToCart = async ({ chadawa_item_id, temple_id, quantity = 1 }) => {
+    // Add chadawa to wishlist (via /cart/chadawa)
+    const addChadawaToWishlist = async ({ chadawa_item_id, temple_id, quantity = 1 }) => {
         try {
             const sessionId = getSessionId();
             await api.post(
@@ -76,24 +77,24 @@ export function CartProvider({ children }) {
                 { chadawa_item_id, temple_id, quantity },
                 { headers: { "x-session-id": sessionId } }
             );
-            await fetchCart();
+            await fetchWishlist();
             return { success: true };
         } catch (err) {
-            console.error("Failed to add chadawa to cart:", err);
+            console.error("Failed to add chadawa to wishlist:", err);
             return { success: false, error: err.message };
         }
     };
 
-    // Update cart item quantity
-    const updateItemQuantity = async (cartItemId, quantity) => {
+    // Update wishlist item quantity
+    const updateItemQuantity = async (itemId, quantity) => {
         try {
             const sessionId = getSessionId();
             await api.put(
-                `/cart/items/${cartItemId}`,
+                `/cart/items/${itemId}`,
                 { quantity },
                 { headers: { "x-session-id": sessionId } }
             );
-            await fetchCart();
+            await fetchWishlist();
             return { success: true };
         } catch (err) {
             console.error("Failed to update quantity:", err);
@@ -110,7 +111,7 @@ export function CartProvider({ children }) {
                 { quantity },
                 { headers: { "x-session-id": sessionId } }
             );
-            await fetchCart();
+            await fetchWishlist();
             return { success: true };
         } catch (err) {
             console.error("Failed to update addon quantity:", err);
@@ -118,14 +119,14 @@ export function CartProvider({ children }) {
         }
     };
 
-    // Remove item from cart
-    const removeItem = async (cartItemId) => {
+    // Remove item from wishlist
+    const removeItem = async (itemId) => {
         try {
             const sessionId = getSessionId();
-            await api.delete(`/cart/items/${cartItemId}`, {
+            await api.delete(`/cart/items/${itemId}`, {
                 headers: { "x-session-id": sessionId },
             });
-            await fetchCart();
+            await fetchWishlist();
             return { success: true };
         } catch (err) {
             console.error("Failed to remove item:", err);
@@ -135,7 +136,7 @@ export function CartProvider({ children }) {
 
     // Calculate total price
     const calculateTotal = () => {
-        return cartItems.reduce((total, item) => {
+        return wishlistItems.reduce((total, item) => {
             const itemTotal = Number(item.base_price) * (item.quantity || 1);
             const addonsTotal = item.addons?.reduce((sum, addon) => {
                 return sum + Number(addon.price) * (addon.quantity || 1);
@@ -144,25 +145,25 @@ export function CartProvider({ children }) {
         }, 0);
     };
 
-    // Load cart on mount
+    // Load wishlist on mount
     useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
+        fetchWishlist();
+    }, [fetchWishlist]);
 
     const value = {
-        cartItems,
-        cartCount,
+        wishlistItems,
+        wishlistCount,
         loading,
-        fetchCart,
-        addPoojaToCart,
-        addChadawaToCart,
+        fetchWishlist,
+        addPoojaToWishlist,
+        addChadawaToWishlist,
         updateItemQuantity,
         updateAddonQuantity,
         removeItem,
         calculateTotal,
     };
 
-    return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+    return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
 
-export default CartContext;
+export default WishlistContext;

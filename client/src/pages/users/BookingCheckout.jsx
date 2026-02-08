@@ -124,7 +124,7 @@ export default function BookingCheckout() {
                         <div className="bg-white rounded-3xl p-8 shadow-lg border border-stone-200 sticky top-24">
                             <h2 className="text-2xl font-serif text-sindoor mb-6 flex items-center gap-3">
                                 <ShoppingBag className="w-6 h-6" />
-                                Order Summary
+                                Booking Summary
                             </h2>
 
                             <div className="mb-6 pb-6 border-b border-stone-100">
@@ -183,7 +183,7 @@ export default function BookingCheckout() {
                                 </div>
                             )}
 
-                            <div className="bg-gradient-to-br from-sindoor to-sindoor/90 p-6 rounded-2xl text-white">
+                            <div className="bg-linear-to-br from-sindoor to-sindoor/90 p-6 rounded-2xl text-white">
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-sm uppercase tracking-wider opacity-90">Total Dakshina</span>
                                     <Banknote className="w-6 h-6" />
@@ -212,7 +212,7 @@ export default function BookingCheckout() {
 
                                     <div className="space-y-6">
                                         {sankalpDetails.map((detail, index) => (
-                                            <div key={index} className="bg-gradient-to-br from-haldi/5 to-marigold/5 p-6 rounded-3xl border-2 border-haldi/20">
+                                            <div key={index} className="bg-linear-to-br from-haldi/5 to-marigold/5 p-6 rounded-3xl border-2 border-haldi/20">
                                                 <div className="flex items-center justify-between mb-5">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-marigold text-white flex items-center justify-center font-bold">
@@ -254,7 +254,7 @@ export default function BookingCheckout() {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-gradient-to-r from-sindoor to-sindoor/90 text-white py-5 rounded-2xl font-black text-lg tracking-widest shadow-2xl shadow-sindoor/30 hover:shadow-sindoor/50 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-linear-to-r from-sindoor to-sindoor/90 text-white py-5 rounded-2xl font-black text-lg tracking-widest shadow-2xl shadow-sindoor/30 hover:shadow-sindoor/50 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>

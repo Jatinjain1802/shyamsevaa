@@ -29,8 +29,12 @@ import ChadawaDetail from "../pages/users/ChadawaDetail";
 import TempleChadawas from "../pages/users/TempleChadawas";
 import Muhurat from "../pages/users/Muhurat";
 import BookingCheckout from "../pages/users/BookingCheckout";
-import Cart from "../pages/users/Cart";
+import SearchResults from "../pages/users/SearchResults";
+import Wishlist from "../pages/users/Wishlist";
 import ScrollToTop from "../components/ScrollToTop";
+import Login from "../pages/users/Login";
+import Signup from "../pages/users/Signup";
+import UserDashboard from "../pages/users/UserDashboard";
 
 export default function AppRoutes() {
   return (
@@ -52,8 +56,13 @@ export default function AppRoutes() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           <Route path="/muhurat" element={<Muhurat />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
         </Route>
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* Admin Login Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

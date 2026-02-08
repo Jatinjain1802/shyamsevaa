@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../utils/axios";
 import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
     Home,
@@ -119,7 +120,7 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
                     <img
                         src={img.image_url || img.image} // Handle both gallery object and fallback string/object
                         alt={img.description || title}
-                        className={`w-full h-full object-cover transform transition-transform duration-[2000ms] ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
+                        className={`w-full h-full object-cover transform transition-transform duration-2000 ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
                     />
                 </div>
             ))}
@@ -159,6 +160,7 @@ export default function PoojaDetail() {
 
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
+    const { addPoojaToWishlist } = useWishlist();
 
     // Helper function to format benefits text as beautiful cards
     const formatBenefitsText = (text) => {
@@ -396,11 +398,31 @@ export default function PoojaDetail() {
         "https://lh3.googleusercontent.com/aida-public/AB6AXuA-z2Wisab7QkOJODO0IfzwBu6fxh9u29pfaXrxZi921BoZ6n87X2VlQ1YazvHKqamnQ662qrvCcn0QJOWFBGoUfhQHazaJsBpX1BXYiHAEpmk1rLKvg2zyujPQXNACPXPkPr0h7Zjw7d4G_I_JzGqZSpyvnkQIkT5Xa6EI6PR-j-HyOLAhzW8en9SKxUCt9rFdxXvj9b1cpc0RDijIIzH8aHvMdqJ_13jqRIqArRKg57m-d0COaAZttJ2qQl-Fr5LJWjG0QmYWEBk"
     ];
 
+    const handleAddToWishlist = async () => {
+        if (!selectedVariant) {
+            showToast("Please select a participation details to save.", 'warning');
+            document.getElementById('variants-section')?.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        const response = await addPoojaToWishlist({
+            pooja_variant_id: selectedVariant.id,
+            temple_id: temples && temples.length > 0 ? temples[0].id : null,
+            addons: selectedAddons.map(a => ({ addon_id: a.id, quantity: 1 }))
+        });
+
+        if (response.success) {
+            showToast("Saved to Wishlist successfully!", 'success');
+        } else {
+            showToast("Failed to save to Wishlist", 'error');
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen pb-24">
             {/* LEARNING: Toast Notifications Component */}
             {/* Position fixed to show notifications on top of everything */}
-            <div className="fixed top-20 right-4 z-[70] space-y-2">
+            <div className="fixed top-20 right-4 z-70 space-y-2">
                 {toasts.map(toast => (
                     <div
                         key={toast.id}
@@ -418,7 +440,7 @@ export default function PoojaDetail() {
                 ))}
             </div>
 
-            <main className="flex-grow">
+            <main className="grow">
                 {/* LEARNING: Breadcrumb Navigation for better UX */}
                 <div className="bg-paper-bg border-b border-marigold/10 py-4">
                     <div className="max-w-[1280px] mx-auto px-6">
@@ -571,7 +593,7 @@ export default function PoojaDetail() {
                                     <h2 className="text-4xl text-sindoor font-serif mb-2">Sacred Offerings (Chadawa)</h2>
                                     <p className="text-stone-500">Enhance your ritual with these traditional offerings</p>
                                 </div>
-                                <div className="hidden md:block h-px flex-grow mx-10 bg-marigold/20"></div>
+                                <div className="hidden md:block h-px grow mx-10 bg-marigold/20"></div>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                                 {addons.map((addon, i) => {
@@ -795,7 +817,7 @@ export default function PoojaDetail() {
             </main>
 
             {/* Sticky Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-stone-200 py-4 px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
+            <div className="fixed bottom-0 left-0 right-0 z-60 bg-white border-t border-stone-200 py-4 px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
                 <div className="max-w-[1280px] mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-8">
                         <div className="flex flex-col">
@@ -811,10 +833,13 @@ export default function PoojaDetail() {
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="hidden lg:flex items-center gap-2 text-stone-400 text-xs italic">
-                            <ShieldCheck className="w-4 h-4" />
-                            Secure payment gateway
-                        </div>
+                        <button
+                            onClick={handleAddToWishlist}
+                            className="bg-white border-2 border-marigold/30 text-marigold p-3 md:p-4 rounded-2xl hover:bg-marigold/10 transition-all flex items-center justify-center"
+                            title="Add to Wishlist"
+                        >
+                            <Heart className="w-6 h-6" />
+                        </button>
                         <button
                             onClick={handleBookNow}
                             className="bg-sindoor text-white px-8 md:px-10 py-3 md:py-4 rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center gap-3"

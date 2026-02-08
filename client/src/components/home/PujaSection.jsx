@@ -14,6 +14,7 @@ export default function PujaSection() {
         const fetchPujas = async () => {
             try {
                 const res = await api.get("/poojas"); // Removed limit to fetch all
+                // console.log("Pujas data:", res.data.data);
                 setPujas(res.data.data || []);
             } catch (err) {
                 console.error("Failed to fetch pujas for home section", err);
@@ -92,13 +93,14 @@ export default function PujaSection() {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {pujas.map((puja) => (
-                        <div
+                        <Link
+                            to={`/poojas/${generateSlug(puja.title, puja.id)}`}
                             key={puja.id}
                             className="min-w-[85vw] md:min-w-[45%] lg:min-w-[calc(33.333%-1rem)] snap-center group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col"
                             style={{ transform: "translateZ(0)" }}
                         >
                             {/* Card Image */}
-                            <div className="relative h-64 md:h-72 overflow-hidden shrink-0">
+                            <div className="relative aspect-4/3 w-full overflow-hidden shrink-0">
                                 <div className="absolute" />
                                 <img
                                     src={puja.image}
@@ -126,7 +128,12 @@ export default function PujaSection() {
 
                                 <div className="flex items-center gap-2 mb-4 text-stone-500 text-sm">
                                     <MapPin className="w-4 h-4 text-marigold" />
-                                    <span>{puja.location || "Ujjain, Madhya Pradesh"}</span>
+                                    <span>
+                                        {puja.temple_city && puja.temple_state
+                                            ? `${puja.temple_city}, ${puja.temple_state}`
+                                            : puja.temple_city || puja.temple_state || "Ujjain, Madhya Pradesh"
+                                        }
+                                    </span>
                                 </div>
 
                                 <p className="text-stone-600 mb-8 line-clamp-2 leading-relaxed flex-1">
@@ -134,21 +141,15 @@ export default function PujaSection() {
                                 </p>
 
                                 <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs text-stone-400 font-bold uppercase tracking-wider mb-1">Dakshina</p>
-                                        <p className="text-xl font-bold text-sindoor">
-                                            ₹{puja.variants?.[0]?.price || "2100"}
-                                        </p>
-                                    </div>
-                                    <Link
-                                        to={`/poojas/${generateSlug(puja.title, puja.id)}`}
-                                        className="inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-marigold/20 text-marigold hover:bg-marigold hover:text-white hover:border-marigold transition-all duration-300"
+                                    <div
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-sindoor text-white font-bold rounded-xl group-hover:bg-marigold group-hover:shadow-lg transition-all duration-300"
                                     >
-                                        <ArrowRight className="w-5 h-5" />
-                                    </Link>
+                                        <span>View Details</span>
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 

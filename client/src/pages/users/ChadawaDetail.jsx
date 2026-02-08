@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../utils/axios";
 import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
     Home,
@@ -22,7 +23,8 @@ import {
     MapPin,
     Receipt,
     ShieldCheck,
-    Flower
+    Flower,
+    Heart
 } from "lucide-react";
 import { MdVolunteerActivism, MdTempleHindu } from "react-icons/md";
 
@@ -151,6 +153,7 @@ export default function ChadawaDetail() {
 
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
+    const { addChadawaToWishlist } = useWishlist();
 
     const [data, setData] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -337,6 +340,25 @@ export default function ChadawaDetail() {
 
     const prevSlide = () => {
         setCurrentSlide((prev) => (prev - 1 + Math.ceil(benefits.length / itemsPerSlide)) % Math.ceil(benefits.length / itemsPerSlide));
+    };
+
+    const handleAddToWishlist = async () => {
+        if (selectedItems.length === 0) {
+            showToast("Please select at least one offering item.", 'warning');
+            return;
+        }
+
+        const response = await addChadawaToWishlist({
+            chadawa_id: chadawa.id,
+            temple_id: temples && temples.length > 0 ? temples[0].id : null,
+            items: selectedItems.map(i => ({ chadawa_item_id: i.id, quantity: 1 }))
+        });
+
+        if (response.success) {
+            showToast("Saved to Wishlist successfully!", 'success');
+        } else {
+            showToast("Failed to save to Wishlist", 'error');
+        }
     };
 
     return (
@@ -594,18 +616,28 @@ export default function ChadawaDetail() {
                                     </div>
                                 </div>
 
-                                {/* Action Button */}
-                                <button
-                                    onClick={handleOffering}
-                                    disabled={selectedItems.length === 0}
-                                    className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-2
+                                {/* Action Buttons */}
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={handleAddToWishlist}
+                                        disabled={selectedItems.length === 0}
+                                        className="bg-white border-2 border-marigold/30 text-marigold p-4 rounded-xl hover:bg-marigold/10 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                        title="Add to Wishlist"
+                                    >
+                                        <Heart className="w-6 h-6" />
+                                    </button>
+                                    <button
+                                        onClick={handleOffering}
+                                        disabled={selectedItems.length === 0}
+                                        className={`flex-1 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-2
                                     ${selectedItems.length > 0
-                                            ? "bg-linear-to-r from-sindoor to-sindoor/90 text-white hover:from-sindoor/90 hover:to-sindoor"
-                                            : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
-                                >
-                                    {selectedItems.length > 0 ? <MdVolunteerActivism className="w-6 h-6" /> : <MousePointerClick className="w-6 h-6" />}
-                                    {selectedItems.length > 0 ? "Make Offering Now" : "Select Items"}
-                                </button>
+                                                ? "bg-linear-to-r from-sindoor to-sindoor/90 text-white hover:from-sindoor/90 hover:to-sindoor"
+                                                : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
+                                    >
+                                        {selectedItems.length > 0 ? <MdVolunteerActivism className="w-6 h-6" /> : <MousePointerClick className="w-6 h-6" />}
+                                        {selectedItems.length > 0 ? "Make Offering Now" : "Select Items"}
+                                    </button>
+                                </div>
 
                                 {/* Trust Badge */}
                                 <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">

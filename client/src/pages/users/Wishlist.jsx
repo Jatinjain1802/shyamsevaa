@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import {
-    ShoppingBag,
-    ShoppingCart,
+    Heart,
     Frown,
     ArrowLeft,
     MapPin,
@@ -16,27 +15,28 @@ import {
     ShieldCheck,
     Truck,
     Headphones,
-    Video
+    Video,
+    Sparkles
 } from "lucide-react";
 import { MdSelfImprovement, MdVolunteerActivism } from "react-icons/md";
 
-export default function Cart() {
+export default function Wishlist() {
     const navigate = useNavigate();
     const {
-        cartItems,
+        wishlistItems,
         loading,
         updateItemQuantity,
         removeItem,
         calculateTotal,
-        fetchCart,
-    } = useCart();
+        fetchWishlist,
+    } = useWishlist();
 
     const [removing, setRemoving] = useState(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        fetchCart();
-    }, [fetchCart]);
+        fetchWishlist();
+    }, [fetchWishlist]);
 
     const handleQuantityChange = async (itemId, newQty) => {
         if (newQty < 1) return;
@@ -67,7 +67,7 @@ export default function Cart() {
             case "chadawa_item":
                 return <MdVolunteerActivism className="text-2xl text-marigold" />;
             default:
-                return <ShoppingBag className="text-2xl text-marigold" />;
+                return <Sparkles className="text-2xl text-marigold" />;
         }
     };
 
@@ -76,31 +76,31 @@ export default function Cart() {
             <div className="min-h-screen flex items-center justify-center bg-paper-bg">
                 <div className="text-center">
                     <div className="animate-spin h-12 w-12 border-4 border-marigold border-t-sindoor rounded-full mx-auto mb-4"></div>
-                    <p className="text-stone-500">Loading your sacred offerings...</p>
+                    <p className="text-stone-500">Loading your divine wishlist...</p>
                 </div>
             </div>
         );
     }
 
-    if (cartItems.length === 0) {
+    if (wishlistItems.length === 0) {
         return (
             <div className="min-h-screen bg-paper-bg py-16 px-6">
                 <div className="max-w-[800px] mx-auto text-center">
                     <div className="relative mb-8">
                         <div className="w-40 h-40 bg-marigold/10 rounded-full mx-auto flex items-center justify-center">
-                            <ShoppingCart className="w-20 h-20 text-marigold/50" />
+                            <Heart className="w-20 h-20 text-marigold/50" />
                         </div>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <Frown className="w-16 h-16 text-sindoor animate-bounce" />
+                            <Frown className="w-16 h-16 text-sindoor animate-pulse" />
                         </div>
                     </div>
 
                     <h1 className="text-3xl font-serif text-sindoor mb-4">
-                        Your Sacred Cart is Empty
+                        Your Sacred Wishlist is Empty
                     </h1>
                     <p className="text-stone-500 mb-8 max-w-md mx-auto">
-                        Begin your spiritual journey by adding divine poojas and chadawa
-                        offerings to receive blessings from the almighty.
+                        Begin your spiritual journey by saving divine poojas and chadawa
+                        offerings to your wishlist for future blessings.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -137,10 +137,10 @@ export default function Cart() {
                                 <ArrowLeft className="text-stone-600 w-6 h-6" />
                             </button>
                             <div>
-                                <h1 className="text-2xl font-serif text-sindoor">Sacred Cart</h1>
+                                <h1 className="text-2xl font-serif text-sindoor">My Sacred Wishlist</h1>
                                 <p className="text-sm text-stone-500">
-                                    {cartItems.length} {cartItems.length === 1 ? "item" : "items"} •
-                                    Ready for divine blessings
+                                    {wishlistItems.length} {wishlistItems.length === 1 ? "item" : "items"} •
+                                    Saved for divine blessings
                                 </p>
                             </div>
                         </div>
@@ -155,7 +155,7 @@ export default function Cart() {
             <div className="max-w-[1280px] mx-auto px-6 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-4">
-                        {cartItems.map((item) => (
+                        {wishlistItems.map((item) => (
                             <div
                                 key={item.id}
                                 className={`bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all ${removing === item.id ? "opacity-50 scale-98" : ""
@@ -277,13 +277,13 @@ export default function Cart() {
                             <div className="p-6 border-b border-stone-100">
                                 <h2 className="text-xl font-serif text-sindoor flex items-center gap-2">
                                     <Receipt className="text-marigold w-6 h-6" />
-                                    Order Summary
+                                    Booking Summary
                                 </h2>
                             </div>
 
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between text-stone-600">
-                                    <span>Subtotal ({cartItems.length} items)</span>
+                                    <span>Subtotal ({wishlistItems.length} items)</span>
                                     <span className="font-medium">
                                         ₹{calculateTotal().toLocaleString()}
                                     </span>
@@ -311,10 +311,10 @@ export default function Cart() {
                                 </div>
 
                                 <button
-                                    onClick={() => navigate("/checkout")}
+                                    onClick={() => navigate("/booking-checkout")}
                                     className="w-full bg-sindoor text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all shadow-lg shadow-sindoor/20 mt-4"
                                 >
-                                    Proceed to Checkout
+                                    Proceed to Booking
                                     <ArrowRight className="w-5 h-5" />
                                 </button>
 
@@ -353,10 +353,10 @@ export default function Cart() {
                         </p>
                     </div>
                     <button
-                        onClick={() => navigate("/checkout")}
+                        onClick={() => navigate("/booking-checkout")}
                         className="flex-1 bg-sindoor text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all"
                     >
-                        Checkout
+                        Book Now
                         <ArrowRight className="w-5 h-5" />
                     </button>
                 </div>

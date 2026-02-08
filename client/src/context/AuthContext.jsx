@@ -32,12 +32,12 @@ export const AuthProvider = ({ children }) => {
         setAuthToken(token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
-        return { success: true };
+        return { success: true, user };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || "Login failed" 
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed"
       };
     }
   };

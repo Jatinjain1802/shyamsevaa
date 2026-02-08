@@ -38,6 +38,9 @@ import paymentRoutes from "./routes/payment.routes.js";
 // Admin Dashboard
 import adminDashboardRoutes from "./routes/adminDashboard.routes.js";
 
+// Search
+import searchRoutes from "./routes/search.routes.js";
+
 // Blogs (optional but DB me hai)
 //import blogRoutes from "./routes/blog.routes.js";
 
@@ -97,6 +100,9 @@ app.use("/api", paymentRoutes);
 
 // Admin Dashboard (orders, bookings, stats)
 app.use("/api", adminDashboardRoutes);
+
+// Search
+app.use("/api/search", searchRoutes);
 
 // Blogs
 //app.use("/api/blogs", blogRoutes);

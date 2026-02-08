@@ -56,7 +56,19 @@ export const getPoojaById = async (id) => {
 };
 
 export const getAllPoojas = async () => {
-  const [rows] = await db.query("SELECT * FROM poojas");
+  const [rows] = await db.query(`
+    SELECT p.*, 
+           t.title AS temple_name, 
+           t.city AS temple_city, 
+           t.state AS temple_state
+    FROM poojas p
+    LEFT JOIN (
+        SELECT pooja_id, MIN(temple_id) as tid
+        FROM pooja_temples
+        GROUP BY pooja_id
+    ) first_pt ON p.id = first_pt.pooja_id
+    LEFT JOIN temples t ON first_pt.tid = t.id
+  `);
   return rows;
 };
 

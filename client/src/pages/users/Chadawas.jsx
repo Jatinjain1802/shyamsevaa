@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generateSlug } from "../../utils/slugify";
-import UnifiedCard from "../../components/common/UnifiedCard";
-import { Search, X, AlertCircle, RefreshCw, Heart } from "lucide-react";
+import { Search, X, AlertCircle, RefreshCw, User, ArrowRight } from "lucide-react";
 import { MdVolunteerActivism } from "react-icons/md";
 
 export default function Chadawas() {
@@ -48,13 +47,12 @@ export default function Chadawas() {
     }, [searchQuery, chadawas]);
 
     const SkeletonCard = () => (
-        <div className="bg-white rounded-t-[40px] rounded-b-xl overflow-hidden shadow-xl border-b-4 border-stone-200 animate-pulse">
-            <div className="h-64 bg-stone-200"></div>
-            <div className="p-6">
-                <div className="h-6 bg-stone-200 rounded mb-3 w-3/4"></div>
-                <div className="h-4 bg-stone-200 rounded mb-2"></div>
-                <div className="h-4 bg-stone-200 rounded mb-2 w-5/6"></div>
-                <div className="h-10 bg-stone-200 rounded-xl mt-4"></div>
+        <div className="bg-white rounded-4xl overflow-hidden shadow-xl border border-stone-100 animate-pulse h-[450px]">
+            <div className="h-72 bg-stone-200"></div>
+            <div className="p-8">
+                <div className="h-6 bg-stone-200 rounded mb-4 w-3/4"></div>
+                <div className="h-4 bg-stone-200 rounded mb-6 w-5/6"></div>
+                <div className="h-12 bg-stone-200 rounded-xl mt-auto"></div>
             </div>
         </div>
     );
@@ -62,13 +60,12 @@ export default function Chadawas() {
     if (loading) {
         return (
             <div className="min-h-screen bg-paper-bg pt-8 pb-12">
-                <div className="hidden md:block toran-border mb-8"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <div className="h-12 bg-stone-200 rounded w-64 mx-auto mb-4 animate-pulse"></div>
                         <div className="h-4 bg-stone-200 rounded w-96 mx-auto animate-pulse"></div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
                     </div>
                 </div>
@@ -98,37 +95,56 @@ export default function Chadawas() {
     }
 
     return (
-        <div className="min-h-screen bg-paper-bg pt-8 pb-12">
-            <div className="hidden md:block toran-border mb-8"></div>
+        <div
+            className="min-h-screen relative py-12"
+            style={{
+                backgroundImage: 'url("/images/vintage.jpg")',
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundAttachment: 'fixed'
+            }}
+        >
+            {/* Light Overlay for better text contrast */}
+            <div className="absolute inset-0 bg-marigold-100/30"></div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="py-4 text-sm text-stone-500 font-bold tracking-widest uppercase mb-4">
+            {/* Pattern Overlay */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none"
+                style={{
+                    backgroundImage: 'url("/images/diwali-festival-patterned-background.png")',
+                    backgroundSize: '400px',
+                    backgroundRepeat: 'repeat',
+                    filter: 'invert(1)'
+                }}>
+            </div>
+
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="py-4 text-sm text-stone-600 font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
                     <Link to="/" className="hover:text-sindoor transition-colors">Home</Link>
-                    <span className="mx-2 text-marigold">/</span>
+                    <span className="text-marigold">/</span>
                     <span className="text-sindoor">Chadawas</span>
                 </div>
 
                 <div className="text-center mb-12">
                     <MdVolunteerActivism className="text-marigold text-5xl mb-2 mx-auto" />
-                    <h1 className="text-4xl md:text-5xl text-sindoor mb-4 font-serif">
-                        Sacred Chadawas
+                    <h1 className="text-4xl md:text-6xl text-heritage-dark mb-4 font-serif font-bold">
+                        Sacred <span className="text-sindoor">Chadawas</span>
                     </h1>
-                    <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans italic">
+                    <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans leading-relaxed">
                         Offer your devotion through sacred items. Send your love and prayers to the deity with our verified chadawa services.
                     </p>
                     <div className="w-24 h-1 bg-marigold mx-auto mt-6 rounded-full"></div>
                 </div>
 
-                <div className="mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-marigold/20">
+                <div className="mb-12 bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/50">
                     <div className="flex flex-col md:flex-row gap-4 items-center">
-                        <div className="flex-1 w-full relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5" />
+                        <div className="flex-1 w-full relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5 group-focus-within:text-marigold transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search chadawas by name or description..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-stone-200 focus:border-marigold focus:outline-none transition-colors font-sans"
+                                className="w-full pl-12 pr-4 py-4 rounded-xl border border-stone-200 bg-white/50 focus:bg-white focus:border-marigold focus:ring-4 focus:ring-marigold/10 outline-none transition-all font-sans text-stone-700"
                                 aria-label="Search chadawas"
                             />
                             {searchQuery && (
@@ -142,22 +158,60 @@ export default function Chadawas() {
                             )}
                         </div>
 
-                        <div className="text-sm text-stone-500 font-medium">
+                        <div className="text-sm text-stone-600 font-medium px-4 py-2 bg-marigold/10 rounded-full border border-marigold/20">
                             Showing <span className="text-sindoor font-bold">{filteredChadawas.length}</span> of {chadawas.length} chadawas
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredChadawas.map((item) => (
-                        <UnifiedCard
+                        <Link
+                            to={`/chadawas/${generateSlug(item.title, item.id)}`}
                             key={item.id}
-                            image={item.image}
-                            title={item.title}
-                            description={item.description}
-                            link={`/chadawas/${generateSlug(item.title, item.id)}`}
-                            buttonText="Offer Now"
-                        />
+                            className="group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col h-full"
+                        >
+                            {/* Card Image */}
+                            <div className="relative aspect-4/3 w-full overflow-hidden shrink-0">
+                                <div className="absolute" />
+                                <img
+                                    src={item.image}
+                                    alt={item.title}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                            </div>
+
+                            {/* Card Content */}
+                            <div className="relative p-8 flex flex-col flex-1">
+                                {/* Decor Line */}
+                                <div className="absolute -top-6 right-8 w-12 h-12 bg-marigold rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                                    <MdVolunteerActivism className="text-white w-6 h-6" />
+                                </div>
+
+                                <div className="mb-2 flex items-center gap-2 text-stone-500 text-sm font-medium">
+                                    <User className="text-marigold w-4 h-4" />
+                                    <span className="truncate">Devotees' Choice</span>
+                                </div>
+
+                                <h3 className="text-2xl font-serif font-bold text-heritage-dark mb-3 leading-snug group-hover:text-sindoor transition-colors line-clamp-2">
+                                    {item.title}
+                                </h3>
+
+                                <p className="text-stone-600 mb-8 line-clamp-3 leading-relaxed flex-1">
+                                    {item.description}
+                                </p>
+
+                                <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between">
+                                    <div
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-sindoor text-white font-bold rounded-xl group-hover:bg-marigold group-hover:shadow-lg transition-all duration-300"
+                                    >
+                                        <span>Send Offering</span>
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
                     ))}
                 </div>
 
@@ -180,7 +234,7 @@ export default function Chadawas() {
                     </div>
                 )}
 
-                {chadawas.length === 0 && (
+                {chadawas.length === 0 && !loading && !error && (
                     <div className="text-center py-20 bg-white/60 rounded-[3rem] shadow-sm border border-marigold/30 backdrop-blur-sm">
                         <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                             <MdVolunteerActivism className="text-sindoor text-4xl" />
