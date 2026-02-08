@@ -60,7 +60,7 @@ app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "🚀 ShyamSevaa API is running",
+    message: "🚀 Shyampuja API is running",
   });
 });
 

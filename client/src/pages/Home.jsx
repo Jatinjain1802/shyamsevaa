@@ -7,7 +7,7 @@ import ChadawaSection from "../components/home/ChadawaSection";
 
 /**
  * Home Component
- * Redesigned to match ShyamPoja "Heritage Home" aesthetic.
+ * Redesigned to match Shyampuja "Heritage Home" aesthetic.
  */
 export default function Home() {
   return (

@@ -1,34 +1,83 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Martel', serif;
-  --font-serif: 'Yatra One', cursive;
+  /* ========== PREMIUM TYPOGRAPHY ========== */
+  --font-sans: 'Poppins', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-display: 'EB Garamond', serif;
+  --font-traditional: 'Yatra One', cursive;
   --font-outfit: 'Outfit', sans-serif;
   --font-cinzel: 'Cinzel', serif;
   --font-hindi: 'Tiro Devanagari Hindi', serif;
+  --font-martel: 'Martel', serif;
 
-  --color-sindoor: #8E1616;
-  --color-marigold: #F39200;
-  --color-haldi: #FFC107;
-  --color-paper-bg: #FCF8F1;
+  /* ========== SACRED COLOR PALETTE ========== */
+  /* Primary - Sindoor (Sacred Red) */
+  --color-sindoor: #C41E3A;
+  --color-sindoor-light: #E63946;
+  --color-sindoor-dark: #8B1538;
+  --color-sindoor-50: rgba(196, 30, 58, 0.05);
+  --color-sindoor-100: rgba(196, 30, 58, 0.1);
+
+  /* Secondary - Marigold (Temple Flower) */
+  --color-marigold: #FF8C00;
+  --color-marigold-light: #FFA500;
+  --color-marigold-dark: #E67E00;
+
+  /* Accent - Haldi (Turmeric Gold) */
+  --color-haldi: #FFD700;
+  --color-haldi-light: #FFE44D;
+  --color-haldi-dark: #DAA520;
+
+  /* Sacred Blue - Krishna */
+  --color-krishna: #1E3A8A;
+  --color-krishna-light: #3B82F6;
+  --color-krishna-dark: #1E40AF;
+
+  /* Sacred Saffron */
+  --color-saffron: #FF9933;
+  --color-saffron-light: #FFB366;
+  --color-saffron-dark: #CC7A29;
+
+  /* Backgrounds */
+  --color-paper-bg: #FFF9F0;
+  --color-cream: #FAF8F3;
+  --color-ivory: #FFFFF0;
+
+  /* Text Colors */
   --color-heritage-dark: #2D1B1B;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A4A4A;
+  --color-text-light: #6B6B6B;
+  --color-text-muted: #9CA3AF;
 
-  --color-primary: #F25D11;
-  --color-primary-dark: #D14909;
-  --color-secondary: #FFF8F0;
-  --color-accent: #FFD700;
+  /* Utility Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
   --color-whatsapp: #25D366;
-  --color-text-dark: #2D1810;
-  --color-text-light: #555555;
 
-  --animate-fade-in: fadeIn 0.5s ease-out forwards;
-  --animate-slide-up: slideUp 0.5s ease-out forwards;
-  --animate-blob: blob 7s infinite;
+  /* ========== PREMIUM GRADIENTS ========== */
+  --gradient-sunset: linear-gradient(135deg, #FF9933 0%, #FF8C00 50%, #C41E3A 100%);
+  --gradient-divine: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%);
+  --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+  --gradient-temple: linear-gradient(180deg, rgba(196, 30, 58, 0.95) 0%, rgba(139, 21, 56, 0.85) 100%);
+  --gradient-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+
+  /* ========== ENHANCED ANIMATIONS ========== */
+  --animate-fade-in: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-up: slideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-down: slideDown 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-scale-in: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-blob: blob 8s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-delayed: float-reverse 7s ease-in-out infinite 1s;
-  --animate-marquee: marquee 25s linear infinite;
+  --animate-glow: glow 2s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
   --animate-spin-slow: spin-slow 20s linear infinite;
+  --animate-pulse-slow: pulse-slow 3s ease-in-out infinite;
 
+  /* ========== KEYFRAME ANIMATIONS ========== */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -42,7 +91,7 @@
   @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
     }
 
     to {
@@ -51,8 +100,34 @@
     }
   }
 
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   @keyframes blob {
-    0% {
+
+    0%,
+    100% {
       transform: translate(0px, 0px) scale(1);
     }
 
@@ -62,10 +137,6 @@
 
     66% {
       transform: translate(-20px, 20px) scale(0.9);
-    }
-
-    100% {
-      transform: translate(0px, 0px) scale(1);
     }
   }
 
@@ -77,7 +148,7 @@
     }
 
     50% {
-      transform: translateY(-20px) rotate(5deg);
+      transform: translateY(-20px) rotate(3deg);
     }
   }
 
@@ -89,17 +160,29 @@
     }
 
     50% {
-      transform: translateY(20px) rotate(-5deg);
+      transform: translateY(20px) rotate(-3deg);
     }
   }
 
-  @keyframes marquee {
+  @keyframes glow {
+
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    50% {
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+    }
+  }
+
+  @keyframes shimmer {
     0% {
-      transform: translateX(0%);
+      background-position: -1000px 0;
     }
 
     100% {
-      transform: translateX(-100%);
+      background-position: 1000px 0;
     }
   }
 
@@ -112,34 +195,81 @@
       transform: rotate(360deg);
     }
   }
+
+  @keyframes pulse-slow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+  }
 }
 
+/* ========== BASE STYLES ========== */
 @layer base {
+  * {
+    @apply antialiased;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: var(--color-paper-bg);
-    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
-    color: var(--color-heritage-dark);
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(255, 153, 51, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(196, 30, 58, 0.03) 0%, transparent 50%),
+      url("https://www.transparenttextures.com/patterns/handmade-paper.png");
+    color: var(--color-text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   h1,
   h2,
-  h3,
-  .heading-devanagari {
+  h3 {
     font-family: var(--font-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  .heading-devanagari {
+    font-family: var(--font-hindi);
+  }
+
+  .heading-traditional {
+    font-family: var(--font-traditional);
+  }
+
+  p {
+    line-height: 1.7;
   }
 }
 
+/* ========== COMPONENT UTILITIES ========== */
 @layer components {
+
+  /* ===== DECORATIVE ELEMENTS ===== */
   .toran-border {
-    height: 24px;
-    background-image: radial-gradient(circle at 12px 0, transparent 10px, var(--color-marigold) 11px, var(--color-marigold) 13px, transparent 14px);
-    background-size: 24px 24px;
+    height: 28px;
+    background-image: radial-gradient(circle at 14px 0,
+        transparent 11px,
+        var(--color-marigold) 12px,
+        var(--color-marigold) 14px,
+        transparent 15px);
+    background-size: 28px 28px;
     width: 100%;
     position: relative;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
 
   .toran-border::after {
@@ -148,42 +278,209 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: var(--color-sindoor);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(243, 146, 0, 0.2);
-  }
-
-  .muhurat-badge {
-    background: linear-gradient(135deg, var(--color-sindoor), #5a0e0e);
-  }
-
-  .mandap-gradient {
-    background: linear-gradient(to bottom, rgba(142, 22, 22, 0.9), rgba(142, 22, 22, 0.4));
+    height: 5px;
+    background: linear-gradient(90deg, var(--color-sindoor) 0%, var(--color-marigold) 50%, var(--color-sindoor) 100%);
   }
 
   .garland-decoration {
-    background-image: radial-gradient(circle, var(--color-marigold) 30%, var(--color-haldi) 70%);
-    width: 20px;
-    height: 20px;
+    background: radial-gradient(circle, var(--color-marigold) 0%, var(--color-haldi) 70%);
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     display: inline-block;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    animation: var(--animate-pulse-slow);
   }
 
+  .om-symbol {
+    font-family: var(--font-hindi);
+    font-size: 2rem;
+    color: var(--color-sindoor);
+    filter: drop-shadow(0 2px 4px rgba(196, 30, 58, 0.3));
+  }
+
+  /* ===== GLASS MORPHISM ===== */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .glass-card-dark {
+    background: rgba(45, 27, 27, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ===== GRADIENT BACKGROUNDS ===== */
+  .mandap-gradient {
+    background: var(--gradient-temple);
+  }
+
+  .sunset-gradient {
+    background: var(--gradient-sunset);
+  }
+
+  .divine-gradient {
+    background: var(--gradient-divine);
+  }
+
+  .gold-gradient {
+    background: var(--gradient-gold);
+  }
+
+  /* ===== BADGES & PILLS ===== */
+  .muhurat-badge {
+    background: var(--gradient-sunset);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3);
+    animation: var(--animate-glow);
+  }
+
+  .sacred-badge {
+    background: var(--gradient-divine);
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== BUTTONS ===== */
   .btn-primary-custom {
-    @apply bg-sindoor text-white px-6 py-2 rounded-full font-bold text-sm shadow-md hover:bg-sindoor/90 transition-all duration-300 flex items-center justify-center gap-2;
+    @apply relative overflow-hidden;
+    background: var(--gradient-sunset);
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba(196, 30, 58, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(196, 30, 58, 0.4);
+  }
+
+  .btn-primary-custom:active {
+    transform: translateY(0);
   }
 
   .btn-outline-custom {
-    @apply border-2 border-sindoor text-sindoor px-6 py-2 rounded-full font-bold hover:bg-sindoor hover:text-white transition-all duration-300;
+    @apply relative overflow-hidden;
+    background: transparent;
+    border: 2px solid var(--color-sindoor);
+    color: var(--color-sindoor);
+    padding: 0.75rem 1.75rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
+  .btn-outline-custom:hover {
+    background: var(--color-sindoor);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(196, 30, 58, 0.3);
+  }
+
+  .btn-gold {
+    background: var(--gradient-gold);
+    color: var(--color-heritage-dark);
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba(255, 140, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 140, 0, 0.4);
+  }
+
+  /* ===== CARDS ===== */
+  .premium-card {
+    @apply bg-white rounded-2xl shadow-lg overflow-hidden;
+    border: 1px solid rgba(196, 30, 58, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .premium-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-marigold);
+  }
+
+  /* ===== DIVIDERS ===== */
   .section-divider {
-    @apply border-b border-sindoor/10 pb-16 mb-16;
+    @apply relative pb-20 mb-20;
+  }
+
+  .section-divider::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: var(--gradient-sunset);
+    border-radius: 9999px;
+  }
+
+  .ornamental-divider {
+    @apply flex items-center justify-center gap-4 my-12;
+  }
+
+  /* ===== SHIMMER EFFECT ===== */
+  .shimmer {
+    background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  /* ===== SCROLL ANIMATIONS ===== */
+  .fade-in-up {
+    animation: var(--animate-slide-up);
+  }
+
+  .fade-in {
+    animation: var(--animate-fade-in);
+  }
+
+  .scale-in {
+    animation: var(--animate-scale-in);
   }
 }

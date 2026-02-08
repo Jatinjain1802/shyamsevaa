@@ -1,19 +1,20 @@
-import { ChevronRight, Calendar } from "lucide-react";
-import api from "../../utils/axios"; // Adjust path if needed
-import { useEffect, useState } from "react";
-import UnifiedCard from '../common/UnifiedCard';
+
+import { ChevronRight, Calendar, MapPin, ArrowRight, ChevronLeft } from "lucide-react";
+import { MdTempleHindu } from "react-icons/md";
+import api from "../../utils/axios";
+import { useEffect, useState, useRef } from "react";
 import { generateSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 
 export default function PujaSection() {
     const [pujas, setPujas] = useState([]);
+    const scrollContainerRef = useRef(null);
 
     useEffect(() => {
-        // Fetch limited number of pujas for the home section
         const fetchPujas = async () => {
             try {
-                const res = await api.get("/poojas?limit=3");
-                setPujas(res.data.data ? res.data.data.slice(0, 3) : []);
+                const res = await api.get("/poojas"); // Removed limit to fetch all
+                setPujas(res.data.data || []);
             } catch (err) {
                 console.error("Failed to fetch pujas for home section", err);
             }
@@ -21,55 +22,143 @@ export default function PujaSection() {
         fetchPujas();
     }, []);
 
+    const scroll = (direction) => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            const scrollAmount = container.clientWidth; // Scroll one full view width
+            const targetScroll = container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+            container.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+        }
+    };
+
     if (!pujas.length) return null;
 
     return (
-        <section className="py-20 bg-orange-50/30">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <section
+            className="relative py-18 overflow-hidden"
+            style={{
+                backgroundImage: 'url("/images/simple2.jpg")',
+                // backgroundSize: '100% 100%',
+                backgroundPosition: 'top center',
+                backgroundAttachment: 'fixed'
+            }}
+        >
+            {/* Premium Overlay */}
+            <div className="absolute inset-0 bg-marigold-100/30"></div>
+
+            <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Section Header */}
+                <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                     <div className="text-center md:text-left">
-                        <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
-                            <Calendar className="text-marigold w-5 h-5" />
-                            <span className="text-marigold font-bold tracking-widest uppercase text-sm"> Sacred Rituals</span>
-                        </div>
-                        <h2 className="text-4xl md:text-5xl font-serif text-sindoor mb-4">
-                            Featured Poojas
+                        <h2 className="text-4xl md:text-6xl font-serif font-bold text-heritage-dark mb-6 leading-tight">
+                            Featured <span className="text-sindoor">Poojas</span>
                         </h2>
-                        <p className="text-lg text-stone-600 max-w-xl font-sans italic">
-                            Participate in powerful rituals performed at ancient temples. Book online and receive divine blessings.
+                        <p className="text-lg text-stone-600 max-w-xl font-sans leading-relaxed">
+                            Participate in powerful rituals performed at ancient temples. Book online and receive divine blessings directly to your home.
                         </p>
                     </div>
 
-                    <Link
-                        to="/poojas"
-                        className="hidden md:flex items-center px-6 py-3 bg-white border-2 border-marigold text-marigold rounded-full font-bold hover:bg-marigold hover:text-white transition-all duration-300 group"
-                    >
-                        View All Poojas
-                        <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    {/* Navigation Buttons for Desktop */}
+                    <div className="hidden md:flex items-center gap-4">
+                        <button
+                            onClick={() => scroll('left')}
+                            className="w-12 h-12 rounded-full bg-white border border-marigold/30 text-marigold flex items-center justify-center hover:bg-marigold hover:text-white transition-all shadow-lg hover:shadow-marigold/30 active:scale-95"
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                            onClick={() => scroll('right')}
+                            className="w-12 h-12 rounded-full bg-white border border-marigold/30 text-marigold flex items-center justify-center hover:bg-marigold hover:text-white transition-all shadow-lg hover:shadow-marigold/30 active:scale-95"
+                        >
+                            <ChevronRight className="w-6 h-6" />
+                        </button>
+                        <Link
+                            to="/poojas"
+                            className="inline-flex items-center px-6 py-3 bg-linear-to-r from-sindoor to-marigold text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:shadow-sindoor/30 transition-all duration-300 ml-4"
+                        >
+                            View All
+                            <ChevronRight className="ml-1 w-5 h-5" />
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Horizontal Scroll Container */}
+                <div
+                    ref={scrollContainerRef}
+                    className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-12 scrollbar-none items-stretch -mx-4 px-4 md:mx-0 md:px-0"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
                     {pujas.map((puja) => (
-                        <UnifiedCard
+                        <div
                             key={puja.id}
-                            image={puja.image}
-                            title={puja.title}
-                            description={puja.description}
-                            link={`/poojas/${generateSlug(puja.title, puja.id)}`}
-                            buttonText="Book Seva"
-                            price={puja.variants?.[0]?.price}
-                        />
+                            className="min-w-[85vw] md:min-w-[45%] lg:min-w-[calc(33.333%-1rem)] snap-center group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col"
+                            style={{ transform: "translateZ(0)" }}
+                        >
+                            {/* Card Image */}
+                            <div className="relative h-64 md:h-72 overflow-hidden shrink-0">
+                                <div className="absolute" />
+                                <img
+                                    src={puja.image}
+                                    alt={puja.title}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                            </div>
+
+                            {/* Card Content */}
+                            <div className="relative p-6 md:p-8 flex flex-col flex-1">
+                                {/* Decor Line */}
+                                <div className="absolute -top-6 right-8 w-12 h-12 bg-marigold rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                                    <Calendar className="text-white w-6 h-6" />
+                                </div>
+
+                                <div className="mb-2 flex items-center gap-2 text-stone-500 text-sm font-medium">
+                                    <MdTempleHindu className="text-marigold text-lg" />
+                                    <span className="truncate">{puja.temple_name || "Ancient Temple"}</span>
+                                </div>
+
+                                <h3 className="text-2xl font-serif font-bold text-heritage-dark mb-3 leading-snug group-hover:text-sindoor transition-colors line-clamp-2">
+                                    {puja.title}
+                                </h3>
+
+                                <div className="flex items-center gap-2 mb-4 text-stone-500 text-sm">
+                                    <MapPin className="w-4 h-4 text-marigold" />
+                                    <span>{puja.location || "Ujjain, Madhya Pradesh"}</span>
+                                </div>
+
+                                <p className="text-stone-600 mb-8 line-clamp-2 leading-relaxed flex-1">
+                                    {puja.description}
+                                </p>
+
+                                <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-xs text-stone-400 font-bold uppercase tracking-wider mb-1">Dakshina</p>
+                                        <p className="text-xl font-bold text-sindoor">
+                                            ₹{puja.variants?.[0]?.price || "2100"}
+                                        </p>
+                                    </div>
+                                    <Link
+                                        to={`/poojas/${generateSlug(puja.title, puja.id)}`}
+                                        className="inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-marigold/20 text-marigold hover:bg-marigold hover:text-white hover:border-marigold transition-all duration-300"
+                                    >
+                                        <ArrowRight className="w-5 h-5" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
 
-                <div className="mt-12 text-center md:hidden">
+                <div className="mt-16 text-center md:hidden">
                     <Link
                         to="/poojas"
-                        className="inline-flex items-center px-6 py-3 bg-white border-2 border-marigold text-marigold rounded-full font-bold hover:bg-marigold hover:text-white transition-all duration-300 group"
+                        className="inline-flex items-center px-8 py-4 bg-white border-2 border-marigold text-marigold rounded-full font-bold hover:bg-marigold hover:text-white transition-all duration-300 shadow-lg"
                     >
-                        View All Poojas
-                        <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        View All Services
+                        <ChevronRight className="ml-2 w-5 h-5" />
                     </Link>
                 </div>
             </div>

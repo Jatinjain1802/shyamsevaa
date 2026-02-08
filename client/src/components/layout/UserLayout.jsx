@@ -6,7 +6,7 @@ export default function UserLayout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1 mt-[72px]"> {/* Offset for fixed navbar */}
+      <main className="flex-1"> {/* Navbar is sticky, no margin-top needed */}
         <Outlet />
       </main>
       <Footer />

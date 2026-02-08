@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Menu, X, Search, Bell, ShoppingBag, User } from "lucide-react";
-import { MdTempleHindu } from "react-icons/md";
 import { useCart } from "../../context/CartContext";
 
 export default function Navbar() {
@@ -26,74 +25,102 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="flex justify-center gap-1 py-1 bg-sindoor/10 overflow-hidden">
-        {/* Javascript loop for garland decoration not ideal in React, using array map */}
-        {Array.from({ length: 40 }).map((_, i) => (
-          <div key={i} className="garland-decoration"></div>
-        ))}
-      </div>
-      <header className={`relative w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 shadow-md py-2 border-b-4 border-marigold" : "bg-white/90 border-b-4 border-marigold py-4"
+      {/* Premium Navbar */}
+      <header className={`relative w-full sticky top-0 z-50 transition-all duration-500 ${scrolled
+        ? "glass-card shadow-xl py-3 border-b-2 border-marigold/50"
+        : "bg-white/95 backdrop-blur-sm py-5 border-b-2 border-marigold/30"
         }`}>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 flex items-center justify-between">
-          <div className="flex items-center gap-10">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="text-sindoor flex flex-col items-center">
-                <MdTempleHindu className="text-4xl leading-none group-hover:scale-110 transition-transform" />
-                <div className="h-1 w-full bg-haldi mt-1"></div>
+
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between">
+          {/* Logo & Navigation */}
+          <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-4 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-sindoor/10 rounded-full blur-xl group-hover:bg-sindoor/20 transition-all"></div>
+                <div className="relative flex flex-col items-center">
+                  <img
+                    src="/logo.png"
+                    alt="Shyampuja Logo"
+                    className="w-14 h-14 md:w-20 md:h-20 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                  />
+                </div>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-2xl md:text-3xl text-sindoor leading-tight tracking-wide font-serif">ShyamPoja</h1>
-                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-marigold -mt-1">Heritage Home</span>
+                <h1 className="text-3xl md:text-4xl leading-tight tracking-tight font-serif font-bold bg-linear-to-r from-sindoor via-marigold to-sindoor bg-size-[200%_auto] bg-clip-text text-transparent animate-shimmer">
+                  Shyampuja
+                </h1>
+                <span className="text-[11px] uppercase tracking-[0.25em] font-bold text-marigold -mt-0.5 font-sans animate-fade-in">
+                  Divine Services
+                </span>
               </div>
             </Link>
-            <nav className="hidden xl:flex items-center gap-6 font-bold text-sm">
+
+            <nav className="hidden xl:flex items-center gap-8">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
                   className={({ isActive }) =>
-                    `hover:text-sindoor transition-colors border-b-2 ${isActive ? "text-sindoor border-marigold" : "border-transparent text-heritage-dark hover:border-marigold"}`
+                    `relative py-2 font-bold text-sm tracking-wide transition-all duration-300 group ${isActive ? "text-sindoor" : "text-text-secondary hover:text-sindoor"
+                    }`
                   }
                 >
-                  {link.name}
+                  {({ isActive }) => (
+                    <>
+                      {link.name}
+                      <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-sindoor to-marigold transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                        }`}></span>
+                    </>
+                  )}
                 </NavLink>
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-4 md:gap-6">
-            <div className="hidden lg:flex items-center bg-stone-100 rounded-full px-4 py-1.5 border border-marigold/30">
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 md:gap-5">
+            {/* Search Bar */}
+            <div className="hidden lg:flex items-center glass-card rounded-full px-5 py-2.5 border border-marigold/20 hover:border-marigold/40 transition-all">
               <Search className="text-marigold w-5 h-5" />
               <input
-                className="bg-transparent border-none focus:ring-0 text-sm w-32 xl:w-48 focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
-                placeholder="Search rituals..."
+                className="bg-transparent border-none focus:ring-0 text-sm w-40 xl:w-56 focus:outline-none ml-3 text-text-primary placeholder-text-muted font-medium"
+                placeholder="Search poojas, temples..."
                 type="text"
               />
             </div>
-            <div className="flex items-center gap-3">
-              <button className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors hidden sm:block">
+
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Notifications */}
+              <button className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 hidden sm:block relative group">
                 <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-marigold rounded-full animate-pulse"></span>
               </button>
-              {/* Cart Icon with Badge */}
+
+              {/* Cart with Badge */}
               <Link
                 to="/cart"
-                className="p-2 text-sindoor hover:bg-sindoor/5 rounded-full transition-colors relative"
+                className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 relative group"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-marigold text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  <span className="absolute -top-1 -right-1 gold-gradient text-heritage-dark text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg animate-pulse">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
               </Link>
+
+              {/* Account Button */}
               <Link
                 to="/login"
-                className="bg-sindoor text-white px-4 md:px-6 py-2 rounded-full font-bold text-sm shadow-md flex items-center gap-2 hover:bg-sindoor/90 transition-all whitespace-nowrap"
+                className="btn-primary-custom shadow-lg hover:shadow-xl"
               >
                 <User className="w-5 h-5" />
-                <span className="hidden sm:inline">MY ACCOUNT</span>
+                <span className="hidden sm:inline">Account</span>
               </Link>
+
+              {/* Mobile Menu Toggle */}
               <button
-                className="xl:hidden p-2 text-sindoor hover:bg-sindoor/10 rounded-full"
+                className="xl:hidden p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all"
                 onClick={() => setIsOpen(true)}
               >
                 <Menu className="w-6 h-6" />
@@ -105,33 +132,39 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md" onClick={() => setIsOpen(false)} />
       )}
 
-      {/* Mobile Menu Drawer */}
-      <div className={`fixed top-0 right-0 z-[70] h-full w-80 bg-paper-bg shadow-2xl transform transition-transform duration-300 ease-in-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"
+      {/* Mobile Menu Drawer - Premium Design */}
+      <div className={`fixed top-0 right-0 z-[70] h-full w-80 glass-card shadow-2xl transform transition-all duration-500 ease-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"
         }`}>
         <div className="flex flex-col h-full">
-          <div className="flex justify-between items-center p-6 border-b border-marigold/20 bg-white">
-            <div className="flex items-center gap-2">
-              <MdTempleHindu className="text-3xl text-sindoor" />
-              <span className="text-xl font-bold text-sindoor font-serif">ShyamPoja</span>
+          {/* Header */}
+          <div className="relative flex justify-between items-center p-6 border-b border-marigold/20 bg-white/50">
+            <div className="absolute top-0 left-0 right-0 h-1 sunset-gradient"></div>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Shyampuja Logo" className="w-10 h-10 object-contain" />
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-sindoor font-serif">Shyampuja</span>
+                <span className="text-[10px] uppercase tracking-widest text-marigold font-bold">Divine Services</span>
+              </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-sindoor hover:bg-sindoor/10 p-2 rounded-full">
+            <button onClick={() => setIsOpen(false)} className="text-sindoor hover:bg-sindoor/10 p-2.5 rounded-full transition-all">
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+          {/* Navigation Links */}
+          <div className="flex-1 overflow-y-auto py-8 px-5 space-y-3">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-3 rounded-xl font-bold transition-all ${isActive
-                    ? "bg-sindoor/10 text-sindoor"
-                    : "text-heritage-dark hover:bg-marigold/10 hover:text-sindoor"
+                  `block px-5 py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 ${isActive
+                    ? "sunset-gradient text-white shadow-lg"
+                    : "text-text-secondary hover:bg-sindoor/10 hover:text-sindoor"
                   }`
                 }
               >
@@ -139,12 +172,13 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            <div className="mt-6 pt-6 border-t border-marigold/20">
-              <div className="flex items-center bg-white rounded-full px-4 py-2 border border-marigold/30 mb-6">
+            {/* Search in Mobile Menu */}
+            <div className="mt-8 pt-8 border-t border-marigold/20">
+              <div className="flex items-center glass-card rounded-full px-5 py-3 border border-marigold/30">
                 <Search className="text-marigold w-5 h-5" />
                 <input
-                  className="bg-transparent border-none focus:ring-0 text-sm w-full focus:outline-none ml-2 text-stone-600 placeholder-stone-400"
-                  placeholder="Search rituals..."
+                  className="bg-transparent border-none focus:ring-0 text-sm w-full focus:outline-none ml-3 text-text-primary placeholder-text-muted font-medium"
+                  placeholder="Search poojas, temples..."
                   type="text"
                 />
               </div>
