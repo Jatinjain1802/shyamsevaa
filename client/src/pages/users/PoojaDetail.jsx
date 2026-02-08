@@ -160,6 +160,70 @@ export default function PoojaDetail() {
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
 
+    // Helper function to format benefits text as beautiful cards
+    const formatBenefitsText = (text) => {
+        if (!text) {
+            return (
+                <div className="text-lg text-stone-700 leading-relaxed italic">
+                    The ritual involves traditional chanting and sacred offerings, creating a powerful spiritual vibration that resonates within the devotee's life.
+                </div>
+            );
+        }
+
+        // Split text by numbers followed by a period or parenthesis (e.g., "1.", "2)", "1 -", etc.)
+        const parts = text.split(/(?=\d+[\.\)\-\s]+)/).filter(p => p.trim());
+
+        // Icons to cycle through for each benefit card
+        const benefitIcons = [Flower, Star, ShieldCheck, CheckCircle, Heart, Coins, Brain, MdSelfImprovement];
+
+        // Check if we have numbered items
+        const hasNumberedItems = parts.some(part => part.trim().match(/^\d+[\.\)\-\s]+/));
+
+        if (!hasNumberedItems) {
+            // No numbered items, return as regular text
+            return <div className="text-lg text-stone-700 leading-relaxed">{text}</div>;
+        }
+
+        return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                {parts.map((part, index) => {
+                    const trimmedPart = part.trim();
+                    const isNumbered = trimmedPart.match(/^(\d+)[\.\)\-\s]+([\s\S]+)/);
+
+                    if (!isNumbered) {
+                        // Introductory text before numbered items
+                        return (
+                            <div key={index} className="text-lg text-stone-700 leading-relaxed mb-2">
+                                {trimmedPart}
+                            </div>
+                        );
+                    }
+
+                    const number = isNumbered[1];
+                    const content = isNumbered[2];
+                    const IconComponent = benefitIcons[index % benefitIcons.length];
+
+                    return (
+                        <div
+                            key={index}
+                            className="bg-white p-6 rounded-2xl shadow-sm border border-marigold/10 flex flex-col items-center text-center hover:shadow-md transition-all group"
+                        >
+                            {/* Icon */}
+                            <div className="mb-4">
+                                <IconComponent className="text-marigold w-10 h-10 group-hover:scale-110 transition-transform" />
+                            </div>
+
+                            {/* Content */}
+                            <p className="text-sm text-stone-600 leading-relaxed font-medium">
+                                {content}
+                            </p>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
     // STATE MANAGEMENT
     const [data, setData] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState(null);
@@ -435,29 +499,14 @@ export default function PoojaDetail() {
                                 <p className="text-lg text-stone-700 leading-relaxed mb-6">
                                     {pooja.description || "This sacred ritual is performed with strict Vedic protocols to invoke divine blessings and spiritual power. Worshipping at the start of any new venture ensures the removal of karmic hurdles and brings prosperity to your household."}
                                 </p>
-                                <p className="text-lg text-stone-700 leading-relaxed">
-                                    The ritual involves traditional chanting and sacred offerings, creating a powerful spiritual vibration that resonates within the devotee's life.
-                                </p>
+
                             </div>
                             <div className="w-full md:w-1/2">
                                 <h2 className="text-2xl md:text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
                                     Blessings & Fruits
                                     <span className="w-8 md:w-12 h-px bg-marigold"></span>
                                 </h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {[
-                                        { icon: Flower, title: 'Vighna Nashak', desc: 'Removal of all unseen obstacles and hurdles in life.' },
-                                        { icon: Coins, title: 'Riddhi Siddhi', desc: 'Attraction of wealth, wisdom, and overall prosperity.' },
-                                        { icon: Home, title: 'Griha Shanti', desc: 'Spiritual purification of the home and family bonds.' },
-                                        { icon: Brain, title: 'Buddhi Vardhak', desc: 'Enhanced intellectual capacity and decision making.' },
-                                    ].map((item, idx) => (
-                                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-marigold/10 flex flex-col items-center text-center hover:shadow-md transition-all">
-                                            <item.icon className="text-marigold w-10 h-10 mb-4" />
-                                            <h4 className="font-bold text-sindoor mb-2">{item.title}</h4>
-                                            <p className="text-sm text-stone-500">{item.desc}</p>
-                                        </div>
-                                    ))}
-                                </div>
+                                {formatBenefitsText(pooja.benefits)}
                             </div>
                         </div>
                     </div>
