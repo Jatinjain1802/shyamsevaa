@@ -9,6 +9,9 @@ import {
   getAllPoojas,
 } from "../controllers/poojas.contoller.js";
 
+import * as poojaFaqs from "../controllers/poojaFaq.controller.js";
+
+
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -39,4 +42,21 @@ router.get("/temple/:templeId", getPoojasByTemple);
 // DETAIL
 router.get("/:poojaId", getPoojaDetail);
 
-export default router;
+router.get("/:poojaId/faqs", poojaFaqs.getPoojaFaqs);
+
+router.post(
+  "/faq",
+  authMiddleware,
+  adminMiddleware,
+  poojaFaqs.createPoojaFaq
+);
+
+router.delete(
+  "/faq/:faqId",
+  authMiddleware,
+  adminMiddleware,
+  poojaFaqs.deletePoojaFaq
+);
+
+
+export default router; 

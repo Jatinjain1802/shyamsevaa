@@ -50,6 +50,55 @@ const useToast = () => {
 };
 
 
+const CountdownDisplay = ({ targetDate }) => {
+    const [timeLeft, setTimeLeft] = useState(null);
+    const [status, setStatus] = useState("loading"); // loading, active, expired
+
+    useEffect(() => {
+        const calculate = () => {
+            const now = new Date().getTime();
+            const target = new Date(targetDate).getTime();
+            const distance = target - now;
+
+            if (distance < 0) {
+                setStatus("expired");
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            setTimeLeft({ days, hours, minutes, seconds });
+            setStatus("active");
+        };
+
+        calculate();
+        // Update every second
+        const interval = setInterval(calculate, 1000);
+
+        return () => clearInterval(interval);
+    }, [targetDate]);
+
+    if (status === "expired") {
+        return <p className="text-xl font-bold text-stone-400">Pooja Completed</p>;
+    }
+
+    if (status === "loading" || !timeLeft) {
+        return <p className="text-xl font-bold text-heritage-dark">Calculating...</p>;
+    }
+
+    return (
+        <div className="flex items-baseline gap-1">
+            <p className="text-xl font-bold text-heritage-dark">
+                {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
+            </p>
+            <span className="text-xs font-medium text-stone-500">left</span>
+        </div>
+    );
+};
+
 // Hero Slideshow Component
 const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
     // Determine images to show: prefer gallery, fallback to mainImage
@@ -237,6 +286,9 @@ export default function PoojaDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [similarLoading, setSimilarLoading] = useState(true);
+    // FAQ State
+    const [faqs, setFaqs] = useState([]);
+    const [activeFaq, setActiveFaq] = useState(null);
 
     // LEARNING: useEffect with dependency array [poojaId]
     // This runs when component mounts AND when poojaId changes
@@ -244,6 +296,9 @@ export default function PoojaDetail() {
         window.scrollTo(0, 0);
         fetchPoojaDetails();
         fetchSimilarPoojas();
+        if (poojaId) {
+            fetchFaqs();
+        }
     }, [slug, poojaId]);
 
     // LEARNING: Separate async functions for better error handling and reusability
@@ -300,6 +355,20 @@ export default function PoojaDetail() {
             // Don't show error for similar poojas - it's not critical
         } finally {
             setSimilarLoading(false);
+        }
+    };
+
+    const fetchFaqs = async () => {
+        if (!poojaId) return;
+        try {
+            const res = await api.get(`/poojas/${poojaId}/faqs`);
+            if (res.data.success) {
+                // Sort by sort_order
+                const sorted = res.data.data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                setFaqs(sorted);
+            }
+        } catch (err) {
+            console.error("Failed to fetch FAQs", err);
         }
     };
 
@@ -526,7 +595,11 @@ export default function PoojaDetail() {
                                 <div className="h-12 w-px bg-stone-200"></div>
                                 <div>
                                     <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Next Muhurat</p>
-                                    <p className="text-xl font-bold text-heritage-dark">Available Daily</p>
+                                    {pooja.pooja_date ? (
+                                        <CountdownDisplay targetDate={pooja.pooja_date} />
+                                    ) : (
+                                        <p className="text-xl font-bold text-heritage-dark">Available Daily</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -768,6 +841,54 @@ export default function PoojaDetail() {
                         </div>
                     </div>
                 </section>
+
+                {/* FAQ Section */}
+                {faqs.length > 0 && (
+                    <section className="py-24 px-6 bg-white">
+                        <div className="max-w-[1000px] mx-auto">
+                            <div className="text-center mb-16">
+                                <h3 className="text-4xl text-sindoor font-serif mb-4">Frequently Asked Questions</h3>
+                                <p className="text-stone-500">Common queries about this sacred ritual</p>
+                            </div>
+
+                            <div className="space-y-4">
+                                {faqs.map((faq, index) => {
+                                    const isOpen = activeFaq === index;
+                                    return (
+                                        <div
+                                            key={faq.id || index}
+                                            className={`border rounded-2xl transition-all duration-300 overflow-hidden ${isOpen ? 'border-marigold bg-marigold/5 shadow-md' : 'border-stone-200 hover:border-marigold/50'
+                                                }`}
+                                        >
+                                            <button
+                                                onClick={() => setActiveFaq(isOpen ? null : index)}
+                                                className="w-full flex items-center justify-between p-6 text-left"
+                                            >
+                                                <span className={`text-lg font-bold transition-colors ${isOpen ? 'text-sindoor' : 'text-stone-700'}`}>
+                                                    {faq.question}
+                                                </span>
+                                                <div className={`p-2 rounded-full transition-colors ${isOpen ? 'bg-sindoor text-white' : 'bg-stone-100 text-stone-500'}`}>
+                                                    {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                                </div>
+                                            </button>
+
+                                            <div
+                                                className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                                                    }`}
+                                            >
+                                                <div className="overflow-hidden">
+                                                    <div className="p-6 pt-0 text-stone-600 leading-relaxed border-t border-marigold/10 mt-2">
+                                                        {faq.answer}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 {/* Similar Poojas */}
                 <section className="py-24 px-6 bg-paper-bg">

@@ -3,6 +3,7 @@ import api from "../../utils/axios";
 import PoojaVariants from "./PoojaVariants";
 import PoojaAddons from "./PoojaAddons";
 import PoojaTemples from "./PoojaTemples";
+import PoojaFaqs from "./PoojaFaqs";
 
 export default function Poojas() {
   const [poojas, setPoojas] = useState([]);
@@ -16,6 +17,7 @@ export default function Poojas() {
     file: null, // Main image File
     description: "",
     benefits: "",
+    pooja_date: "",
     gallery: [], // Existing gallery images (objects with id, image_url)
   });
 
@@ -78,7 +80,7 @@ export default function Poojas() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ title: "", image: "", file: null, description: "", benefits: "", gallery: [] });
+    setForm({ title: "", image: "", file: null, description: "", benefits: "", pooja_date: "", gallery: [] });
     setGalleryFiles([]);
     setShowForm(true);
   };
@@ -136,6 +138,7 @@ export default function Poojas() {
     formData.append("title", form.title);
     formData.append("description", form.description);
     formData.append("benefits", form.benefits);
+    if (form.pooja_date) formData.append("pooja_date", form.pooja_date);
 
     // Append main image file if selected
     if (form.file) {
@@ -264,6 +267,18 @@ export default function Poojas() {
                       placeholder="e.g. Satyanarayan Pooja"
                       className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                       required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Pooja Date
+                    </label>
+                    <input
+                      type="date"
+                      name="pooja_date"
+                      value={form.pooja_date ? form.pooja_date.split('T')[0] : ""}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -418,6 +433,7 @@ export default function Poojas() {
                   <PoojaVariants poojaId={editingId} />
                   <PoojaAddons poojaId={editingId} />
                   <PoojaTemples poojaId={editingId} />
+                  <PoojaFaqs poojaId={editingId} />
                 </div>
               )}
             </div>

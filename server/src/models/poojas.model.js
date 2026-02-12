@@ -3,11 +3,11 @@ import db from "../config/db.js";
 
 /* POOJA */
 
-export const createPooja = async ({ title, image, description, benefits }) => {
+export const createPooja = async ({ title, image, description, benefits, pooja_date }) => {
   const [res] = await db.query(
-    `INSERT INTO poojas (title,image,description,benefits)
-     VALUES (?,?,?,?)`,
-    [title, image, description, benefits]
+    `INSERT INTO poojas (title,image,description,benefits,pooja_date)
+     VALUES (?,?,?,?,?)`,
+    [title, image, description, benefits, pooja_date]
   );
   return res.insertId;
 };
@@ -27,6 +27,9 @@ export const updatePooja = async (id, data) => {
 
   if (data.benefits !== undefined) fields.push("benefits=?");
   if (data.benefits !== undefined) values.push(data.benefits);
+
+  if (data.pooja_date !== undefined) fields.push("pooja_date=?");
+  if (data.pooja_date !== undefined) values.push(data.pooja_date);
 
   if (fields.length === 0) return 0;
 

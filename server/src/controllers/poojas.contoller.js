@@ -4,7 +4,7 @@ import * as PoojaModel from "../models/poojas.model.js";
 
 export const createPooja = async (req, res) => {
   try {
-    const { title, image, description, benefits } = req.body;
+    const { title, image, description, benefits, pooja_date } = req.body;
 
     if (!title || !description) {
       return res.status(400).json({
@@ -23,6 +23,7 @@ export const createPooja = async (req, res) => {
       image: imagePath,
       description,
       benefits,
+      pooja_date,
     });
 
     // Handle Gallery Images
