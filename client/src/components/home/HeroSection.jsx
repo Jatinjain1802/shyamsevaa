@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { MdTempleHindu } from "react-icons/md";
 import api from "../../utils/axios";
-import { generateSlug } from "../../utils/slugify";
+import { generatePureSlug } from "../../utils/slugify";
 
 const HeroSection = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -119,7 +119,8 @@ const HeroSection = () => {
                                 {/* Buttons */}
                                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
                                     <Link
-                                        to={`/temples/${generateSlug(temple.title, temple.id)}`}
+                                        to={`/temples/${generatePureSlug(temple.title)}`}
+                                        state={{ id: temple.id }}
                                         className="btn-primary-custom group shadow-2xl hover:shadow-marigold/40 py-4 px-8 text-base md:text-lg w-full sm:w-auto text-center flex items-center justify-center"
                                     >
                                         <MdTempleHindu className="w-5 h-5 mr-2" />

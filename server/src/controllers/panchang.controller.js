@@ -1,41 +1,46 @@
-import { getPanchangam, Observer, tithiNames, nakshatraNames, yogaNames } from '@ishubhamx/panchangam-js';
+import { MhahPanchang as Panchang } from 'mhah-panchang';
 
 /**
- * Get Panchang details for today using strict Vedic calculations
+ * Get Panchang details for today
  * Default location: Varanasi (Kashi)
  */
 export const getPanchang = async (req, res) => {
     try {
-        // 1. Setup Location (Varanasi)
-        const observer = new Observer(25.3176, 82.9739, 81); // Lat, Lng, Elevation (m)
-
-        // 2. Setup Date (Current Date)
+        const panchangObj = new Panchang();
         const date = new Date();
+        const lat = 25.3176;
+        const lon = 82.9739;
 
-        // 3. Calculate Panchang
-        const panchang = getPanchangam(date, observer);
+        // 1. Calculate Panchang using mhah-panchang
+        const mhahCal = panchangObj.calendar(date, lat, lon);
+        const sunTimer = panchangObj.sunTimer(date, lat, lon);
 
-        // 4. Format Data for Frontend
-        // Tithi: library returns 0-29. 0 = Prathama, 29 = Amavasya.
-        const tithiName = tithiNames[panchang.tithi] || "Unknown";
+        // 2. Extract and format values
+        const tithi = mhahCal.Tithi.name_en_IN;
+        const paksha = mhahCal.Paksha.name_en_IN;
+        const fullTithi = `${paksha} Paksha ${tithi}`;
 
-        // Nakshatra Name
-        const nakshatraName = nakshatraNames[panchang.nakshatra];
+        const nakshatraName = mhahCal.Nakshatra.name_en_IN;
+        const yogaName = mhahCal.Yoga.name_en_IN;
 
-        // Yoga Name
-        const yogaName = yogaNames[panchang.yoga];
+        // 3. Sunrise and Sunset
+        const sunriseDate = new Date(sunTimer.sunRise);
+        const sunsetDate = new Date(sunTimer.sunSet);
 
-        // Paksha Calculation (0-14 is Shukla, 15-29 is Krishna)
-        const paksha = panchang.tithi < 15 ? "Shukla" : "Krishna";
-        const fullTithi = `${paksha} Paksha ${tithiName}`;
+        const sunriseTime = sunriseDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        const sunsetTime = sunsetDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-        // Muhurats (Abhijit)
-        let muhuratDisplay = "Not Available Today";
-        if (panchang.abhijitMuhurta) {
-            const start = panchang.abhijitMuhurta.start.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-            const end = panchang.abhijitMuhurta.end.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-            muhuratDisplay = `${start} - ${end}`;
-        }
+        // 4. Calculate Abhijit Muhurat (Roughly the 8th muhurta of the day)
+        // Day length = Sunset - Sunrise
+        // Each muhurta = Day length / 15
+        // Abhijit is the 8th muhurta: from (Sunrise + 7 * muhurtaLength) to (Sunrise + 8 * muhurtaLength)
+        const dayLengthMs = sunsetDate.getTime() - sunriseDate.getTime();
+        const muhurtaLengthMs = dayLengthMs / 15;
+
+        const abhijitStart = new Date(sunriseDate.getTime() + 7 * muhurtaLengthMs);
+        const abhijitEnd = new Date(sunriseDate.getTime() + 8 * muhurtaLengthMs);
+
+        const abhijitDisplay = `${abhijitStart.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })} - ${abhijitEnd.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
 
         const panchangData = {
             date: date.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
@@ -44,10 +49,10 @@ export const getPanchang = async (req, res) => {
             yoga: yogaName,
             muhurat: {
                 name: "Abhijit Muhurat",
-                time: muhuratDisplay
+                time: abhijitDisplay
             },
-            sunrise: panchang.sunrise ? panchang.sunrise.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "--:--",
-            sunset: panchang.sunset ? panchang.sunset.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "--:--"
+            sunrise: sunriseTime,
+            sunset: sunsetTime
         };
 
         return res.status(200).json({

@@ -3,7 +3,7 @@ import { ChevronRight, Calendar, MapPin, ArrowRight, ChevronLeft } from "lucide-
 import { MdTempleHindu } from "react-icons/md";
 import api from "../../utils/axios";
 import { useEffect, useState, useRef } from "react";
-import { generateSlug } from "../../utils/slugify";
+import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 
 export default function PujaSection() {
@@ -94,7 +94,8 @@ export default function PujaSection() {
                 >
                     {pujas.map((puja) => (
                         <Link
-                            to={`/poojas/${generateSlug(puja.title, puja.id)}`}
+                            to={`/poojas/${generatePureSlug(puja.title)}`}
+                            state={{ id: puja.id }}
                             key={puja.id}
                             className="min-w-[85vw] md:min-w-[45%] lg:min-w-[calc(33.333%-1rem)] snap-center group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col"
                             style={{ transform: "translateZ(0)" }}

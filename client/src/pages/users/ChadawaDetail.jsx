@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
-import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
 import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
@@ -148,8 +148,11 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
 
 export default function ChadawaDetail() {
     // LEARNING: Get slug from URL and extract ID from it
-    const { slug } = useParams();  // Changed from 'chadawaId' to 'slug'
-    const chadawaId = extractIdFromSlug(slug);  // Extract numeric ID from slug
+    const { slug } = useParams();
+    const location = useLocation();
+
+    // Priority: 1. ID from location state, 2. ID from slug (old links), 3. Finding by slug string later
+    const [chadawaId, setChadawaId] = useState(location.state?.id || extractIdFromSlug(slug));
 
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
@@ -169,7 +172,28 @@ export default function ChadawaDetail() {
         try {
             setLoading(true);
             setError(null);
-            const res = await api.get(`/chadawas/${chadawaId}`);
+
+            let finalId = chadawaId;
+
+            // If we don't have an ID yet (manual URL enter with pure slug)
+            if (!finalId) {
+                console.log("Looking up chadawa by slug:", slug);
+                const resAll = await api.get("/chadawas");
+                const found = resAll.data.data.find(c => slugify(c.title) === slug);
+
+                if (found) {
+                    finalId = found.id;
+                    setChadawaId(found.id);
+                }
+            }
+
+            if (!finalId) {
+                setError("Offering not found. Please check the URL.");
+                setLoading(false);
+                return;
+            }
+
+            const res = await api.get(`/chadawas/${finalId}`);
             setData(res.data.data);
             // Pre-select the first item if available
             if (res.data.data.items && res.data.data.items.length > 0) {
@@ -184,16 +208,9 @@ export default function ChadawaDetail() {
     };
 
     useEffect(() => {
-        // LEARNING: Only fetch if we have a valid ID
-        if (!chadawaId) {
-            setError("Invalid chadawa URL");
-            setLoading(false);
-            return;
-        }
-
         fetchDetail();
         window.scrollTo(0, 0);
-    }, [chadawaId]);
+    }, [slug, chadawaId]);
 
     // Auto-slider logic
     useEffect(() => {
@@ -451,7 +468,9 @@ export default function ChadawaDetail() {
                                             <div
                                                 key={t.id}
                                                 className="flex items-center gap-3 bg-paper-bg border-2 border-marigold/20 rounded-xl p-3 pr-5 hover:bg-white hover:border-marigold hover:shadow-lg transition-all cursor-pointer group"
-                                                onClick={() => navigate(`/temples/${generateSlug(t.title, t.id)}`)}
+                                                onClick={() => navigate(`/temples/${generatePureSlug(t.title)}`, {
+                                                    state: { id: t.id }
+                                                })}
                                             >
                                                 <div className="w-10 h-10 rounded-full bg-marigold/20 flex items-center justify-center overflow-hidden border-2 border-marigold/30">
                                                     {/* Start of temple image logic - if available, otherwise fallback */}

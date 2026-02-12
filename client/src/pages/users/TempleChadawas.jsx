@@ -1,16 +1,42 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
+import { generatePureSlug, extractIdFromSlug, slugify } from "../../utils/slugify";
 
 export default function TempleChadawas() {
-    const { id: templeId } = useParams();
+    const { slug } = useParams();
+    const location = useLocation();
+
+    // Priority: 1. ID from location state, 2. ID from slug (old links), 3. Finding by slug string later
+    const [templeId, setTempleId] = useState(location.state?.id || extractIdFromSlug(slug));
+
     const [chadawas, setChadawas] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchChadawas = async () => {
         try {
-            const res = await api.get(`/chadawas/temple/${templeId}`);
+            setLoading(true);
+            let finalId = templeId;
+
+            // If we don't have an ID yet (manual URL enter with pure slug)
+            if (!finalId) {
+                console.log("Looking up temple by slug:", slug);
+                const resAll = await api.get("/temples/public");
+                const found = resAll.data.data.find(c => slugify(c.title) === slug);
+
+                if (found) {
+                    finalId = found.id;
+                    setTempleId(found.id);
+                }
+            }
+
+            if (!finalId) {
+                setLoading(false);
+                return;
+            }
+
+            const res = await api.get(`/chadawas/temple/${finalId}`);
             setChadawas(res.data.data || []);
         } catch (err) {
             console.error(err);
@@ -21,7 +47,7 @@ export default function TempleChadawas() {
 
     useEffect(() => {
         fetchChadawas();
-    }, [templeId]);
+    }, [templeId, slug]);
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
@@ -34,7 +60,7 @@ export default function TempleChadawas() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link to={`/temples/${templeId}`} className="text-orange-600 font-medium hover:underline mb-2 inline-block">← Back to Temple</Link>
+                    <Link to={`/temples/${slug}`} state={{ id: templeId }} className="text-orange-600 font-medium hover:underline mb-2 inline-block">← Back to Temple</Link>
                     <h1 className="text-3xl font-bold text-gray-900">Available Chadawas</h1>
                     <p className="text-gray-500">Sacred offerings available at this temple.</p>
                 </div>
@@ -46,7 +72,8 @@ export default function TempleChadawas() {
                             image={c.image}
                             title={c.title}
                             description={c.description}
-                            link={`/chadawas/${c.id}`}
+                            link={`/chadawas/${generatePureSlug(c.title)}`}
+                            state={{ id: c.id }}
                             buttonText="Offer Now"
                             className="h-full"
                         />

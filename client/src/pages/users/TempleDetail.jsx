@@ -1,8 +1,8 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
-import { extractIdFromSlug, generateSlug } from "../../utils/slugify";
+import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify";
 import {
   Share2,
   Home,
@@ -122,7 +122,8 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
 
 export default function TempleDetail() {
   const { slug } = useParams();
-  const id = extractIdFromSlug(slug);
+  const location = useLocation();
+  const [id, setId] = useState(location.state?.id || extractIdFromSlug(slug));
   const navigate = useNavigate();
   const { toasts, showToast } = useToast();
 
@@ -134,22 +135,38 @@ export default function TempleDetail() {
   const [activeTab, setActiveTab] = useState("poojas");
 
   useEffect(() => {
-    if (!id) {
-      setError("Invalid temple URL");
-      setLoading(false);
-      return;
-    }
     fetchAllData();
-  }, [id]);
+  }, [id, slug]);
 
   const fetchAllData = async () => {
     try {
       setLoading(true);
       setError(null);
+
+      let finalId = id;
+
+      // If we don't have an ID yet (manual URL enter with pure slug)
+      if (!finalId) {
+        console.log("Looking up temple by slug:", slug);
+        const resAll = await api.get("/temples/public");
+        const found = resAll.data.data.find(c => slugify(c.title) === slug);
+
+        if (found) {
+          finalId = found.id;
+          setId(found.id);
+        }
+      }
+
+      if (!finalId) {
+        setError("Temple not found. Please check the URL.");
+        setLoading(false);
+        return;
+      }
+
       const [templeRes, poojasRes, chadawasRes] = await Promise.all([
-        api.get(`/temples/public/${id}`),
-        api.get(`/poojas/temple/${id}`),
-        api.get(`/chadawas/temple/${id}`)
+        api.get(`/temples/public/${finalId}`),
+        api.get(`/poojas/temple/${finalId}`),
+        api.get(`/chadawas/temple/${finalId}`)
       ]);
 
       setTemple(templeRes.data.data);
@@ -383,7 +400,8 @@ export default function TempleDetail() {
                     image={p.image}
                     title={p.title}
                     description={p.description || "Join this sacred pooja."}
-                    link={`/poojas/${generateSlug(p.title, p.id)}`}
+                    link={`/poojas/${generatePureSlug(p.title)}`}
+                    state={{ id: p.id }}
                     buttonText="View Details"
                     className="h-full"
                   />
@@ -408,7 +426,8 @@ export default function TempleDetail() {
                     image={c.image}
                     title={c.title}
                     description={c.description || "Make a sacred offering."}
-                    link={`/chadawas/${generateSlug(c.title, c.id)}`}
+                    link={`/chadawas/${generatePureSlug(c.title)}`}
+                    state={{ id: c.id }}
                     buttonText="Make Offering"
                     className="h-full"
                   />

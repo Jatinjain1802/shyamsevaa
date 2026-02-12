@@ -11,10 +11,12 @@ export default function UnifiedCard({
     location,
     buttonText = "View Details",
     className = "",
+    state = null,
 }) {
     return (
         <Link
             to={link}
+            state={state}
             className={`group bg-white rounded-t-[40px] rounded-b-xl overflow-hidden shadow-xl border-b-4 border-sindoor hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full ${className}`}
         >
             <div className="relative h-64 overflow-hidden bg-gray-100">

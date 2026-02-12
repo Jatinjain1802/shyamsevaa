@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
-import { extractIdFromSlug, generateSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { extractIdFromSlug, generateSlug, slugify } from "../../utils/slugify"; // LEARNING: Import slug utilities
 import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
@@ -156,7 +156,10 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
 export default function PoojaDetail() {
     // LEARNING: Get slug from URL and extract ID from it
     const { slug } = useParams();  // Changed from 'poojaId' to 'slug'
-    const poojaId = extractIdFromSlug(slug);  // Extract numeric ID from slug
+    const location = useLocation();
+
+    // Priority: 1. ID from location state, 2. ID from slug (old links), 3. Finding by slug string later
+    const [poojaId, setPoojaId] = useState(location.state?.id || extractIdFromSlug(slug));
 
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
@@ -241,14 +244,35 @@ export default function PoojaDetail() {
         window.scrollTo(0, 0);
         fetchPoojaDetails();
         fetchSimilarPoojas();
-    }, [poojaId]);
+    }, [slug, poojaId]);
 
     // LEARNING: Separate async functions for better error handling and reusability
     const fetchPoojaDetails = async () => {
         try {
             setLoading(true);
             setError(null);
-            const res = await api.get(`/poojas/${poojaId}`);
+
+            let finalId = poojaId;
+
+            // If we don't have an ID yet (manual URL enter with pure slug)
+            if (!finalId) {
+                console.log("Looking up pooja by slug:", slug);
+                const resAll = await api.get("/poojas");
+                const found = resAll.data.data.find(c => slugify(c.title) === slug);
+
+                if (found) {
+                    finalId = found.id;
+                    setPoojaId(found.id);
+                }
+            }
+
+            if (!finalId) {
+                setError("Pooja not found. Please check the URL.");
+                setLoading(false);
+                return;
+            }
+
+            const res = await api.get(`/poojas/${finalId}`);
             setData(res.data.data);
 
             // Auto-select first variant if available
@@ -781,7 +805,9 @@ export default function PoojaDetail() {
                                     <div
                                         key={item.id}
                                         onClick={() => {
-                                            navigate(`/poojas/${item.id}`);
+                                            navigate(`/poojas/${generatePureSlug(item.title)}`, {
+                                                state: { id: item.id }
+                                            });
                                             window.scrollTo(0, 0);
                                         }}
                                         className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group cursor-pointer"

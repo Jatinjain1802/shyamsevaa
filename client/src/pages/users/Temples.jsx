@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
-import { generateSlug } from "../../utils/slugify";
+import { generatePureSlug } from "../../utils/slugify";
 import UnifiedCard from "../../components/common/UnifiedCard";
 import {
   Building2,
@@ -164,7 +164,8 @@ export default function Temples() {
               title={t.title}
               location={t.city && t.state ? `${t.city}, ${t.state}` : t.city || t.state}
               description={t.description}
-              link={`/temples/${generateSlug(t.title, t.id)}`}
+              link={`/temples/${generatePureSlug(t.title)}`}
+              state={{ id: t.id }}
               buttonText="View Temple"
             />
           ))}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
-import { generateSlug } from "../../utils/slugify";
+import { generatePureSlug } from "../../utils/slugify";
 import { Search, X, AlertCircle, RefreshCw, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { MdSelfImprovement, MdTempleHindu } from "react-icons/md";
 
@@ -165,7 +165,8 @@ export default function Poojas() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredPoojas.map((pooja) => (
                         <Link
-                            to={`/poojas/${generateSlug(pooja.title, pooja.id)}`}
+                            to={`/poojas/${generatePureSlug(pooja.title)}`}
+                            state={{ id: pooja.id }}
                             key={pooja.id}
                             className="group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col h-full"
                         >

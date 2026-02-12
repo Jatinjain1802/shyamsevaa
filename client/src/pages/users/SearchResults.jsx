@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
-import { generateSlug } from "../../utils/slugify";
+import { generatePureSlug } from "../../utils/slugify";
 import { Search, AlertCircle, RefreshCw, X } from "lucide-react";
 
 export default function SearchResults() {
@@ -137,9 +137,10 @@ export default function SearchResults() {
                                 tag={item.type.toUpperCase()}
                                 link={
                                     item.type === 'temple'
-                                        ? `/temples/${generateSlug(item.title, item.id)}`
-                                        : `/poojas/${generateSlug(item.title, item.id)}`
+                                        ? `/temples/${generatePureSlug(item.title)}`
+                                        : `/poojas/${generatePureSlug(item.title)}`
                                 }
+                                state={{ id: item.id }}
                                 buttonText={item.type === 'temple' ? 'View Temple' : 'View Pooja'}
                             />
                         ))}
