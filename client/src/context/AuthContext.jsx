@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
         setUser(user);
         return { success: true, user };
       }
+      return { success: false, message: response.data.message || "Login failed" };
     } catch (error) {
       return {
         success: false,

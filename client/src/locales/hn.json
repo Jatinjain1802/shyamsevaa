@@ -1,0 +1,65 @@
+{
+    "common": {
+        "welcome": "Shyam Sevaa mein aapka swagat hai",
+        "loading": "Load ho raha hai...",
+        "error": "Kuch galat ho gaya",
+        "view_details": "Details dekhein",
+        "book_now": "Abhi book karein",
+        "save": "Save karein",
+        "cancel": "Cancel karein",
+        "search": "Yahan search karein...",
+        "try_again": "Phir se try karein",
+        "no_data": "Koi jaankari nahi hai"
+    },
+    "nav": {
+        "home": "Home",
+        "temples": "Mandir",
+        "poojas": "Pooja",
+        "chadawas": "Chadawa",
+        "about": "Humaare baare mein",
+        "blog": "Blog",
+        "contact": "Contact karein"
+    },
+    "auth": {
+        "login": "Login",
+        "signup": "Sign Up",
+        "logout": "Logout",
+        "profile": "Profile",
+        "dashboard": "Dashboard"
+    },
+    "search": {
+        "results": "Search Results",
+        "placeholder": "Mandir ya pooja search karein...",
+        "no_results": "Koi result nahi mila",
+        "clear": "Filters saaf karein",
+        "found_prefix": "Found",
+        "found_suffix": "results",
+        "empty_prompt": "Mandir, pooja aur divine services search karein",
+        "suggestion": "Spelling check karein ya kuch aur search karein."
+    },
+    "footer": {
+        "about_text": "Vedic paramparaon ko mehfooz rakhna. Hum authentic heritage services ke zariye aapko bhagwan se jodte hain.",
+        "read_more": "Aur padhein",
+        "services": "SERVICES",
+        "knowledge": "KNOWLEDGE",
+        "contact_us": "CONTACT US",
+        "helpline": "24/7 Helpline",
+        "email_support": "Email Support",
+        "rights": "Bharat mein bhakti ke saath banaya gaya",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "refunds": "Refunds"
+    },
+    "services": {
+        "pandit": "Online Pandit Booking",
+        "epuja": "Temple E-Puja",
+        "vastu": "Vastu & Astrology"
+    },
+    "temple_detail": {
+        "location": "Jagah",
+        "deity": "Bhagwan",
+        "timings": "Mandir ka time",
+        "history": "Itihaas",
+        "gallery": "Gallery"
+    }
+}

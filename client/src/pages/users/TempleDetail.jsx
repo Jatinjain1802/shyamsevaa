@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
+import { getAssetUrl } from "../../utils/assets";
 import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify";
 import {
   Share2,
@@ -87,7 +88,7 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
           className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
           <img
-            src={img.image_url || img.image}
+            src={getAssetUrl(img.image_url || img.image)}
             alt={img.description || title}
             className={`w-full h-full object-cover transform transition-transform duration-2000 ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
           />
@@ -318,7 +319,7 @@ export default function TempleDetail() {
           <div className="relative p-4 lg:p-8 bg-paper-bg h-[400px] sm:h-[500px] lg:h-auto flex items-center justify-center">
             <HeroSlideshow
               gallery={temple.gallery}
-              mainImage={temple.image}
+              mainImage={getAssetUrl(temple.image)}
               title={temple.title}
               onShare={handleShare}
             />
@@ -397,7 +398,7 @@ export default function TempleDetail() {
                 {poojas.map((p) => (
                   <UnifiedCard
                     key={p.id}
-                    image={p.image}
+                    image={getAssetUrl(p.image)}
                     title={p.title}
                     description={p.description || "Join this sacred pooja."}
                     link={`/poojas/${generatePureSlug(p.title)}`}
@@ -423,7 +424,7 @@ export default function TempleDetail() {
                 {chadawas.map((c) => (
                   <UnifiedCard
                     key={c.id}
-                    image={c.image}
+                    image={getAssetUrl(c.image)}
                     title={c.title}
                     description={c.description || "Make a sacred offering."}
                     link={`/chadawas/${generatePureSlug(c.title)}`}

@@ -3,6 +3,7 @@ import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generatePureSlug } from "../../utils/slugify";
 import UnifiedCard from "../../components/common/UnifiedCard";
+import { getAssetUrl } from "../../utils/assets";
 import {
   Building2,
   MapPin,
@@ -160,7 +161,7 @@ export default function Temples() {
           {filteredTemples.map((t) => (
             <UnifiedCard
               key={t.id}
-              image={t.image}
+              image={getAssetUrl(t.image)}
               title={t.title}
               location={t.city && t.state ? `${t.city}, ${t.state}` : t.city || t.state}
               description={t.description}

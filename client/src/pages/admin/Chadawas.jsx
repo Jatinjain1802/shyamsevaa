@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
+import { getAssetUrl } from "../../utils/assets";
 import { useNavigate } from "react-router-dom";
 
 export default function Chadawas() {
@@ -265,7 +266,7 @@ export default function Chadawas() {
               <div className="h-40 bg-gray-100">
                 {c.image ? (
                   <img
-                    src={c.image}
+                    src={getAssetUrl(c.image)}
                     alt={c.title}
                     className="w-full h-full object-cover"
                   />
@@ -335,7 +336,7 @@ export default function Chadawas() {
       {showForm && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
           <div className="bg-white/95 w-full max-w-xl rounded-2xl p-8 shadow-2xl border border-white/20">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6">
+            <h2 className="text-2xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6">
               {editingId ? "Edit Chadawa" : "Add Chadawa"}
             </h2>
 
@@ -365,7 +366,7 @@ export default function Chadawas() {
               {form.image && (
                 <div className="h-40 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
                   <img
-                    src={form.image}
+                    src={getAssetUrl(form.image)}
                     alt="Preview"
                     className="w-full h-full object-cover"
                     onError={(e) => (e.target.style.display = "none")}
@@ -429,7 +430,7 @@ export default function Chadawas() {
                     <div className="grid grid-cols-1 gap-4">
                       {form.gallery.map(img => (
                         <div key={img.id} className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                          <img src={img.image_url} alt="Gallery" className="w-20 h-20 object-cover rounded-md" />
+                          <img src={getAssetUrl(img.image_url)} alt="Gallery" className="w-20 h-20 object-cover rounded-md" />
                           <div className="flex-1">
                             <p className="text-sm text-gray-600 mb-1 line-clamp-2">{img.description || "No description"}</p>
                           </div>
@@ -487,7 +488,7 @@ export default function Chadawas() {
                 >
                   Cancel
                 </button>
-                <button className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all font-medium">
+                <button className="px-5 py-2.5 bg-linear-to-r from-orange-600 to-red-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all font-medium">
                   {editingId ? "Update Chadawa" : "Create Chadawa"}
                 </button>
               </div>
@@ -500,7 +501,7 @@ export default function Chadawas() {
       {showTempleModal && selectedChadawaForTemple && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
           <div className="bg-white/95 w-full max-w-lg rounded-2xl p-8 shadow-2xl border border-white/20">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-xl font-bold bg-linear-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent mb-6">
               Manage Temples for "{selectedChadawaForTemple.title}"
             </h2>
 
@@ -518,7 +519,7 @@ export default function Chadawas() {
               </select>
               <button
                 onClick={handleLinkTemple}
-                className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
+                className="bg-linear-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
                 disabled={!selectedTempleId}
               >
                 Link

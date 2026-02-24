@@ -4,6 +4,7 @@ import api from "../../utils/axios";
 import { useEffect, useState, useRef } from "react";
 import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
+import { getAssetUrl } from "../../utils/assets";
 
 export default function ChadawaSection() {
     const [chadawas, setChadawas] = useState([]);
@@ -144,7 +145,7 @@ export default function ChadawaSection() {
                                 <div className="absolute inset-0 bg-linear-to-t from-heritage-dark/80 via-transparent to-transparent z-10 opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
 
                                 <img
-                                    src={item.image}
+                                    src={getAssetUrl(item.image)}
                                     alt={item.title}
                                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-115"
                                 />

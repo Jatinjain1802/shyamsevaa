@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
+import { getAssetUrl } from "../../utils/assets";
 
 export default function Addons() {
     const [addons, setAddons] = useState([]);
@@ -241,7 +242,7 @@ export default function Addons() {
                                 {form.image && (
                                     <div className="h-40 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
                                         <img
-                                            src={form.image}
+                                            src={getAssetUrl(form.image)}
                                             alt="Preview"
                                             className="w-full h-full object-cover"
                                             onError={(e) => (e.target.style.display = "none")}

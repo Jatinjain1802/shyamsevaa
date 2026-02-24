@@ -4,8 +4,10 @@ import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
 import { generatePureSlug } from "../../utils/slugify";
 import { Search, AlertCircle, RefreshCw, X } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function SearchResults() {
+    const { t, language } = useLanguage();
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get("q") || "";
 
@@ -39,7 +41,7 @@ export default function SearchResults() {
             }
         } catch (err) {
             console.error("Search failed", err);
-            setError("Failed to fetch search results. Please try again.");
+            setError(t('common.error'));
         } finally {
             setLoading(false);
         }
@@ -67,12 +69,12 @@ export default function SearchResults() {
                 <div className="text-center mb-12">
                     <Search className="text-marigold text-5xl mb-2 mx-auto" />
                     <h1 className="text-4xl md:text-5xl text-sindoor mb-4 font-serif">
-                        Search Results
+                        {t('search.results')}
                     </h1>
                     <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans italic">
                         {query
-                            ? `Found ${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`
-                            : "Search for temples, poojas, and divine services"
+                            ? `${t('search.found_prefix')} ${results.length} ${t('search.found_suffix')} "${query}"`
+                            : t('search.empty_prompt')
                         }
                     </p>
                     <div className="w-24 h-1 bg-marigold mx-auto mt-6 rounded-full"></div>
@@ -85,7 +87,7 @@ export default function SearchResults() {
                             type="text"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder="Search for temples or poojas..."
+                            placeholder={t('search.placeholder')}
                             className="w-full pl-6 pr-14 py-4 rounded-full border-2 border-marigold/30 focus:border-marigold focus:ring-4 focus:ring-marigold/10 shadow-lg text-lg outline-none transition-all placeholder:text-stone-400 text-sindoor font-medium"
                         />
                         {searchInput && (
@@ -116,13 +118,13 @@ export default function SearchResults() {
                 ) : error ? (
                     <div className="text-center py-12">
                         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold text-stone-700 mb-2">Error Loading Results</h3>
+                        <h3 className="text-2xl font-bold text-stone-700 mb-2">{t('common.error')}</h3>
                         <p className="text-stone-500 mb-6">{error}</p>
                         <button
                             onClick={() => fetchResults(query)}
                             className="px-6 py-2 bg-sindoor text-white rounded-full font-bold hover:bg-sindoor/90 transition-colors"
                         >
-                            TryAgain
+                            {t('search.try_again')}
                         </button>
                     </div>
                 ) : results.length > 0 ? (
@@ -141,7 +143,7 @@ export default function SearchResults() {
                                         : `/poojas/${generatePureSlug(item.title)}`
                                 }
                                 state={{ id: item.id }}
-                                buttonText={item.type === 'temple' ? 'View Temple' : 'View Pooja'}
+                                buttonText={item.type === 'temple' ? (language === 'hi' ? 'मंदिर देखें' : 'View Temple') : (language === 'hi' ? 'पूजा देखें' : 'View Pooja')}
                             />
                         ))}
                     </div>
@@ -151,16 +153,16 @@ export default function SearchResults() {
                             <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-6 text-stone-400">
                                 <Search className="w-10 h-10" />
                             </div>
-                            <h3 className="text-2xl font-bold text-sindoor mb-2 font-serif">No Results Found</h3>
+                            <h3 className="text-2xl font-bold text-sindoor mb-2 font-serif">{t('search.no_results')}</h3>
                             <p className="text-stone-500 italic mb-8 max-w-md mx-auto">
-                                We couldn't find any temples or poojas matching "{query}". Try checking for typos or using broader keywords.
+                                {t('search.suggestion')}
                             </p>
                             <button
                                 onClick={clearSearch}
                                 className="px-8 py-3 bg-white border-2 border-marigold/30 text-marigold font-bold rounded-xl hover:bg-marigold hover:text-white transition-all shadow-md flex items-center gap-2 mx-auto"
                             >
                                 <RefreshCw className="w-5 h-5" />
-                                Clear Filters
+                                {t('search.clear')}
                             </button>
                         </div>
                     )

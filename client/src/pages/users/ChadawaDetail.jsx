@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
 import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
@@ -111,7 +112,7 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
                     className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                 >
                     <img
-                        src={img.image_url || img.image} // Handle both gallery object and fallback string/object
+                        src={getAssetUrl(img.image_url || img.image)} // Handle both gallery object and fallback string/object
                         alt={img.description || title}
                         className={`w-full h-full object-cover transform transition-transform duration-2000 ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
                     />
@@ -475,7 +476,7 @@ export default function ChadawaDetail() {
                                                 <div className="w-10 h-10 rounded-full bg-marigold/20 flex items-center justify-center overflow-hidden border-2 border-marigold/30">
                                                     {/* Start of temple image logic - if available, otherwise fallback */}
                                                     {t.image ? (
-                                                        <img src={t.image} alt={t.title} className="w-full h-full object-cover" />
+                                                        <img src={getAssetUrl(t.image)} alt={t.title} className="w-full h-full object-cover" />
                                                     ) : (
                                                         <MdTempleHindu className="text-marigold text-lg" />
                                                     )}

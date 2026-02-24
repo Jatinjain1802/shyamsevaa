@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Share2, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <>
       <footer className="relative bg-paper-bg text-heritage-dark py-16 overflow-hidden mt-auto border-t border-marigold/20">
@@ -33,7 +36,7 @@ export default function Footer() {
                 </div>
               </Link>
               <p className="text-stone-600 text-sm leading-relaxed mb-8 font-medium max-w-xs">
-                Preserving the soul of Vedic traditions. We bridge the distance between you and the divine through authentic heritage services. <Link to="/about" className="text-marigold hover:text-sindoor font-bold">Read More</Link>
+                {t('footer.about_text')} <Link to="/about" className="text-marigold hover:text-sindoor font-bold">{t('footer.read_more')}</Link>
               </p>
               <div className="flex gap-3">
                 <a href="#" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -50,21 +53,21 @@ export default function Footer() {
 
             {/* Services */}
             <div>
-              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">SERVICES</h4>
+              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">{t('footer.services')}</h4>
               <ul className="space-y-3 text-sm text-stone-600 font-medium">
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/pandit">Online Pandit Booking</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/poojas">Temple E-Puja</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/about">About Us</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/vastu">Vastu & Astrology</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/pandit">{t('services.pandit')}</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/poojas">{t('services.epuja')}</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/about">{t('nav.about')}</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/vastu">{t('services.vastu')}</Link></li>
               </ul>
             </div>
 
             {/* Knowledge */}
             <div>
-              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">KNOWLEDGE</h4>
+              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">{t('footer.knowledge')}</h4>
               <ul className="space-y-3 text-sm text-stone-600 font-medium">
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/panchang">Panchang {new Date().getFullYear()}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/blog">Heritage Blog</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/blog">{t('nav.blog')}</Link></li>
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/mantras">Vedic Mantras</Link></li>
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/yatras">Spiritual Yatras</Link></li>
               </ul>
@@ -72,14 +75,14 @@ export default function Footer() {
 
             {/* Contact */}
             <div>
-              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">CONTACT US</h4>
+              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">{t('footer.contact_us')}</h4>
               <div className="bg-white/60 p-5 rounded-2xl border border-marigold/20 space-y-4 hover:shadow-md transition-all">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-sindoor/5 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5 text-sindoor" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">24/7 Helpline</p>
+                    <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">{t('footer.helpline')}</p>
                     <p className="text-lg font-black text-heritage-dark">1800-SANATAN</p>
                   </div>
                 </div>
@@ -88,7 +91,7 @@ export default function Footer() {
                     <Mail className="w-5 h-5 text-sindoor" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">Email Support</p>
+                    <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">{t('footer.email_support')}</p>
                     <p className="text-sm font-bold text-heritage-dark">support@Shyampuja.com</p>
                   </div>
                 </div>
@@ -99,12 +102,12 @@ export default function Footer() {
           {/* Bottom Bar */}
           <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-stone-500 text-xs font-medium tracking-wide">
-              © {new Date().getFullYear()} Shyampuja. Designed with Devotion in Bharat 🇮🇳
+              © {new Date().getFullYear()} Shyampuja. {t('footer.rights')} 🇮🇳
             </p>
             <div className="flex gap-8 text-[10px] font-bold text-stone-400 tracking-[0.2em] uppercase">
-              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/privacy">Privacy</Link>
-              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/terms">Terms</Link>
-              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/refunds">Refunds</Link>
+              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/privacy">{t('footer.privacy')}</Link>
+              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/terms">{t('footer.terms')}</Link>
+              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/refunds">{t('footer.refunds')}</Link>
             </div>
           </div>
         </div>

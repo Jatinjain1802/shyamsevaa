@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axios";
+import { getAssetUrl } from "../../utils/assets";
 import PoojaVariants from "./PoojaVariants";
 import PoojaAddons from "./PoojaAddons";
 import PoojaTemples from "./PoojaTemples";
@@ -194,7 +195,7 @@ export default function Poojas() {
               <div className="h-40 bg-gray-100">
                 {p.image ? (
                   <img
-                    src={p.image}
+                    src={getAssetUrl(p.image)}
                     alt={p.title}
                     className="w-full h-full object-cover"
                   />
@@ -297,7 +298,7 @@ export default function Poojas() {
                 {form.image && (
                   <div className="h-48 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
                     <img
-                      src={form.image}
+                      src={getAssetUrl(form.image)}
                       alt="Preview"
                       className="w-full h-full object-cover"
                       onError={(e) => (e.target.style.display = "none")}
@@ -333,7 +334,7 @@ export default function Poojas() {
                       <div className="grid grid-cols-1 gap-4">
                         {form.gallery.map(img => (
                           <div key={img.id} className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <img src={img.image_url} alt="Gallery" className="w-20 h-20 object-cover rounded-md" />
+                            <img src={getAssetUrl(img.image_url)} alt="Gallery" className="w-20 h-20 object-cover rounded-md" />
                             <div className="flex-1">
                               <p className="text-sm text-gray-600 mb-1 line-clamp-2">{img.description || "No description"}</p>
                             </div>

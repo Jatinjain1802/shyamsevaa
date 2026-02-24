@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generatePureSlug } from "../../utils/slugify";
+import { getAssetUrl } from "../../utils/assets";
 import { Search, X, AlertCircle, RefreshCw, User, ArrowRight } from "lucide-react";
 import { MdVolunteerActivism } from "react-icons/md";
 
@@ -176,7 +177,7 @@ export default function Chadawas() {
                             <div className="relative aspect-4/3 w-full overflow-hidden shrink-0">
                                 <div className="absolute" />
                                 <img
-                                    src={item.image}
+                                    src={getAssetUrl(item.image)}
                                     alt={item.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />

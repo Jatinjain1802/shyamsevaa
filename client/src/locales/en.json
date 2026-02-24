@@ -1,0 +1,65 @@
+{
+    "common": {
+        "welcome": "Welcome to Shyam Sevaa",
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "view_details": "View Details",
+        "book_now": "Book Now",
+        "save": "Save",
+        "cancel": "Cancel",
+        "search": "Search Here...",
+        "try_again": "Try Again",
+        "no_data": "No Information Available"
+    },
+    "nav": {
+        "home": "Home",
+        "temples": "Temples",
+        "poojas": "Poojas",
+        "chadawas": "Chadawas",
+        "about": "About Us",
+        "blog": "Blog",
+        "contact": "Contact"
+    },
+    "auth": {
+        "login": "Login",
+        "signup": "Sign Up",
+        "logout": "Logout",
+        "profile": "Profile",
+        "dashboard": "Dashboard"
+    },
+    "search": {
+        "results": "Search Results",
+        "placeholder": "Search for temples or poojas...",
+        "no_results": "No Results Found",
+        "clear": "Clear Filters",
+        "found_prefix": "Found",
+        "found_suffix": "results for",
+        "empty_prompt": "Search for temples, poojas, and divine services",
+        "suggestion": "Try checking for typos or using broader keywords."
+    },
+    "footer": {
+        "about_text": "Preserving the soul of Vedic traditions. We bridge the distance between you and the divine through authentic heritage services.",
+        "read_more": "Read More",
+        "services": "SERVICES",
+        "knowledge": "KNOWLEDGE",
+        "contact_us": "CONTACT US",
+        "helpline": "24/7 Helpline",
+        "email_support": "Email Support",
+        "rights": "Designed with Devotion in Bharat",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "refunds": "Refunds"
+    },
+    "services": {
+        "pandit": "Online Pandit Booking",
+        "epuja": "Temple E-Puja",
+        "vastu": "Vastu & Astrology"
+    },
+    "temple_detail": {
+        "location": "Location",
+        "deity": "Main Deity",
+        "timings": "Temple Timings",
+        "history": "History",
+        "gallery": "Gallery"
+    }
+}

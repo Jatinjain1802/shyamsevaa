@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
-import { extractIdFromSlug, generateSlug, slugify } from "../../utils/slugify"; // LEARNING: Import slug utilities
+import { extractIdFromSlug, generateSlug, slugify } from "../../utils/slugify";
+import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
 import {
     ChevronRight,
@@ -167,7 +168,7 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
                     className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                 >
                     <img
-                        src={img.image_url || img.image} // Handle both gallery object and fallback string/object
+                        src={getAssetUrl(img.image_url || img.image)} // Handle both gallery object and fallback string/object
                         alt={img.description || title}
                         className={`w-full h-full object-cover transform transition-transform duration-2000 ease-out ${idx === currentIndex ? 'scale-110' : 'scale-100'}`}
                     />
@@ -559,7 +560,7 @@ export default function PoojaDetail() {
                     <div className="relative p-4 lg:p-8 bg-paper-bg h-[400px] sm:h-[500px] lg:h-auto flex items-center justify-center">
                         <HeroSlideshow
                             gallery={data.gallery}
-                            mainImage={pooja.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
+                            mainImage={getAssetUrl(pooja.image) || "https://lh3.googleusercontent.com/aida-public/AB6AXuA-oMjsjkReCjtyX1Q9OGUDrV1Rwy4IqHQUhvT-oRth2nHDItC8vZC1XQCL2MyqWYxK76p2yXIlsvbuWEekZkXsTPAgfvPduVatgtizyG3LNuqbx9LNTW8yo60LfNZhHL8JqrUo4x56GsnZ6bOH33LF8HgjY-zuwAiVFkXLWSlHRdzy6cVwf0BnWmN35bcMTZ18F3K1NuXZEeb4jqA_kmptUhqAziVdlxpPLSymxAoBDIUTpvRQi93MrOwdyF8xhi2vv1Drp4djgXs"}
                             title={pooja.title}
                             onShare={handleShare}
                         />
@@ -703,7 +704,7 @@ export default function PoojaDetail() {
                                         >
                                             <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-stone-100 flex items-center justify-center relative">
                                                 {addon.images?.[0] ? (
-                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={addon.images[0]} alt={addon.title} />
+                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={getAssetUrl(addon.images[0])} alt={addon.title} />
                                                 ) : (
                                                     <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={addonImages[i % addonImages.length]} alt={addon.title} />
                                                 )}
@@ -747,7 +748,7 @@ export default function PoojaDetail() {
                                         <img
                                             alt={temples[0].title}
                                             className="w-full h-full object-cover"
-                                            src={temples[0].image || "https://lh3.googleusercontent.com/aida-public/AB6AXuCNKQD_nvQc4mh-teWAdK6Q5iVGF9dwO-syFh8kptR5ynYxEd18m7mGdjdsp6iMEhUqbGggTgwkmYl6CNCwGXexErLDC6PgaivNRf_35hoVMTjhEMPDzfQK5VJxJ56y3wHN_sb3LiTHHm11674jLnidEZlqOvEzbLOFIo4Su7xhJiyL1IWUyXbN0I_rkhOqC1yKOdxM8jg5T4ZYCDHUBlWXmZIgOdWRrSkcMMFjATg-EIOyUsOlNa-MgMJXSviTWk4K48hwyaZJkx0"}
+                                            src={getAssetUrl(temples[0].image) || "https://lh3.googleusercontent.com/aida-public/AB6AXuCNKQD_nvQc4mh-teWAdK6Q5iVGF9dwO-syFh8kptR5ynYxEd18m7mGdjdsp6iMEhUqbGggTgwkmYl6CNCwGXexErLDC6PgaivNRf_35hoVMTjhEMPDzfQK5VJxJ56y3wHN_sb3LiTHHm11674jLnidEZlqOvEzbLOFIo4Su7xhJiyL1IWUyXbN0I_rkhOqC1yKOdxM8jg5T4ZYCDHUBlWXmZIgOdWRrSkcMMFjATg-EIOyUsOlNa-MgMJXSviTWk4K48hwyaZJkx0"}
                                         />
                                         {/* LEARNING: Combining city and state fields for location display */}
                                         {(temples[0].city || temples[0].state) && (

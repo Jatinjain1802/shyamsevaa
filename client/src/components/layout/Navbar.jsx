@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Menu, X, Search, Bell, Heart, User, Loader2, LogOut } from "lucide-react";
+import { Menu, X, Search, Bell, Heart, User, Loader2, LogOut, Languages } from "lucide-react";
 import { useWishlist } from "../../context/WishlistContext";
 import { AuthContext } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import api from "../../utils/axios";
 import { generateSlug } from "../../utils/slugify";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 export default function Navbar() {
+  const { t, changeLanguage, language: currentLang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { wishlistCount } = useWishlist();
@@ -17,8 +20,10 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
   const searchRef = useRef(null);
   const userMenuRef = useRef(null);
+  const langMenuRef = useRef(null);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -27,11 +32,9 @@ export default function Navbar() {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setIsOpen(false);
       setShowDropdown(false);
-      // setSearchQuery(""); // Optional: keep query or clear it
     }
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -40,12 +43,14 @@ export default function Navbar() {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserDropdown(false);
       }
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setShowLangDropdown(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Live search debounce
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.trim().length > 1) {
@@ -73,7 +78,6 @@ export default function Navbar() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -83,21 +87,19 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "TEMPLES", path: "/temples" },
-    { name: "POOJAS", path: "/poojas" },
-    { name: "CHADAWA", path: "/chadawas" },
+    { name: t('nav.temples'), path: "/temples" },
+    { name: t('nav.poojas'), path: "/poojas" },
+    { name: t('nav.chadawas'), path: "/chadawas" },
   ];
 
   return (
     <>
-      {/* Premium Navbar */}
       <header className={`relative w-full sticky top-0 z-50 transition-all duration-500 ${scrolled
         ? "glass-card shadow-xl py-3 border-b-2 border-marigold/50"
         : "bg-white/95 backdrop-blur-sm py-5 border-b-2 border-marigold/30"
         }`}>
 
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          {/* Logo & Navigation */}
           <div className="flex items-center gap-12">
             <Link to="/" className="flex items-center gap-4 group">
               <div className="relative">
@@ -142,9 +144,7 @@ export default function Navbar() {
             </nav>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-3 md:gap-5">
-            {/* Search Bar */}
             <div className="relative hidden lg:block" ref={searchRef}>
               <form
                 onSubmit={handleSearch}
@@ -155,7 +155,7 @@ export default function Navbar() {
                 </button>
                 <input
                   className="bg-transparent border-none focus:ring-0 text-sm w-40 xl:w-56 focus:outline-none ml-3 text-text-primary placeholder-text-muted font-medium"
-                  placeholder="Search poojas, temples..."
+                  placeholder={t('search.placeholder')}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => {
@@ -168,7 +168,6 @@ export default function Navbar() {
                 />
               </form>
 
-              {/* Search Dropdown Desktop */}
               {showDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-marigold/20 overflow-hidden max-h-[400px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   {isSearching ? (
@@ -216,13 +215,46 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              {/* Notifications */}
+              <div className="relative" ref={langMenuRef}>
+                <button
+                  onClick={() => setShowLangDropdown(!showLangDropdown)}
+                  className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 relative group"
+                  title="Change Language"
+                >
+                  <Languages className="w-5 h-5" />
+                </button>
+
+                {showLangDropdown && (
+                  <div className="absolute top-full right-0 mt-3 w-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-marigold/20 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="py-1">
+                      <button
+                        onClick={() => { changeLanguage("en"); setShowLangDropdown(false); }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-left ${currentLang === 'en' ? 'text-sindoor bg-orange-50' : 'text-stone-600 hover:text-sindoor hover:bg-orange-50'}`}
+                      >
+                        <span className="text-xs font-bold">EN</span> English
+                      </button>
+                      <button
+                        onClick={() => { changeLanguage("hi"); setShowLangDropdown(false); }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-left ${currentLang === 'hi' ? 'text-sindoor bg-orange-50' : 'text-stone-600 hover:text-sindoor hover:bg-orange-50'}`}
+                      >
+                        <span className="text-xs font-bold">HI</span> हिन्दी
+                      </button>
+                      <button
+                        onClick={() => { changeLanguage("hn"); setShowLangDropdown(false); }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-left ${currentLang === 'hn' ? 'text-sindoor bg-orange-50' : 'text-stone-600 hover:text-sindoor hover:bg-orange-50'}`}
+                      >
+                        <span className="text-xs font-bold">HN</span> Hindlish
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 hidden sm:block relative group">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-marigold rounded-full animate-pulse"></span>
               </button>
 
-              {/* Wishlist with Badge */}
               <Link
                 to="/wishlist"
                 className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 relative group"
@@ -236,7 +268,6 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* Auth Button */}
               {user ? (
                 <div className="relative" ref={userMenuRef}>
                   <button
@@ -253,7 +284,6 @@ export default function Navbar() {
                     )}
                   </button>
 
-                  {/* User Dropdown */}
                   {showUserDropdown && (
                     <div className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-marigold/20 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="p-4 border-b border-stone-100 bg-orange-50/30">
@@ -289,11 +319,10 @@ export default function Navbar() {
                   className="btn-primary-custom shadow-lg hover:shadow-xl px-6 py-2.5"
                 >
                   <User className="w-5 h-5 mr-2" />
-                  <span className="hidden sm:inline">Login</span>
+                  <span className="hidden sm:inline">{t('auth.login')}</span>
                 </Link>
               )}
 
-              {/* Mobile Menu Toggle */}
               <button
                 className="xl:hidden p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all"
                 onClick={() => setIsOpen(true)}
@@ -305,16 +334,12 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md" onClick={() => setIsOpen(false)} />
       )}
 
-      {/* Mobile Menu Drawer - Premium Design */}
-      <div className={`fixed top-0 right-0 z-[70] h-full w-80 glass-card shadow-2xl transform transition-all duration-500 ease-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"
-        }`}>
+      <div className={`fixed top-0 right-0 z-[70] h-full w-80 glass-card shadow-2xl transform transition-all duration-500 ease-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="relative flex justify-between items-center p-6 border-b border-marigold/20 bg-white/50">
             <div className="absolute top-0 left-0 right-0 h-1 sunset-gradient"></div>
             <div className="flex items-center gap-3">
@@ -329,7 +354,6 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Navigation Links */}
           <div className="flex-1 overflow-y-auto py-8 px-5 space-y-3">
             {navLinks.map((link) => (
               <NavLink
@@ -347,7 +371,6 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Search in Mobile Menu */}
             <div className="mt-8 pt-8 border-t border-marigold/20">
               <form onSubmit={handleSearch} className="flex items-center glass-card rounded-full px-5 py-3 border border-marigold/30">
                 <button type="submit">
@@ -355,14 +378,13 @@ export default function Navbar() {
                 </button>
                 <input
                   className="bg-transparent border-none focus:ring-0 text-sm w-full focus:outline-none ml-3 text-text-primary placeholder-text-muted font-medium"
-                  placeholder="Search poojas, temples..."
+                  placeholder={t('search.placeholder')}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </form>
 
-              {/* Mobile Search Results */}
               {searchQuery.length > 1 && (
                 <div className="mt-3 bg-white rounded-2xl shadow-inner overflow-hidden border border-marigold/10">
                   {isSearching ? (
@@ -392,12 +414,6 @@ export default function Navbar() {
                           </div>
                         </Link>
                       ))}
-                      <button
-                        onClick={handleSearch}
-                        className="w-full text-center py-2 text-xs text-marigold font-bold hover:bg-orange-50 transition-colors uppercase tracking-wider"
-                      >
-                        See all results
-                      </button>
                     </div>
                   ) : (
                     <div className="p-3 text-center text-sm text-stone-500 font-medium">
@@ -406,17 +422,39 @@ export default function Navbar() {
                   )}
                 </div>
               )}
+
+              <div className="mt-8 pt-8 border-t border-marigold/20">
+                <h3 className="text-[10px] uppercase tracking-widest text-marigold font-bold mb-4">Choose Language</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => changeLanguage("en")}
+                    className={`py-3 rounded-xl text-xs font-bold transition-all ${currentLang === 'en' ? 'sunset-gradient text-white shadow-md' : 'bg-white text-stone-600 border border-marigold/20'}`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => changeLanguage("hi")}
+                    className={`py-3 rounded-xl text-xs font-bold transition-all ${currentLang === 'hi' ? 'sunset-gradient text-white shadow-md' : 'bg-white text-stone-600 border border-marigold/20'}`}
+                  >
+                    हिन्दी
+                  </button>
+                  <button
+                    onClick={() => changeLanguage("hn")}
+                    className={`py-3 rounded-xl text-xs font-bold transition-all ${currentLang === 'hn' ? 'sunset-gradient text-white shadow-md' : 'bg-white text-stone-600 border border-marigold/20'}`}
+                  >
+                    Hindlish
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 z-80 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100 animate-in zoom-in-95 duration-200 border border-marigold/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sindoor to-marigold"></div>
-
             <div className="text-center mb-6">
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 animate-pulse">
                 <LogOut className="w-8 h-8" />
@@ -424,7 +462,6 @@ export default function Navbar() {
               <h3 className="text-xl font-serif font-bold text-heritage-dark mb-2">Confirm Logout</h3>
               <p className="text-stone-500 text-sm">Are you sure you want to end your spiritual session?</p>
             </div>
-
             <div className="flex gap-3">
               <button
                 onClick={() => setShowLogoutConfirm(false)}

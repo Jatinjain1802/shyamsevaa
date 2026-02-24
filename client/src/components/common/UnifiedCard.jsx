@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Image as ImageIcon, MapPin } from "lucide-react";
+import { getAssetUrl } from "../../utils/assets";
 
 export default function UnifiedCard({
     image,
@@ -22,7 +23,7 @@ export default function UnifiedCard({
             <div className="relative h-64 overflow-hidden bg-gray-100">
                 {image ? (
                     <img
-                        src={image}
+                        src={getAssetUrl(image)}
                         alt={title}
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />

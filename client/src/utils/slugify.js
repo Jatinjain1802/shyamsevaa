@@ -21,14 +21,14 @@ export function slugify(text) {
     if (!text) return '';
 
     return text
-        .toString()                     // Convert to string (in case it's not)
-        .toLowerCase()                  // Convert to lowercase
-        .trim()                         // Remove whitespace from both ends
-        .replace(/\s+/g, '-')          // Replace spaces with hyphens
-        .replace(/[^\w\-]+/g, '')      // Remove all non-word chars except hyphens
-        .replace(/\-\-+/g, '-')        // Replace multiple hyphens with single hyphen
-        .replace(/^-+/, '')            // Trim hyphens from start
-        .replace(/-+$/, '');           // Trim hyphens from end
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')                                    // Replace spaces with -
+        .replace(/[^\p{L}\p{N}\-]/gu, '')                        // Remove all non-word chars (compatible with Unicode)
+        .replace(/\-\-+/g, '-')                                  // Replace multiple - with single -
+        .replace(/^-+/, '')                                      // Trim - from start
+        .replace(/-+$/, '');                                     // Trim - from end
 }
 
 /**

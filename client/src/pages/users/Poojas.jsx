@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generatePureSlug } from "../../utils/slugify";
+import { getAssetUrl } from "../../utils/assets";
 import { Search, X, AlertCircle, RefreshCw, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { MdSelfImprovement, MdTempleHindu } from "react-icons/md";
 
@@ -174,7 +175,7 @@ export default function Poojas() {
                             <div className="relative aspect-4/3 w-full overflow-hidden shrink-0">
                                 <div className="absolute" />
                                 <img
-                                    src={pooja.image}
+                                    src={getAssetUrl(pooja.image)}
                                     alt={pooja.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
