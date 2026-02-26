@@ -27,6 +27,9 @@ export const getStats = async () => {
   const [[chadawas]] = await db.query(
     `SELECT COUNT(*) AS totalChadawas FROM chadawas`
   );
+  const [[users]] = await db.query(
+    `SELECT COUNT(*) AS totalUsers FROM users`
+  );
 
   return {
     total_orders: orders.totalOrders,
@@ -35,6 +38,7 @@ export const getStats = async () => {
     total_temples: temples.totalTemples,
     total_poojas: poojas.totalPoojas,
     total_chadawas: chadawas.totalChadawas,
+    total_users: users.totalUsers,
   };
 };
 
@@ -101,13 +105,19 @@ export const getAllBookings = async () => {
       b.id,
       b.pooja_date,
       b.devotee_name,
+      b.gotra,
       b.mobile,
       b.status,
       b.created_at,
-      o.order_number
+      o.order_number,
+      p.title as pooja_title,
+      t.title as temple_title
     FROM bookings b
     JOIN order_items oi ON oi.id=b.order_item_id
     JOIN orders o ON o.id=oi.order_id
+    JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
+    JOIN poojas p ON p.id = pv.pooja_id
+    JOIN temples t ON t.id = oi.temple_id
     ORDER BY b.created_at DESC
     `
   );
@@ -119,4 +129,32 @@ export const updateBookingStatus = async (bookingId, status) => {
     `UPDATE bookings SET status=? WHERE id=?`,
     [status, bookingId]
   );
+};
+
+/* ===== USERS ===== */
+export const getAllUsers = async () => {
+  const [rows] = await db.query(
+    `SELECT id, name, email, mobile, role, created_at FROM users ORDER BY created_at DESC`
+  );
+  return rows;
+};
+/* ===== HELPERS FOR NOTIFICATIONS ===== */
+export const getUserIdByBookingId = async (bookingId) => {
+  const [[row]] = await db.query(
+    `SELECT o.user_id 
+     FROM bookings b
+     JOIN order_items oi ON oi.id = b.order_item_id
+     JOIN orders o ON o.id = oi.order_id
+     WHERE b.id = ?`,
+    [bookingId]
+  );
+  return row ? row.user_id : null;
+};
+
+export const getUserIdByOrderId = async (orderId) => {
+  const [[row]] = await db.query(
+    `SELECT user_id FROM orders WHERE id = ?`,
+    [orderId]
+  );
+  return row ? row.user_id : null;
 };

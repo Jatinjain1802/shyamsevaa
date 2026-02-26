@@ -22,12 +22,20 @@ export const getOrderDetail = async (req, res) => {
 
 export const updatePaymentStatus = async (req, res) => {
   const { status, payment_id } = req.body;
+  const { orderId } = req.params;
 
   await AdminModel.updatePaymentStatus(
-    req.params.orderId,
+    orderId,
     status,
     payment_id
   );
+
+  // Emit real-time update ONLY to the specific user
+  const userId = await AdminModel.getUserIdByOrderId(orderId);
+  const io = req.app.get("io");
+  if (userId) {
+    io.to(`user-${userId}`).emit("status-updated", { type: "order", id: orderId, status });
+  }
 
   res.json({ success: true, message: "Payment status updated" });
 };
@@ -39,10 +47,27 @@ export const getAllBookings = async (req, res) => {
 };
 
 export const updateBookingStatus = async (req, res) => {
+  const { status } = req.body;
+  const { bookingId } = req.params;
+
   await AdminModel.updateBookingStatus(
-    req.params.bookingId,
-    req.body.status
+    bookingId,
+    status
   );
+
+  // Emit real-time update ONLY to the specific user
+  const userId = await AdminModel.getUserIdByBookingId(bookingId);
+  const io = req.app.get("io");
+  if (userId) {
+    io.to(`user-${userId}`).emit("status-updated", { type: "booking", id: bookingId, status });
+  }
 
   res.json({ success: true, message: "Booking status updated" });
 };
+
+/* ===== USERS ===== */
+export const getAllUsers = async (req, res) => {
+  const users = await AdminModel.getAllUsers();
+  res.json({ success: true, data: users });
+};
+

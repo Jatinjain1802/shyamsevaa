@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
+import toast from "react-hot-toast";
 import {
     ArrowLeft,
     ShieldCheck,
@@ -10,11 +11,22 @@ import {
     Heart,
     Flower,
     Banknote,
-    Calendar, // Note: EditCalendar wasn't exact match, using Calendar for now or Pencil
+    Calendar,
     PenLine,
     Clock,
-    ArrowRight
+    ArrowRight,
+    Phone
 } from "lucide-react";
+
+const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+};
 
 export default function BookingCheckout() {
     const location = useLocation();
@@ -28,6 +40,7 @@ export default function BookingCheckout() {
         name: "",
         gotra: ""
     }]);
+    const [contactMobile, setContactMobile] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -59,6 +72,12 @@ export default function BookingCheckout() {
     const handleSubmitBooking = async (e) => {
         e.preventDefault();
 
+        // 1. Validation
+        if (!contactMobile || contactMobile.length < 10) {
+            alert("Please enter a valid 10-digit mobile number for communication.");
+            return;
+        }
+
         for (let i = 0; i < sankalpDetails.length; i++) {
             if (!sankalpDetails[i].name.trim()) {
                 alert(`Please enter the name for Devotee ${i + 1}`);
@@ -72,25 +91,91 @@ export default function BookingCheckout() {
 
         setIsSubmitting(true);
 
-        const payload = {
-            poojaId: pooja.id,
-            variantId: selectedVariant.id,
-            addons: selectedAddons.map((a) => a.id),
-            date: selectedDate,
-            time: selectedTimeSlot,
-            sankalp: sankalpDetails,
-            totalAmount: totalPrice,
-        };
-
         try {
-            const response = await api.post('/bookings', payload);
-            console.log("Booking successful:", response.data);
+            // 2. Load Razorpay Script
+            const res = await loadRazorpayScript();
+            if (!res) {
+                alert("Razorpay SDK failed to load. Are you online?");
+                setIsSubmitting(false);
+                return;
+            }
 
-            alert(`Booking confirmed! Total: ₹${totalPrice.toLocaleString()}\n\nBooking ID: ${response.data.data?.id || 'GENERATED'}`);
-            navigate('/my-bookings');
+            // 3. Create Local Order (Checkout)
+            // This adds items to orders and order_items tables
+            const checkoutRes = await api.post('/checkout', {
+                // Backend might handle cart from session/user_id, 
+                // but let's assume we need to ensure the order is created.
+                // Looking at checkout.controller.js, it uses cart items.
+            });
+
+            if (!checkoutRes.data.success) {
+                alert("Order creation failed.");
+                setIsSubmitting(false);
+                return;
+            }
+
+            const { order_id, total_amount } = checkoutRes.data;
+
+            // 4. Create Razorpay Order
+            const paymentOrderRes = await api.post('/payments/create', { order_id });
+            if (!paymentOrderRes.data.success) {
+                alert("Failed to initiate payment. Please try again.");
+                setIsSubmitting(false);
+                return;
+            }
+
+            const { razorpay_order_id, amount, currency, key_id } = paymentOrderRes.data;
+
+            // 5. Initialize Razorpay Options
+            const options = {
+                key: key_id,
+                amount: amount,
+                currency: currency,
+                name: "Shyam Sevaa",
+                description: `Pooja Booking: ${pooja.title}`,
+                image: "https://shyamsevaa.com/logo.png", // Replace with your logo
+                order_id: razorpay_order_id,
+                handler: async function (response) {
+                    try {
+                        // 6. Verify Payment on Backend
+                        const verifyRes = await api.post('/payments/verify', {
+                            order_id: order_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            pooja_date: selectedDate,
+                            devotee_name: sankalpDetails[0].name, // Fallback for single field columns
+                            gotra: sankalpDetails[0].gotra,      // Fallback
+                            mobile: contactMobile,
+                            sankalp: sankalpDetails
+                        });
+
+                        if (verifyRes.data.success) {
+                            toast.success("Payment Successful! Your pooja has been booked.");
+                            navigate('/dashboard');
+                        } else {
+                            toast.error("Payment verification failed. Please contact support.");
+                        }
+                    } catch (err) {
+                        console.error("Verification error:", err);
+                        toast.error("An error occurred during payment verification.");
+                    }
+                },
+                prefill: {
+                    name: sankalpDetails[0].name,
+                    contact: contactMobile,
+                },
+                theme: {
+                    color: "#800000", // Sindoor color
+                },
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+
         } catch (error) {
-            console.error("Booking failed:", error);
-            alert("Failed to create booking. Please try again.");
+            console.error("Booking workflow failed:", error);
+            alert("Checkout process failed. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -207,8 +292,30 @@ export default function BookingCheckout() {
                                 <div className="space-y-6">
                                     <h3 className="text-lg font-bold text-heritage-dark flex items-center gap-2">
                                         <PenLine className="text-marigold w-5 h-5" />
-                                        Devotee Details for Sankalp
+                                        Contact & Devotee Details
                                     </h3>
+
+                                    <div className="bg-linear-to-br from-haldi/5 to-marigold/5 p-6 rounded-3xl border-2 border-haldi/20 mb-8">
+                                        <div className="flex items-center gap-3 mb-5">
+                                            <Phone className="text-marigold w-6 h-6" />
+                                            <span className="text-sm font-bold text-sindoor uppercase tracking-wider">Contact Number (WhatsApp Updates)</span>
+                                        </div>
+                                        <div className="max-w-md">
+                                            <label className="text-xs font-bold text-stone-600 uppercase tracking-wide">Mobile Number *</label>
+                                            <div className="flex gap-2">
+                                                <span className="flex items-center px-4 bg-white border-2 border-stone-200 rounded-xl text-stone-500 font-bold">+91</span>
+                                                <input
+                                                    required
+                                                    type="tel"
+                                                    pattern="[0-9]{10}"
+                                                    className="w-full bg-white border-2 border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-marigold transition-all"
+                                                    placeholder="Enter 10 digit number"
+                                                    value={contactMobile}
+                                                    onChange={(e) => setContactMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div className="space-y-6">
                                         {sankalpDetails.map((detail, index) => (

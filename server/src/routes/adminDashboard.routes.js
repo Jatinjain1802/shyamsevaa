@@ -9,6 +9,7 @@ import {
   updatePaymentStatus,
   getAllBookings,
   updateBookingStatus,
+  getAllUsers,
 } from "../controllers/adminDashboard.controller.js";
 
 const router = express.Router();
@@ -56,6 +57,14 @@ router.put(
   authMiddleware,
   adminMiddleware,
   updateBookingStatus
+);
+
+/* ===== USERS ===== */
+router.get(
+  "/admin/users",
+  authMiddleware,
+  adminMiddleware,
+  getAllUsers
 );
 
 export default router;

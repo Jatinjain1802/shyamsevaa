@@ -6,6 +6,7 @@ import { checkout } from "../controllers/checkout.conrtroller.js";
 
 import {
   getUserOrders,
+  getUserChadawaOrders,
   getUserOrderDetail,
   getAllOrders,
   getAdminOrderDetail,
@@ -27,10 +28,11 @@ router.post("/checkout", authMiddleware, checkout);
 
 // user orders
 router.get("/orders", authMiddleware, getUserOrders);
+router.get("/orders/my-chadawas", authMiddleware, getUserChadawaOrders);
 router.get("/orders/:orderId", authMiddleware, getUserOrderDetail);
 
 // user bookings
-router.get("/bookings", authMiddleware, getUserBookings);
+router.get("/bookings/my-bookings", authMiddleware, getUserBookings);
 
 /* ================= ADMIN ================= */
 

@@ -186,7 +186,7 @@ export default function Poojas() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {poojas.map((p) => (
             <div
               key={p.id}
@@ -256,7 +256,7 @@ export default function Poojas() {
 
             <div className="p-6">
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700">
                       Title

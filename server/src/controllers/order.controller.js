@@ -5,6 +5,11 @@ export const getUserOrders = async (req, res) => {
   res.json({ success: true, data: orders });
 };
 
+export const getUserChadawaOrders = async (req, res) => {
+  const data = await OrderModel.getChadawaOrdersByUser(req.user.id);
+  res.json({ success: true, data });
+};
+
 export const getUserOrderDetail = async (req, res) => {
   const order = await OrderModel.getOrderById(req.params.orderId, req.user.id);
   if (!order) return res.status(404).json({ success: false });

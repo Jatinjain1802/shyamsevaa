@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
+import toast from "react-hot-toast";
 import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
 import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
@@ -343,11 +344,11 @@ export default function ChadawaDetail() {
 
     const handleOffering = () => {
         if (selectedItems.length === 0) {
-            alert("Please select at least one offering item.");
+            toast.error("Please select at least one offering item.");
             return;
         }
         const totalAmount = selectedItems.reduce((sum, item) => sum + Number(item.price), 0);
-        alert(`Proceeding to offer ${selectedItems.length} items for ₹${totalAmount.toLocaleString()}`);
+        toast.success(`Proceeding to offer ${selectedItems.length} items for ₹${totalAmount.toLocaleString()}`);
         // Implementation for checkout navigation would go here
         // navigate('/checkout', { state: { type: 'chadawa', items: selectedItems, total: totalAmount } })
     };
@@ -384,24 +385,7 @@ export default function ChadawaDetail() {
             {/* Decorative Toran Border */}
             <div className="hidden md:block toran-border mb-8"></div>
 
-            {/* Toast Notifications */}
-            <div className="fixed top-20 right-4 z-70 space-y-2">
-                {toasts.map(toast => (
-                    <div
-                        key={toast.id}
-                        className={`px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm animate-slide-in-right flex items-center gap-3 ${toast.type === 'success' ? 'bg-green-500 text-white' :
-                            toast.type === 'error' ? 'bg-red-500 text-white' :
-                                toast.type === 'warning' ? 'bg-yellow-500 text-white' :
-                                    'bg-blue-500 text-white'
-                            }`}
-                    >
-                        {toast.type === 'success' ? <CheckCircle className="w-5 h-5" /> :
-                            toast.type === 'error' ? <AlertCircle className="w-5 h-5" /> :
-                                toast.type === 'warning' ? <AlertTriangle className="w-5 h-5" /> : <Info className="w-5 h-5" />}
-                        {toast.message}
-                    </div>
-                ))}
-            </div>
+            {/* Removed legacy custom toast display as react-hot-toast is global */}
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* LEARNING: Breadcrumb Navigation for better UX */}

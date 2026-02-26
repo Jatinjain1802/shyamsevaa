@@ -110,3 +110,7 @@ export const getCartDetail = async (cartId) => {
 
     return items;
 };
+
+export const clearCart = async (cartId) => {
+    await db.query(`DELETE FROM cart_items WHERE cart_id=?`, [cartId]);
+};

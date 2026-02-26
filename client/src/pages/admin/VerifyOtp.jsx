@@ -23,7 +23,7 @@ export default function VerifyOtp() {
 
     try {
       await verifyOtp({ email: state?.email, otp });
-      navigate("/admin/reset-password", { state });
+      navigate("/reset-password", { state });
     } catch (err) {
       setError(err.response?.data?.message || "Invalid OTP. Please try again.");
     } finally {
@@ -36,7 +36,7 @@ export default function VerifyOtp() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <p className="text-gray-500 mb-4">Email not found. Please try again.</p>
-          <Link to="/admin/forgot-password" className="text-(--color-primary) font-medium">Go Back</Link>
+          <Link to="/forgot-password" className="text-(--color-primary) font-medium">Go Back</Link>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ export default function VerifyOtp() {
         </form>
 
         <div className="mt-8 text-center">
-          <Link 
-            to="/admin/forgot-password" 
+          <Link
+            to="/forgot-password"
             className="inline-flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-(--color-primary) transition-colors font-medium group"
           >
             <FiArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

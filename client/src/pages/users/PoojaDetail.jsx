@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../../utils/axios";
+import toast from "react-hot-toast";
 import { extractIdFromSlug, generateSlug, slugify } from "../../utils/slugify";
 import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
@@ -36,18 +37,15 @@ import { MdTempleHindu, MdVolunteerActivism, MdSelfImprovement } from "react-ico
 
 // LEARNING: Custom hook for toast notifications
 // This is a simple implementation - in production, use libraries like react-hot-toast or react-toastify
+// Custom hook wrapper for backward compatibility with existing code
 const useToast = () => {
-    const [toasts, setToasts] = useState([]);
-
     const showToast = (message, type = 'info') => {
-        const id = Date.now();
-        setToasts(prev => [...prev, { id, message, type }]);
-        setTimeout(() => {
-            setToasts(prev => prev.filter(t => t.id !== id));
-        }, 3000);
+        if (type === 'success') toast.success(message);
+        else if (type === 'error') toast.error(message);
+        else if (type === 'warning') toast.error(message); // fallback for warning
+        else toast(message);
     };
-
-    return { toasts, showToast };
+    return { toasts: [], showToast }; // toasts array returned empty as react-hot-toast handles display
 };
 
 
@@ -436,7 +434,7 @@ export default function PoojaDetail() {
     };
 
     // LEARNING: Better UX with toast notifications instead of alerts
-    const handleBookNow = (e) => {
+    const handleBookNow = async (e) => {
         e.preventDefault();
 
         // Validation with user-friendly feedback
@@ -447,15 +445,28 @@ export default function PoojaDetail() {
             return;
         }
 
-        // Navigate to booking checkout page with all data
-        navigate('/booking-checkout', {
-            state: {
-                pooja: pooja,
-                selectedVariant: selectedVariant,
-                selectedAddons: selectedAddons,
-                totalPrice: totalPrice()
-            }
-        });
+        try {
+            // Add to cart first so backend /checkout can find it
+            // We use the existing /cart/pooja endpoint
+            await api.post('/cart/pooja', {
+                pooja_variant_id: selectedVariant.id,
+                temple_id: temples && temples.length > 0 ? temples[0].id : null,
+                addons: selectedAddons.map(a => ({ addon_id: a.id, quantity: 1 }))
+            });
+
+            // Navigate to booking checkout page with all data
+            navigate('/booking-checkout', {
+                state: {
+                    pooja: pooja,
+                    selectedVariant: selectedVariant,
+                    selectedAddons: selectedAddons,
+                    totalPrice: totalPrice()
+                }
+            });
+        } catch (err) {
+            console.error("Failed to add to cart:", err);
+            showToast("Failed to initiate booking. Please try again.", "error");
+        }
     };
 
     // LEARNING: Share functionality using Web Share API
@@ -516,23 +527,7 @@ export default function PoojaDetail() {
         <div className="flex flex-col min-h-screen pb-24">
             {/* LEARNING: Toast Notifications Component */}
             {/* Position fixed to show notifications on top of everything */}
-            <div className="fixed top-20 right-4 z-70 space-y-2">
-                {toasts.map(toast => (
-                    <div
-                        key={toast.id}
-                        className={`px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm animate-slide-in-right flex items-center gap-3 ${toast.type === 'success' ? 'bg-green-500 text-white' :
-                            toast.type === 'error' ? 'bg-red-500 text-white' :
-                                toast.type === 'warning' ? 'bg-yellow-500 text-white' :
-                                    'bg-blue-500 text-white'
-                            }`}
-                    >
-                        {toast.type === 'success' ? <CheckCircle className="w-5 h-5" /> :
-                            toast.type === 'error' ? <AlertCircle className="w-5 h-5" /> :
-                                toast.type === 'warning' ? <AlertTriangle className="w-5 h-5" /> : <Info className="w-5 h-5" />}
-                        {toast.message}
-                    </div>
-                ))}
-            </div>
+            {/* Removed legacy custom toast display as react-hot-toast is global */}
 
             <main className="grow">
                 {/* LEARNING: Breadcrumb Navigation for better UX */}
@@ -586,14 +581,14 @@ export default function PoojaDetail() {
                             <p className="text-lg text-stone-600 leading-relaxed max-w-lg mb-10 italic">
                                 {pooja.description || "Invoke the blessings of the divine for prosperity, wisdom, and the removal of all obstacles in your life's journey."}
                             </p>
-                            <div className="flex items-center gap-8">
+                            <div className="flex flex-wrap items-center gap-6 sm:gap-8">
                                 <div>
                                     <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Dakshina from</p>
-                                    <p className="text-4xl font-black text-sindoor">
+                                    <p className="text-3xl sm:text-4xl font-black text-sindoor">
                                         ₹{variants.length > 0 ? Number(variants[0].price).toLocaleString() : "1,101"}
                                     </p>
                                 </div>
-                                <div className="h-12 w-px bg-stone-200"></div>
+                                <div className="hidden sm:block h-12 w-px bg-stone-200"></div>
                                 <div>
                                     <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Next Muhurat</p>
                                     {pooja.pooja_date ? (
@@ -669,7 +664,7 @@ export default function PoojaDetail() {
                                         <div className="text-marigold mb-4">
                                             {variant.persons > 2 ? <Users className="w-10 h-10" /> : (variant.persons === 2 ? <Heart className="w-10 h-10" /> : <User className="w-10 h-10" />)}
                                         </div>
-                                        <h4 className="text-xl font-bold mb-2">{variant.title}</h4>
+                                        <h4 className="text-xl font-bold mb-2">{variant.title || `${variant.persons} Person${variant.persons > 1 ? 's' : ''}`}</h4>
                                         <p className="text-sm text-stone-500 mb-6">
                                             {variant.description || "Personalized Vedic ritual with complete Sankalp"}
                                         </p>
@@ -965,35 +960,35 @@ export default function PoojaDetail() {
             </main>
 
             {/* Sticky Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-60 bg-white border-t border-stone-200 py-4 px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
-                <div className="max-w-[1280px] mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-8">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-1">Selected Seva</span>
-                            <span className="text-heritage-dark font-bold flex items-center gap-2">
-                                {pooja.title} ({selectedVariant ? selectedVariant.title : "Select Variant"})
+            <div className="fixed bottom-0 left-0 right-0 z-60 bg-white border-t border-stone-200 py-3 md:py-4 px-4 md:px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
+                <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
+                    <div className="flex items-center justify-between w-full md:w-auto md:gap-8">
+                        <div className="flex flex-col max-w-[50%] md:max-w-none">
+                            <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-0.5 md:mb-1">Selected Seva</span>
+                            <span className="text-heritage-dark font-bold text-xs md:text-base flex items-center gap-1 md:gap-2 truncate">
+                                {pooja.title} {selectedVariant ? `(${selectedVariant.title || `${selectedVariant.persons} Person${selectedVariant.persons > 1 ? 's' : ''}`})` : "(Select Variant)"}
                             </span>
                         </div>
-                        <div className="h-10 w-px bg-stone-200 hidden sm:block"></div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-1">Total Dakshina</span>
-                            <span className="text-2xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
+                        <div className="h-10 w-px bg-stone-200 hidden md:block"></div>
+                        <div className="flex flex-col text-right md:text-left">
+                            <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-0.5 md:mb-1">Total Dakshina</span>
+                            <span className="text-lg md:text-2xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
                         <button
                             onClick={handleAddToWishlist}
-                            className="bg-white border-2 border-marigold/30 text-marigold p-3 md:p-4 rounded-2xl hover:bg-marigold/10 transition-all flex items-center justify-center"
+                            className="bg-white border-2 border-marigold/30 text-marigold p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-marigold/10 transition-all flex items-center justify-center shrink-0"
                             title="Add to Wishlist"
                         >
-                            <Heart className="w-6 h-6" />
+                            <Heart className="w-5 h-5 md:w-6 md:h-6" />
                         </button>
                         <button
                             onClick={handleBookNow}
-                            className="bg-sindoor text-white px-8 md:px-10 py-3 md:py-4 rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center gap-3"
+                            className="bg-sindoor text-white px-4 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center justify-center gap-2 md:gap-3 w-full text-xs md:text-base"
                         >
-                            PROCEED TO BOOK
-                            <ArrowRight className="w-5 h-5" />
+                            PROCEED <span className="hidden sm:inline">TO BOOK</span>
+                            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                     </div>
                 </div>

@@ -193,7 +193,7 @@ export default function Temples() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {temples.map((t) => (
             <div
               key={t.id}
@@ -323,7 +323,7 @@ export default function Temples() {
                 </div>
 
                 {/* City and State Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700">
                       City

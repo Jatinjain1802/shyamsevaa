@@ -22,7 +22,7 @@ export default function ForgotPassword() {
 
     try {
       await forgotPassword({ email });
-      navigate("/admin/verify-otp", { state: { email } });
+      navigate("/verify-otp", { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
@@ -90,8 +90,8 @@ export default function ForgotPassword() {
         </form>
 
         <div className="mt-8 text-center">
-          <Link 
-            to="/admin/login" 
+          <Link
+            to="/login"
             className="inline-flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-(--color-primary) transition-colors font-medium group"
           >
             <FiArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

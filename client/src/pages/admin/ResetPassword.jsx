@@ -40,7 +40,7 @@ export default function ResetPassword() {
         email: state?.email,
         newPassword: formData.password,
       });
-      navigate("/admin/login");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to reset password. Please try again.");
     } finally {
@@ -53,7 +53,7 @@ export default function ResetPassword() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <p className="text-gray-500 mb-4">Session expired or invalid. Please start over.</p>
-          <Link to="/admin/forgot-password" className="text-(--color-primary) font-medium">Go to Forgot Password</Link>
+          <Link to="/forgot-password" className="text-(--color-primary) font-medium">Go to Forgot Password</Link>
         </div>
       </div>
     );

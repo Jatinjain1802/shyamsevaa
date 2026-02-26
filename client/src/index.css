@@ -2,67 +2,90 @@
 
 @theme {
   /* ========== PREMIUM TYPOGRAPHY ========== */
-  --font-sans: 'Poppins', sans-serif;
-  --font-serif: 'Playfair Display', serif;
-  --font-display: 'EB Garamond', serif;
-  --font-traditional: 'Yatra One', cursive;
-  --font-outfit: 'Outfit', sans-serif;
-  --font-cinzel: 'Cinzel', serif;
-  --font-hindi: 'Tiro Devanagari Hindi', serif;
-  --font-martel: 'Martel', serif;
+  --font-sans: "Poppins", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-display: "EB Garamond", serif;
+  --font-traditional: "Yatra One", cursive;
+  --font-outfit: "Outfit", sans-serif;
+  --font-cinzel: "Cinzel", serif;
+  --font-hindi: "Tiro Devanagari Hindi", serif;
+  --font-martel: "Martel", serif;
 
   /* ========== SACRED COLOR PALETTE ========== */
   /* Primary - Sindoor (Sacred Red) */
-  --color-sindoor: #C41E3A;
-  --color-sindoor-light: #E63946;
-  --color-sindoor-dark: #8B1538;
+  --color-sindoor: #c41e3a;
+  --color-sindoor-light: #e63946;
+  --color-sindoor-dark: #8b1538;
   --color-sindoor-50: rgba(196, 30, 58, 0.05);
   --color-sindoor-100: rgba(196, 30, 58, 0.1);
 
   /* Secondary - Marigold (Temple Flower) */
-  --color-marigold: #FF8C00;
-  --color-marigold-light: #FFA500;
-  --color-marigold-dark: #E67E00;
+  --color-marigold: #ff8c00;
+  --color-marigold-light: #ffa500;
+  --color-marigold-dark: #e67e00;
 
   /* Accent - Haldi (Turmeric Gold) */
-  --color-haldi: #FFD700;
-  --color-haldi-light: #FFE44D;
-  --color-haldi-dark: #DAA520;
+  --color-haldi: #ffd700;
+  --color-haldi-light: #ffe44d;
+  --color-haldi-dark: #daa520;
 
   /* Sacred Blue - Krishna */
-  --color-krishna: #1E3A8A;
-  --color-krishna-light: #3B82F6;
-  --color-krishna-dark: #1E40AF;
+  --color-krishna: #1e3a8a;
+  --color-krishna-light: #3b82f6;
+  --color-krishna-dark: #1e40af;
 
   /* Sacred Saffron */
-  --color-saffron: #FF9933;
-  --color-saffron-light: #FFB366;
-  --color-saffron-dark: #CC7A29;
+  --color-saffron: #ff9933;
+  --color-saffron-light: #ffb366;
+  --color-saffron-dark: #cc7a29;
 
   /* Backgrounds */
-  --color-paper-bg: #FFF9F0;
-  --color-cream: #FAF8F3;
-  --color-ivory: #FFFFF0;
+  --color-paper-bg: #fff9f0;
+  --color-cream: #faf8f3;
+  --color-ivory: #fffff0;
 
   /* Text Colors */
-  --color-heritage-dark: #2D1B1B;
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #4A4A4A;
-  --color-text-light: #6B6B6B;
-  --color-text-muted: #9CA3AF;
+  --color-heritage-dark: #2d1b1b;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-light: #6b6b6b;
+  --color-text-muted: #9ca3af;
 
   /* Utility Colors */
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-whatsapp: #25D366;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-whatsapp: #25d366;
 
   /* ========== PREMIUM GRADIENTS ========== */
-  --gradient-sunset: linear-gradient(135deg, #FF9933 0%, #FF8C00 50%, #C41E3A 100%);
-  --gradient-divine: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%);
-  --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
-  --gradient-temple: linear-gradient(180deg, rgba(196, 30, 58, 0.95) 0%, rgba(139, 21, 56, 0.85) 100%);
-  --gradient-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+  --gradient-sunset: linear-gradient(
+    135deg,
+    #ff9933 0%,
+    #ff8c00 50%,
+    #c41e3a 100%
+  );
+  --gradient-divine: linear-gradient(
+    135deg,
+    #1e3a8a 0%,
+    #3b82f6 50%,
+    #60a5fa 100%
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    #ffd700 0%,
+    #ffa500 50%,
+    #ff8c00 100%
+  );
+  --gradient-temple: linear-gradient(
+    180deg,
+    rgba(196, 30, 58, 0.95) 0%,
+    rgba(139, 21, 56, 0.85) 100%
+  );
+  --gradient-overlay: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
 
   /* ========== ENHANCED ANIMATIONS ========== */
   --animate-fade-in: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -125,7 +148,6 @@
   }
 
   @keyframes blob {
-
     0%,
     100% {
       transform: translate(0px, 0px) scale(1);
@@ -141,7 +163,6 @@
   }
 
   @keyframes float {
-
     0%,
     100% {
       transform: translateY(0px) rotate(0deg);
@@ -153,7 +174,6 @@
   }
 
   @keyframes float-reverse {
-
     0%,
     100% {
       transform: translateY(0px) rotate(0deg);
@@ -165,7 +185,6 @@
   }
 
   @keyframes glow {
-
     0%,
     100% {
       box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
@@ -197,7 +216,6 @@
   }
 
   @keyframes pulse-slow {
-
     0%,
     100% {
       opacity: 1;
@@ -219,8 +237,16 @@
     font-family: var(--font-sans);
     background-color: var(--color-paper-bg);
     background-image:
-      radial-gradient(circle at 20% 50%, rgba(255, 153, 51, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(196, 30, 58, 0.03) 0%, transparent 50%),
+      radial-gradient(
+        circle at 20% 50%,
+        rgba(255, 153, 51, 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(196, 30, 58, 0.03) 0%,
+        transparent 50%
+      ),
       url("https://www.transparenttextures.com/patterns/handmade-paper.png");
     color: var(--color-text-primary);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -257,15 +283,16 @@
 
 /* ========== COMPONENT UTILITIES ========== */
 @layer components {
-
   /* ===== DECORATIVE ELEMENTS ===== */
   .toran-border {
     height: 28px;
-    background-image: radial-gradient(circle at 14px 0,
-        transparent 11px,
-        var(--color-marigold) 12px,
-        var(--color-marigold) 14px,
-        transparent 15px);
+    background-image: radial-gradient(
+      circle at 14px 0,
+      transparent 11px,
+      var(--color-marigold) 12px,
+      var(--color-marigold) 14px,
+      transparent 15px
+    );
     background-size: 28px 28px;
     width: 100%;
     position: relative;
@@ -273,17 +300,26 @@
   }
 
   .toran-border::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, var(--color-sindoor) 0%, var(--color-marigold) 50%, var(--color-sindoor) 100%);
+    background: linear-gradient(
+      90deg,
+      var(--color-sindoor) 0%,
+      var(--color-marigold) 50%,
+      var(--color-sindoor) 100%
+    );
   }
 
   .garland-decoration {
-    background: radial-gradient(circle, var(--color-marigold) 0%, var(--color-haldi) 70%);
+    background: radial-gradient(
+      circle,
+      var(--color-marigold) 0%,
+      var(--color-haldi) 70%
+    );
     width: 22px;
     height: 22px;
     border-radius: 50%;
@@ -446,7 +482,7 @@
   }
 
   .section-divider::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -463,12 +499,23 @@
 
   /* ===== SHIMMER EFFECT ===== */
   .shimmer {
-    background: linear-gradient(90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.3) 50%,
-        rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
     background-size: 200% 100%;
     animation: var(--animate-shimmer);
+  }
+
+  /* ===== SCROLLBAR UTILITIES ===== */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* ===== SCROLL ANIMATIONS ===== */

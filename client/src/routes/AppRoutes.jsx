@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import UserLayout from "../components/layout/UserLayout";
 import Home from "../pages/Home";
-import AdminLogin from "../pages/admin/Login";
 import Templess from "../pages/users/Temples";
 import ForgotPassword from "../pages/admin/ForgotPassword";
 import VerifyOtp from "../pages/admin/VerifyOtp";
@@ -14,6 +13,7 @@ import Pandits from "../pages/admin/Pandits";
 import Users from "../pages/admin/Users";
 import ProtectedAdmin from "./ProtectedAdmin";
 import Poojas from "../pages/admin/Poojas";
+import Orders from "../pages/admin/Orders";
 import Temples from "../pages/admin/Temples";
 import Chadawas from "../pages/admin/Chadawas";
 import ChadawaItems from "../pages/admin/ChadawaItems";
@@ -58,17 +58,18 @@ export default function AppRoutes() {
           <Route path="/muhurat" element={<Muhurat />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/search" element={<SearchResults />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
         </Route>
+
+        {/* Dedicated Dashboard Route with custom layout logic */}
+        <Route path="/dashboard" element={<UserDashboard />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Admin Login Routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin/verify-otp" element={<VerifyOtp />} />
-        <Route path="/admin/reset-password" element={<ResetPassword />} />
+        {/* Auth Flow Routes */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Admin Dashboard Routes */}
         <Route
           path="/admin"
@@ -91,8 +92,10 @@ export default function AppRoutes() {
           <Route path="pandits" element={<Pandits />} />
           <Route path="bookings" element={<Bookings />} />
           <Route path="users" element={<Users />} />
+          <Route path="orders" element={<Orders />} />
         </Route>
       </Routes>
     </>
   );
 }
+

@@ -67,8 +67,8 @@ export default function PoojaFaqs({ poojaId }) {
             <form onSubmit={handleAdd} className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8 shadow-sm">
                 <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Add New Question</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <div className="md:col-span-8 space-y-2">
+                <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-8 space-y-2">
                         <label className="text-xs font-semibold text-gray-500 uppercase">Question</label>
                         <input
                             type="text"
@@ -80,7 +80,7 @@ export default function PoojaFaqs({ poojaId }) {
                         />
                     </div>
 
-                    <div className="md:col-span-4 space-y-2">
+                    <div className="col-span-4 space-y-2">
                         <label className="text-xs font-semibold text-gray-500 uppercase">Sort Order</label>
                         <input
                             type="number"
@@ -91,7 +91,7 @@ export default function PoojaFaqs({ poojaId }) {
                         />
                     </div>
 
-                    <div className="md:col-span-12 space-y-2">
+                    <div className="col-span-12 space-y-2">
                         <label className="text-xs font-semibold text-gray-500 uppercase">Answer</label>
                         <textarea
                             placeholder="Detailed answer for the devotee..."
