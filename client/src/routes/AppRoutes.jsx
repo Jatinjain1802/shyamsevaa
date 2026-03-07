@@ -38,6 +38,8 @@ import UserDashboard from "../pages/users/UserDashboard";
 import Panchang from "../pages/users/Panchang";
 import PrivacyPolicy from "../pages/users/PrivacyPolicy";
 import TermsAndConditions from "../pages/users/TermsAndConditions";
+import RefundPolicy from "../pages/users/RefundPolicy";
+import Contact from "../pages/users/Contact";
 
 
 export default function AppRoutes() {
@@ -65,6 +67,8 @@ export default function AppRoutes() {
           <Route path="/panchang" element={<Panchang />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/contact" element={<Contact />} />
 
         </Route>
 

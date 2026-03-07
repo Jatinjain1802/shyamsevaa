@@ -38,6 +38,7 @@ export default function Footer() {
               <p className="text-stone-600 text-sm leading-relaxed mb-8 font-medium max-w-xs">
                 {t('footer.about_text')} <Link to="/about" className="text-marigold hover:text-sindoor font-bold">{t('footer.read_more')}</Link>
               </p>
+
               <div className="flex gap-3">
                 <a href="#" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                   <Share2 className="w-4 h-4" />
@@ -51,25 +52,17 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Services */}
-            <div>
-              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">{t('footer.services')}</h4>
+            {/* Support & Legal */}
+            <div className="md:col-span-1">
+              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">Support & Legal</h4>
               <ul className="space-y-3 text-sm text-stone-600 font-medium">
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/pandit">{t('services.pandit')}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/poojas">{t('services.epuja')}</Link></li>
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/about">{t('nav.about')}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/vastu">{t('services.vastu')}</Link></li>
-              </ul>
-            </div>
-
-            {/* Knowledge */}
-            <div>
-              <h4 className="text-sindoor font-bold tracking-widest mb-6 font-sans text-sm border-b-2 border-marigold/20 pb-2 inline-block">{t('footer.knowledge')}</h4>
-              <ul className="space-y-3 text-sm text-stone-600 font-medium">
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/contact">{t('nav.contact')}</Link></li>
+                {/* <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/privacy">{t('footer.privacy')}</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/terms">{t('footer.terms')}</Link></li>
+                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/refund-policy">{t('refund.title')}</Link></li> */}
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/panchang">Panchang {new Date().getFullYear()}</Link></li>
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/blog">{t('nav.blog')}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/mantras">Vedic Mantras</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/yatras">Spiritual Yatras</Link></li>
               </ul>
             </div>
 
@@ -107,6 +100,7 @@ export default function Footer() {
             <div className="flex gap-8 text-[10px] font-bold text-stone-400 tracking-[0.2em] uppercase">
               <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/privacy">{t('footer.privacy')}</Link>
               <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/terms">{t('footer.terms')}</Link>
+              <Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/refund-policy">{t('refund.title')}</Link>
             </div>
           </div>
         </div>

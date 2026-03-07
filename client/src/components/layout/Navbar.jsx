@@ -94,29 +94,29 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`relative w-full sticky top-0 z-50 transition-all duration-500 ${scrolled
+      <header className={`w-full sticky top-0 z-50 transition-all duration-500 ${scrolled
         ? "glass-card shadow-xl py-3 border-b-2 border-marigold/50"
         : "bg-white/95 backdrop-blur-sm py-5 border-b-2 border-marigold/30"
         }`}>
 
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between">
           <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-4 group">
+            <Link to="/" className="flex items-center gap-2 sm:gap-4 group shrink-0">
               <div className="relative">
                 <div className="absolute inset-0 bg-sindoor/10 rounded-full blur-xl group-hover:bg-sindoor/20 transition-all"></div>
                 <div className="relative flex flex-col items-center">
                   <img
                     src="/logo.png"
                     alt="Shyampuja Logo"
-                    className="w-14 h-14 md:w-20 md:h-20 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    className="w-10 h-10 sx:w-12 sx:h-12 md:w-20 md:h-20 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
                   />
                 </div>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-3xl md:text-4xl leading-tight tracking-tight font-serif font-bold bg-linear-to-r from-sindoor via-marigold to-sindoor bg-size-[200%_auto] bg-clip-text text-transparent animate-shimmer">
+                <h1 className="text-xl sx:text-2xl md:text-4xl leading-tight tracking-tight font-serif font-bold bg-linear-to-r from-sindoor via-marigold to-sindoor bg-size-[200%_auto] bg-clip-text text-transparent animate-shimmer">
                   Shyampuja
                 </h1>
-                <span className="text-[11px] uppercase tracking-[0.25em] font-bold text-marigold -mt-0.5 font-sans animate-fade-in">
+                <span className="text-[8px] sx:text-[10px] md:text-[11px] uppercase tracking-widest sx:tracking-[0.25em] font-bold text-marigold -mt-0.5 font-sans animate-fade-in">
                   Divine Services
                 </span>
               </div>
@@ -144,7 +144,7 @@ export default function Navbar() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-1.5 sx:gap-3 md:gap-5">
             <div className="relative hidden lg:block" ref={searchRef}>
               <form
                 onSubmit={handleSearch}
@@ -214,8 +214,8 @@ export default function Navbar() {
               )}
             </div>
 
-            <div className="flex items-center gap-2 md:gap-3">
-              <div className="relative" ref={langMenuRef}>
+            <div className="flex items-center gap-1 sx:gap-2 md:gap-3">
+              <div className="relative hidden sm:block" ref={langMenuRef}>
                 <button
                   onClick={() => setShowLangDropdown(!showLangDropdown)}
                   className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 relative group"
@@ -330,10 +330,10 @@ export default function Navbar() {
       </header>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md" onClick={() => setIsOpen(false)} />
+        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md" onClick={() => setIsOpen(false)} />
       )}
 
-      <div className={`fixed top-0 right-0 z-[70] h-full w-80 glass-card shadow-2xl transform transition-all duration-500 ease-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+      <div className={`fixed top-0 right-0 z-70 h-full w-80 glass-card shadow-2xl transform transition-all duration-500 ease-out border-l-4 border-marigold ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="flex flex-col h-full">
           <div className="relative flex justify-between items-center p-6 border-b border-marigold/20 bg-white/50">
             <div className="absolute top-0 left-0 right-0 h-1 sunset-gradient"></div>
