@@ -13,9 +13,13 @@ import {
   AlertCircle
 } from "lucide-react";
 import { MdTempleHindu } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
+
 
 export default function Temples() {
+  const { t } = useTranslation();
   const [temples, setTemples] = useState([]);
+
   const [filteredTemples, setFilteredTemples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,15 +96,16 @@ export default function Temples() {
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="text-red-500 w-10 h-10" />
           </div>
-          <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">Oops! Something went wrong</h3>
+          <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">{t('common.error_title')}</h3>
           <p className="text-stone-600 mb-6 italic">{error}</p>
           <button
             onClick={fetchTemples}
             className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2 mx-auto"
           >
             <RefreshCw className="w-5 h-5" />
-            Try Again
+            {t('common.try_again')}
           </button>
+
         </div>
       </div>
     );
@@ -112,21 +117,23 @@ export default function Temples() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="py-4 text-sm text-stone-500 font-bold tracking-widest uppercase mb-4">
-          <Link to="/" className="hover:text-sindoor transition-colors">Home</Link>
+          <Link to="/" className="hover:text-sindoor transition-colors">{t('nav.home')}</Link>
           <span className="mx-2 text-marigold">/</span>
-          <span className="text-sindoor">Temples</span>
+          <span className="text-sindoor">{t('nav.temples')}</span>
         </div>
+
 
         <div className="text-center mb-12">
           <MdTempleHindu className="text-marigold text-5xl mb-2 mx-auto" />
           <h1 className="text-4xl md:text-5xl text-sindoor mb-4 font-serif">
-            Sacred Temples
+            {t('temples_page.title')}
           </h1>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans italic">
-            Discover the divine architecture and spiritual sanctity of ancient temples.
+            {t('temples_page.subtitle')}
           </p>
           <div className="w-24 h-1 bg-marigold mx-auto mt-6 rounded-full"></div>
         </div>
+
 
         <div className="mb-12 bg-white/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-marigold/20">
           <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -134,12 +141,13 @@ export default function Temples() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search temples by name, location, or description..."
+                placeholder={t('temples_page.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-stone-200 focus:border-marigold focus:outline-none transition-colors font-sans"
                 aria-label="Search temples"
               />
+
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
@@ -152,22 +160,23 @@ export default function Temples() {
             </div>
 
             <div className="text-sm text-stone-500 font-medium">
-              Showing <span className="text-sindoor font-bold">{filteredTemples.length}</span> of {temples.length} temples
+              {t('common.showing')} <span className="text-sindoor font-bold">{filteredTemples.length}</span> {t('common.of')} {temples.length} {t('nav.temples').toLowerCase()}
             </div>
+
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {filteredTemples.map((t) => (
+          {filteredTemples.map((temple) => (
             <UnifiedCard
-              key={t.id}
-              image={getAssetUrl(t.image)}
-              title={t.title}
-              location={t.city && t.state ? `${t.city}, ${t.state}` : t.city || t.state}
-              description={t.description}
-              link={`/temples/${generatePureSlug(t.title)}`}
-              state={{ id: t.id }}
-              buttonText="View Temple"
+              key={temple.id}
+              image={getAssetUrl(temple.image)}
+              title={temple.title}
+              location={temple.city && temple.state ? `${temple.city}, ${temple.state}` : temple.city || temple.state}
+              description={temple.description}
+              link={`/temples/${generatePureSlug(temple.title)}`}
+              state={{ id: temple.id }}
+              buttonText={t('common.view_details')}
             />
           ))}
         </div>
@@ -177,17 +186,18 @@ export default function Temples() {
             <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
               <Search className="text-sindoor w-8 h-8 opacity-50" />
             </div>
-            <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Temples Found</h3>
+            <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('temples_page.no_results')}</h3>
             <p className="text-stone-500 font-sans italic mb-4">
-              We couldn't find any temples matching "{searchQuery}".
+              {t('temples_page.no_results_desc')} "{searchQuery}".
             </p>
             <button
               onClick={() => setSearchQuery("")}
               className="text-marigold font-bold hover:underline flex items-center gap-2 mx-auto"
             >
               <RefreshCw className="w-4 h-4" />
-              Clear Search
+              {t('panchang.clear_search')}
             </button>
+
           </div>
         )}
 
@@ -196,10 +206,11 @@ export default function Temples() {
             <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
               <MdTempleHindu className="text-sindoor text-4xl" />
             </div>
-            <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Temples Available</h3>
+            <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('temples_page.no_temples_available')}</h3>
             <p className="text-stone-500 font-sans italic">
-              We are currently updating our temple listings. Please check back soon.
+              {t('temples_page.updating_listing')}
             </p>
+
           </div>
         )}
 

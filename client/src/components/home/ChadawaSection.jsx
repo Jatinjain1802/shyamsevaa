@@ -5,9 +5,13 @@ import { useEffect, useState, useRef } from "react";
 import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 import { getAssetUrl } from "../../utils/assets";
+import { useTranslation } from 'react-i18next';
+
 
 export default function ChadawaSection() {
+    const { t } = useTranslation();
     const [chadawas, setChadawas] = useState([]);
+
     const scrollContainerRef = useRef(null);
 
     useEffect(() => {
@@ -75,20 +79,23 @@ export default function ChadawaSection() {
                             <div className="w-10 h-[2px] bg-marigold/50 hidden md:block"></div>
                             <div className="flex items-center gap-2">
                                 <MdVolunteerActivism className="text-marigold w-6 h-6 animate-pulse" />
-                                <span className="text-marigold font-bold tracking-[0.2em] uppercase text-xs">Divine Contributions</span>
+                                <span className="text-marigold font-bold tracking-[0.2em] uppercase text-xs">{t('home.chadawas_tagline')}</span>
                             </div>
+
                         </div>
                         <h2 className="text-5xl md:text-7xl font-serif font-bold text-heritage-dark mb-6 leading-[1.1]">
-                            Sacred <span className="text-sindoor relative italic">
-                                Chadawas
+                            {t('home.chadawas_title')} <span className="text-sindoor relative italic">
+                                {t('nav.chadawas')}
+
                                 <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
                                     <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="#B32D2D" strokeWidth="2" opacity="0.3" />
                                 </svg>
                             </span>
                         </h2>
                         <p className="text-lg text-stone-600 max-w-xl font-sans leading-relaxed">
-                            Perform sacred offerings to your beloved deities. We ensure your devotion reaches the temple sanctum with complete purity and rituals.
+                            {t('home.chadawas_desc')}
                         </p>
+
                     </div>
 
                     {/* Navigation Buttons for Desktop */}
@@ -111,9 +118,10 @@ export default function ChadawaSection() {
                             to="/chadawas"
                             className="inline-flex items-center px-8 py-4 bg-linear-to-r from-sindoor to-marigold text-white rounded-full font-bold shadow-lg shadow-sindoor/20 hover:shadow-2xl hover:shadow-sindoor/40 transition-all duration-500 hover:-translate-y-1"
                         >
-                            Explore Collection
+                            {t('home.chadawas_collection')}
                             <ChevronRight className="ml-2 w-5 h-5" />
                         </Link>
+
                     </div>
                 </div>
 
@@ -181,9 +189,10 @@ export default function ChadawaSection() {
                                     <div
                                         className="inline-flex items-center justify-center gap-3 w-full px-8 py-4 bg-heritage-dark text-white font-bold rounded-2xl group-hover:bg-sindoor group-hover:shadow-xl group-hover:shadow-sindoor/30 transition-all duration-500"
                                     >
-                                        <span className="tracking-wide">Book Offering Now</span>
+                                        <span className="tracking-wide">{t('home.chadawas_book')}</span>
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                                     </div>
+
 
                                     {/* Bottom Decorative Pattern */}
                                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-marigold/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

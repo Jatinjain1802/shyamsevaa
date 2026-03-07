@@ -142,7 +142,7 @@ export default function AdminLayout() {
                     {user?.name || "Administrator"}
                   </p>
                   <p className="text-[10px] text-stone-500 font-bold truncate mt-0.5">
-                    {user?.email || "admin@shyamsevaa.com"}
+                    {user?.email || "admin@ShyamPujaa.com"}
                   </p>
                 </div>
               )}

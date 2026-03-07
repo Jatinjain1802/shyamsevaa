@@ -6,9 +6,13 @@ import { useEffect, useState, useRef } from "react";
 import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 import { getAssetUrl } from "../../utils/assets";
+import { useTranslation } from 'react-i18next';
+
 
 export default function PujaSection() {
+    const { t } = useTranslation();
     const [pujas, setPujas] = useState([]);
+
     const scrollContainerRef = useRef(null);
 
     useEffect(() => {
@@ -56,12 +60,13 @@ export default function PujaSection() {
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                     <div className="text-center md:text-left">
                         <h2 className="text-4xl md:text-6xl font-serif font-bold text-heritage-dark mb-6 leading-tight">
-                            Featured <span className="text-sindoor">Poojas</span>
+                            {t('home.poojas_title')} <span className="text-sindoor">{t('nav.poojas')}</span>
                         </h2>
                         <p className="text-lg text-stone-600 max-w-xl font-sans leading-relaxed">
-                            Participate in powerful rituals performed at ancient temples. Book online and receive divine blessings directly to your home.
+                            {t('home.poojas_subtitle')}
                         </p>
                     </div>
+
 
                     {/* Navigation Buttons for Desktop */}
                     <div className="hidden md:flex items-center gap-4">
@@ -81,9 +86,10 @@ export default function PujaSection() {
                             to="/poojas"
                             className="inline-flex items-center px-6 py-3 bg-linear-to-r from-sindoor to-marigold text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:shadow-sindoor/30 transition-all duration-300 ml-4"
                         >
-                            View All
+                            {t('common.view_all')}
                             <ChevronRight className="ml-1 w-5 h-5" />
                         </Link>
+
                     </div>
                 </div>
 
@@ -146,9 +152,10 @@ export default function PujaSection() {
                                     <div
                                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-sindoor text-white font-bold rounded-xl group-hover:bg-marigold group-hover:shadow-lg transition-all duration-300"
                                     >
-                                        <span>View Details</span>
+                                        <span>{t('common.view_details')}</span>
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </div>
+
                                 </div>
                             </div>
                         </Link>

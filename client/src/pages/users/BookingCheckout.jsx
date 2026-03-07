@@ -133,7 +133,7 @@ export default function BookingCheckout() {
                 currency: currency,
                 name: "Shyam Sevaa",
                 description: `Pooja Booking: ${pooja.title}`,
-                image: "https://shyamsevaa.com/logo.png", // Replace with your logo
+                image: "https://ShyamPujaa.com/logo.png", // Replace with your logo
                 order_id: razorpay_order_id,
                 handler: async function (response) {
                     try {
@@ -184,21 +184,36 @@ export default function BookingCheckout() {
     return (
         <div className="min-h-screen bg-paper-bg pb-8">
             <div className="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
-                <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate(-1)}
-                            className="flex items-center gap-2 text-stone-600 hover:text-sindoor transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            <span className="font-bold text-sm">Back</span>
-                        </button>
-                        <div className="h-6 w-px bg-stone-200"></div>
-                        <h1 className="text-2xl font-serif text-sindoor">Complete Your Booking</h1>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <ShieldCheck className="text-marigold w-5 h-5" />
-                        <span className="text-xs text-stone-500 italic">Secure Checkout</span>
+                <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-4">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="flex items-center justify-center w-10 h-10 rounded-xl bg-stone-50 text-stone-600 hover:text-sindoor hover:bg-sindoor/10 transition-all shadow-sm"
+                            >
+                                <ArrowLeft className="w-5 h-5" />
+                            </button>
+                            <div className="h-8 w-px bg-stone-200 hidden md:block"></div>
+                            <h1 className="text-xl md:text-2xl font-serif text-sindoor font-bold">Complete Your Booking</h1>
+                        </div>
+
+                        {/* Step Indicator - Premium UI Addition */}
+                        <div className="flex items-center gap-2 md:gap-8 w-full md:w-auto justify-center md:justify-end">
+                            <div className="flex items-center gap-2 group">
+                                <div className="w-8 h-8 rounded-full bg-sindoor text-white flex items-center justify-center font-bold text-xs ring-4 ring-sindoor/10">1</div>
+                                <span className="text-xs font-bold text-sindoor hidden sm:inline uppercase tracking-widest">Details</span>
+                            </div>
+                            <div className="w-8 md:w-16 h-0.5 bg-stone-200"></div>
+                            <div className="flex items-center gap-2 opacity-40">
+                                <div className="w-8 h-8 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center font-bold text-xs">2</div>
+                                <span className="text-xs font-bold text-stone-500 hidden sm:inline uppercase tracking-widest">Payment</span>
+                            </div>
+                            <div className="w-8 md:w-16 h-0.5 bg-stone-200"></div>
+                            <div className="flex items-center gap-2 opacity-40">
+                                <div className="w-8 h-8 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center font-bold text-xs">3</div>
+                                <span className="text-xs font-bold text-stone-500 hidden sm:inline uppercase tracking-widest">Success</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

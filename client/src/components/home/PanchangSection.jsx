@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, RefreshCw, Sunrise, Sunset, ArrowRight } from "lucide-react";
 import { MdSelfImprovement, MdTempleHindu } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
 import api from "../../utils/axios";
 
 const PanchangSection = () => {
+    const { t } = useTranslation();
     const [panchang, setPanchang] = useState(null);
+
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -35,8 +38,9 @@ const PanchangSection = () => {
                         <div className="w-full md:w-1/3 glass-card p-8 rounded-3xl border-2 border-haldi shadow-inner flex flex-col justify-center">
                             <div className="flex items-center gap-4 mb-6">
                                 <Calendar className="text-4xl text-sindoor" />
-                                <h3 className="text-3xl text-sindoor font-serif">Panchang Today</h3>
+                                <h3 className="text-3xl text-sindoor font-serif">{t('panchang.panchang_today')}</h3>
                             </div>
+
 
                             {loading ? (
                                 <div className="py-12 flex justify-center">
@@ -48,17 +52,20 @@ const PanchangSection = () => {
                                         {panchang.date}
                                     </div>
                                     <div className="flex justify-between items-center border-b border-marigold/20 pb-2">
-                                        <span className="font-bold text-gray-600">Tithi:</span>
+                                        <span className="font-bold text-gray-600">{t('panchang.tithi')}:</span>
                                         <span className="text-sindoor font-bold">{panchang.tithi}</span>
                                     </div>
+
                                     <div className="flex justify-between items-center border-b border-marigold/20 pb-2">
-                                        <span className="font-bold text-gray-600">Nakshatra:</span>
+                                        <span className="font-bold text-gray-600">{t('panchang.nakshatra')}:</span>
                                         <span className="text-sindoor font-bold">{panchang.nakshatra}</span>
                                     </div>
+
                                     <div className="flex justify-between items-center border-b border-marigold/20 pb-2">
-                                        <span className="font-bold text-gray-600">Yoga:</span>
+                                        <span className="font-bold text-gray-600">{t('panchang.yoga')}:</span>
                                         <span className="text-sindoor font-bold">{panchang.yoga}</span>
                                     </div>
+
                                     <div className="flex justify-between items-center pt-2">
                                         <div className="flex items-center gap-1 text-sm text-stone-500">
                                             <Sunrise className="text-marigold w-5 h-5" />
@@ -77,8 +84,9 @@ const PanchangSection = () => {
                                 </div>
                             ) : (
                                 <div className="text-center py-8 text-stone-500">
-                                    Unable to load Panchang data.
+                                    {t('panchang.unable_load')}
                                 </div>
+
                             )}
                         </div>
 
@@ -99,13 +107,14 @@ const PanchangSection = () => {
                                     <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 text-haldi border border-white/20">
                                         <MdSelfImprovement className="text-3xl" />
                                     </div>
-                                    <h4 className="text-3xl text-white mb-2 font-serif">Book a Puja</h4>
+                                    <h4 className="text-3xl text-white mb-2 font-serif">{t('services.pandit')}</h4>
                                     <p className="text-sm text-stone-300 mb-6 italic leading-relaxed font-sans">
-                                        Perform sacred rituals with certified Vedic Pandits for divine blessings at your home or online.
+                                        {t('home.poojas_subtitle')}
                                     </p>
                                     <Link to="/poojas" className="text-haldi font-black flex items-center gap-2 group-hover:gap-4 transition-all uppercase tracking-wider text-xs">
-                                        EXPLORE POOJAS <ArrowRight className="w-5 h-5" />
+                                        {t('home.explore_poojas')} <ArrowRight className="w-5 h-5" />
                                     </Link>
+
                                 </div>
                             </div>
 
@@ -124,13 +133,14 @@ const PanchangSection = () => {
                                     <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 text-haldi border border-white/20">
                                         <MdTempleHindu className="text-3xl" />
                                     </div>
-                                    <h4 className="text-3xl text-white mb-2 font-serif">Visit Temple</h4>
+                                    <h4 className="text-3xl text-white mb-2 font-serif">{t('home.explore_temples').split(' ')[1]}</h4>
                                     <p className="text-sm text-stone-300 mb-6 italic leading-relaxed font-sans">
-                                        Experience divine darshan at India's most spirited and ancient temples. Plan your pilgrimage.
+                                        {t('about.tagline')}
                                     </p>
                                     <Link to="/temples" className="text-haldi font-black flex items-center gap-2 group-hover:gap-4 transition-all uppercase tracking-wider text-xs">
-                                        EXPLORE TEMPLES <ArrowRight className="w-5 h-5" />
+                                        {t('home.explore_temples')} <ArrowRight className="w-5 h-5" />
                                     </Link>
+
                                 </div>
                             </div>
                         </div>

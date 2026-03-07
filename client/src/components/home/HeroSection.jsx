@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { MdTempleHindu } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
 import api from "../../utils/axios";
 import { generatePureSlug } from "../../utils/slugify";
+import { getAssetUrl } from "../../utils/assets";
 
 const HeroSection = () => {
+    const { t } = useTranslation();
     const [currentSlide, setCurrentSlide] = useState(0);
+
     const [temples, setTemples] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -84,7 +88,7 @@ const HeroSection = () => {
                         <div
                             className={`absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ${index === currentSlide ? "scale-110" : "scale-100"
                                 }`}
-                            style={{ backgroundImage: `url("${temple.image}")` }}
+                            style={{ backgroundImage: `url("${getAssetUrl(temple.image)}")` }}
                         >
                             {/* Overlay for better text readability */}
                         </div>
@@ -124,8 +128,9 @@ const HeroSection = () => {
                                         className="btn-primary-custom group shadow-2xl hover:shadow-marigold/40 py-4 px-8 text-base md:text-lg w-full sm:w-auto text-center flex items-center justify-center"
                                     >
                                         <MdTempleHindu className="w-5 h-5 mr-2" />
-                                        <span>View Puja</span>
+                                        <span>{t('home.hero_view_puja')}</span>
                                     </Link>
+
                                 </div>
                             </div>
                         </div>

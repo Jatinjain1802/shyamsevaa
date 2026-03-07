@@ -20,13 +20,7 @@ const LanguageSwitcher = () => {
             >
                 हिन्दी (Hindi)
             </button>
-            <button
-                onClick={() => changeLanguage("hn")}
-                className={`px-3 py-1 rounded ${language === "hn" ? "bg-blue-600 text-white" : "bg-gray-200"
-                    }`}
-            >
-                Hindlish
-            </button>
+
         </div>
     );
 };

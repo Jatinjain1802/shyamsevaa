@@ -239,12 +239,7 @@ export default function Navbar() {
                       >
                         <span className="text-xs font-bold">HI</span> हिन्दी
                       </button>
-                      <button
-                        onClick={() => { changeLanguage("hn"); setShowLangDropdown(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-left ${currentLang === 'hn' ? 'text-sindoor bg-orange-50' : 'text-stone-600 hover:text-sindoor hover:bg-orange-50'}`}
-                      >
-                        <span className="text-xs font-bold">HN</span> Hindlish
-                      </button>
+
                     </div>
                   </div>
                 )}
@@ -438,12 +433,7 @@ export default function Navbar() {
                   >
                     हिन्दी
                   </button>
-                  <button
-                    onClick={() => changeLanguage("hn")}
-                    className={`py-3 rounded-xl text-xs font-bold transition-all ${currentLang === 'hn' ? 'sunset-gradient text-white shadow-md' : 'bg-white text-stone-600 border border-marigold/20'}`}
-                  >
-                    Hindlish
-                  </button>
+
                 </div>
               </div>
             </div>

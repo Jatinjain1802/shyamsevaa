@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import en from "../locales/en.json";
 import hi from "../locales/hi.json";
-import hn from "../locales/hn.json";
+import i18n from "../i18n";
 
-const translations = { en, hi, hn };
+
+
+const translations = { en, hi };
 
 const LanguageContext = createContext();
 
@@ -28,8 +30,10 @@ export const LanguageProvider = ({ children }) => {
     const changeLanguage = (lang) => {
         if (translations[lang]) {
             setLanguage(lang);
+            i18n.changeLanguage(lang);
         }
     };
+
 
     return (
         <LanguageContext.Provider value={{ language, t, changeLanguage }}>

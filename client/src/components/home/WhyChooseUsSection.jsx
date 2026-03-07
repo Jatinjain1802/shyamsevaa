@@ -20,7 +20,7 @@ const WhyChooseUsSection = () => {
                     </div>
 
                     <div>
-                        <div className="text-orange-600 font-bold uppercase tracking-wider text-sm mb-2">Why Choose ShyamSeva</div>
+                        <div className="text-orange-600 font-bold uppercase tracking-wider text-sm mb-2">Why Choose ShyamPuja</div>
                         <h2 className="text-4xl font-serif font-bold text-gray-900 mb-6 leading-tight">
                             Bridging Tradition <br /> with Modern Convenience
                         </h2>

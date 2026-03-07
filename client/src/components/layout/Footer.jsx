@@ -107,7 +107,6 @@ export default function Footer() {
             <div className="flex gap-8 text-[10px] font-bold text-stone-400 tracking-[0.2em] uppercase">
               <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/privacy">{t('footer.privacy')}</Link>
               <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/terms">{t('footer.terms')}</Link>
-              <Link className="hover:text-sindoor transition-colors hover:scale-105 transform inline-block" to="/refunds">{t('footer.refunds')}</Link>
             </div>
           </div>
         </div>

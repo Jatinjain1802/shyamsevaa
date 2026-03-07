@@ -35,6 +35,10 @@ import ScrollToTop from "../components/ScrollToTop";
 import Login from "../pages/users/Login";
 import Signup from "../pages/users/Signup";
 import UserDashboard from "../pages/users/UserDashboard";
+import Panchang from "../pages/users/Panchang";
+import PrivacyPolicy from "../pages/users/PrivacyPolicy";
+import TermsAndConditions from "../pages/users/TermsAndConditions";
+
 
 export default function AppRoutes() {
   return (
@@ -58,6 +62,10 @@ export default function AppRoutes() {
           <Route path="/muhurat" element={<Muhurat />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/panchang" element={<Panchang />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+
         </Route>
 
         {/* Dedicated Dashboard Route with custom layout logic */}

@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, forgotPassword, verifyOtp, resetPassword } from "../controllers/auth.controller.js";
+import { register, login, refresh, forgotPassword, verifyOtp, resetPassword } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
@@ -8,6 +8,7 @@ router.post("/register", register);
 
 // Login (admin/user)
 router.post("/login", login);
+router.post("/refresh", refresh);
 
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-otp", verifyOtp);

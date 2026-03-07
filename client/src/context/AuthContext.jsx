@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { getToken, setToken as setAuthToken, removeToken } from "../services/token.service";
+import { getToken, setToken as setAuthToken, removeToken, setRefreshToken, removeRefreshToken } from "../services/token.service";
 import { login as apiLogin } from "../api/auth.api";
 
 export const AuthContext = createContext();
@@ -28,8 +28,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiLogin(credentials);
       if (response.data.success) {
-        const { token, user } = response.data;
+        const { token, refreshToken, user } = response.data;
         setAuthToken(token);
+        if (refreshToken) {
+          setRefreshToken(refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
         return { success: true, user };
@@ -45,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     removeToken();
+    removeRefreshToken();
     localStorage.removeItem("user");
     setUser(null);
   };

@@ -4,9 +4,15 @@ import * as AuthModel from "../models/auth.model.js";
 import crypto from "crypto";
 import { sendEmail } from "../utils/email.js";
 
-const generateToken = (payload) => {
+const generateAccessToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+const generateRefreshToken = (payload) => {
+  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
   });
 };
 
@@ -82,15 +88,23 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = generateToken({
+    const accessToken = generateAccessToken({
       id: user.id,
       role: user.role,
     });
 
+    const refreshToken = generateRefreshToken({
+      id: user.id,
+    });
+
+    // Store refresh token in DB
+    await AuthModel.saveRefreshToken(user.id, refreshToken);
+
     return res.json({
       success: true,
       message: "Login successful",
-      token,
+      token: accessToken,
+      refreshToken,
       user: {
         id: user.id,
         name: user.name,
@@ -103,6 +117,55 @@ export const login = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+
+// REFRESH TOKEN
+export const refresh = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh Token is required",
+      });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    if (!decoded) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Refresh Token",
+      });
+    }
+
+    // Check if user exists and token matches
+    const user = await AuthModel.findById(decoded.id);
+    if (!user || user.refresh_token !== refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Session expired, please login again",
+      });
+    }
+
+    // Generate new access token
+    const newAccessToken = generateAccessToken({
+      id: user.id,
+      role: user.role,
+    });
+
+    return res.json({
+      success: true,
+      token: newAccessToken,
+    });
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired refresh token",
     });
   }
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getPanchangam, Observer, tithiNames, nakshatraNames, yogaNames, karanaNames } from '@ishubhamx/panchangam-js';
+import { MhahPanchang as PanchangObj } from 'mhah-panchang';
 import {
     Sun,
     Sparkles,
@@ -29,46 +29,49 @@ const Muhurat = () => {
     useEffect(() => {
         const fetchPanchang = () => {
             try {
-                // Default Location: Varanasi (Kashi)
-                const observer = new Observer(25.3176, 82.9739, 81);
+                const panchangObj = new PanchangObj();
                 const date = new Date();
-                const panchang = getPanchangam(date, observer);
+                const lat = 25.3176;
+                const lon = 82.9739;
 
-                // Process Data
-                const tithiName = tithiNames[panchang.tithi] || "Unknown";
-                const paksha = panchang.paksha || (panchang.tithi < 15 ? "Shukla" : "Krishna");
-                const fullTithi = `${paksha} Paksha ${tithiName}`;
+                const mhahCal = panchangObj.calendar(date, lat, lon);
+                const sunTimer = panchangObj.sunTimer(date, lat, lon);
 
                 // Formatting Helpers
-                const formatTime = (isoString) => {
-                    if (!isoString) return "--:--";
-                    return new Date(isoString).toLocaleTimeString('en-IN', {
+                const formatTime = (timeStr) => {
+                    if (!timeStr) return "--:--";
+                    return new Date(timeStr).toLocaleTimeString('en-IN', {
                         hour: '2-digit',
                         minute: '2-digit',
                         hour12: true
                     });
                 };
 
+                const sunriseDate = new Date(sunTimer.sunRise);
+                const sunsetDate = new Date(sunTimer.sunSet);
+                const dayLengthMs = sunsetDate.getTime() - sunriseDate.getTime();
+                const muhurtaLengthMs = dayLengthMs / 15;
+
                 const data = {
-                    tithi: fullTithi,
-                    nakshatra: nakshatraNames[panchang.nakshatra] || "Unknown",
-                    yoga: yogaNames[panchang.yoga] || "Unknown",
-                    karan: karanaNames[panchang.karana] || "Unknown",
-                    sunrise: formatTime(panchang.sunrise),
-                    sunset: formatTime(panchang.sunset),
-                    moonrise: formatTime(panchang.moonrise),
-                    moonset: formatTime(panchang.moonset),
+                    tithi: `${mhahCal.Paksha.name_en_IN} Paksha ${mhahCal.Tithi.name_en_IN}`,
+                    nakshatra: mhahCal.Nakshatra.name_en_IN,
+                    yoga: mhahCal.Yoga.name_en_IN,
+                    karan: mhahCal.Karan ? mhahCal.Karan.name_en_IN : "Dashata",
+                    sunrise: formatTime(sunTimer.sunRise),
+                    sunset: formatTime(sunTimer.sunSet),
+                    moonrise: formatTime(sunTimer.moonRise),
+                    moonset: formatTime(sunTimer.moonSet),
                     abhijit: {
-                        start: formatTime(panchang.abhijitMuhurta?.start),
-                        end: formatTime(panchang.abhijitMuhurta?.end)
+                        start: formatTime(new Date(sunriseDate.getTime() + 7 * muhurtaLengthMs)),
+                        end: formatTime(new Date(sunriseDate.getTime() + 8 * muhurtaLengthMs))
                     },
                     rahu: {
-                        start: formatTime(panchang.rahuKaalam?.start),
-                        end: formatTime(panchang.rahuKaalam?.end)
+                        start: "15:00 PM",
+                        end: "16:30 PM"
                     },
                     yamaganda: {
-                        start: formatTime(panchang.yamagandaKalam?.start),
-                        end: formatTime(panchang.yamagandaKalam?.end)
+                        start: "09:00 AM",
+                        end: "10:30 AM"
                     }
                 };
 
@@ -192,7 +195,7 @@ const Muhurat = () => {
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.moonrise}</span>
                             </div>
                             <div className="bg-white/60 p-4 rounded-2xl flex flex-col items-center text-center border border-marigold/20 hover:border-marigold transition-colors">
-                                <Sunset className="text-3xl text-stone-400 mb-2 w-8 h-8 text-stone-400" />
+                                <Sunset className="text-3xl text-stone-400 mb-2 w-8 h-8" />
                                 <span className="text-xs text-stone-500 uppercase font-bold">Moonset</span>
                                 <span className="text-xl text-sindoor font-bold">{panchangData?.moonset}</span>
                             </div>

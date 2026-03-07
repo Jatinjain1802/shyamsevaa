@@ -12,7 +12,7 @@ const TestimonialsSection = () => {
                 <div className="grid md:grid-cols-3 gap-8">
                     {[
                         {
-                            text: "ShyamSeva made it so easy to book a Pandit for my Griha Pravesh. The entire process was smooth and the Panditji was very knowledgeable.",
+                            text: "ShyamPuja made it so easy to book a Pandit for my Griha Pravesh. The entire process was smooth and the Panditji was very knowledgeable.",
                             author: "Anjali Gupta",
                             location: "Bangalore"
                         },

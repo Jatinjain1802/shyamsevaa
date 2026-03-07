@@ -679,48 +679,66 @@ export default function PoojaDetail() {
 
                 {/* Sacred Offerings */}
                 {addons && addons.length > 0 && (
-                    <section className="py-24 px-6 bg-paper-bg">
+                    <section className="py-24 px-6 bg-paper-bg overflow-hidden">
                         <div className="max-w-[1280px] mx-auto">
-                            <div className="flex items-center justify-between mb-16">
+                            <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-4 text-center md:text-left">
                                 <div>
-                                    <h2 className="text-4xl text-sindoor font-serif mb-2">Sacred Offerings (Chadawa)</h2>
+                                    <h2 className="text-3xl md:text-4xl text-sindoor font-serif mb-2">Sacred Offerings (Chadawa)</h2>
                                     <p className="text-stone-500">Enhance your ritual with these traditional offerings</p>
                                 </div>
                                 <div className="hidden md:block h-px grow mx-10 bg-marigold/20"></div>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+
+                            {/* Improved Grid: 2 columns on mobile, 3 on small tablets, 6 on desktop */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-8">
                                 {addons.map((addon, i) => {
                                     const isSelected = selectedAddons.find(a => a.id === addon.id);
                                     return (
                                         <div
                                             key={addon.id}
-                                            className={`bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center group transition-all ${isSelected ? 'border-marigold bg-marigold/5' : 'border-stone-100'
+                                            className={`group relative bg-white p-5 rounded-[2.5rem] shadow-sm border-2 transition-all duration-500 flex flex-col items-center flex-1 ${isSelected
+                                                ? 'border-marigold bg-marigold/5 shadow-marigold/10'
+                                                : 'border-white hover:border-marigold/30 hover:shadow-xl'
                                                 }`}
                                         >
-                                            <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-stone-100 flex items-center justify-center relative">
+                                            {/* Circular Image Wrapper */}
+                                            <div className="relative w-full aspect-square rounded-full overflow-hidden mb-5 border-4 border-paper-bg shadow-inner group-hover:scale-105 transition-transform duration-500">
                                                 {addon.images?.[0] ? (
-                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={getAssetUrl(addon.images[0])} alt={addon.title} />
+                                                    <img className="w-full h-full object-cover" src={getAssetUrl(addon.images[0])} alt={addon.title} />
                                                 ) : (
-                                                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={addonImages[i % addonImages.length]} alt={addon.title} />
+                                                    <img className="w-full h-full object-cover" src={addonImages[i % addonImages.length]} alt={addon.title} />
                                                 )}
                                                 {isSelected && (
-                                                    <div className="absolute top-1 right-1 bg-marigold text-white rounded-full p-0.5">
-                                                        <Check className="w-3 h-3" />
+                                                    <div className="absolute inset-0 bg-marigold/20 backdrop-blur-[2px] flex items-center justify-center animate-fade-in">
+                                                        <div className="bg-white rounded-full p-2 shadow-lg">
+                                                            <Check className="w-6 h-6 text-marigold" />
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
-                                            <h5 className="text-sm font-bold text-heritage-dark mb-1 text-center">{addon.title}</h5>
-                                            <p className="text-xs text-stone-400 mb-3 text-center">
-                                                {addon.description ? (addon.description.length > 20 ? addon.description.substring(0, 20) + "..." : addon.description) : "Sacred offering"} • ₹{Number(addon.price).toLocaleString()}
-                                            </p>
+
+                                            <h5 className="text-sm font-bold text-heritage-dark mb-1 text-center line-clamp-1 group-hover:text-sindoor transition-colors">{addon.title}</h5>
+                                            <div className="flex items-center gap-1.5 mb-5">
+                                                <span className="text-xs font-black text-sindoor">₹{Number(addon.price).toLocaleString()}</span>
+                                                <span className="text-[9px] text-stone-400 font-bold uppercase tracking-tighter">Dakshina</span>
+                                            </div>
+
                                             <button
                                                 onClick={() => toggleAddon(addon)}
-                                                className={`w-full py-2 rounded-lg flex items-center justify-center transition-all ${isSelected
-                                                    ? 'bg-sindoor text-white'
-                                                    : 'bg-stone-50 hover:bg-marigold hover:text-white'
+                                                className={`mt-auto w-full py-2.5 rounded-2xl flex items-center justify-center transition-all duration-300 font-bold text-xs tracking-widest ${isSelected
+                                                    ? 'bg-sindoor text-white shadow-lg shadow-sindoor/20'
+                                                    : 'bg-stone-50 text-stone-600 hover:bg-marigold hover:text-white'
                                                     }`}
                                             >
-                                                {isSelected ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                                {isSelected ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <Minus className="w-4 h-4" /> REMOVE
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <Plus className="w-4 h-4" /> ADD SEVA
+                                                    </div>
+                                                )}
                                             </button>
                                         </div>
                                     );
@@ -959,37 +977,55 @@ export default function PoojaDetail() {
                 </section>
             </main>
 
-            {/* Sticky Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-60 bg-white border-t border-stone-200 py-3 md:py-4 px-4 md:px-6 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
-                <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
-                    <div className="flex items-center justify-between w-full md:w-auto md:gap-8">
-                        <div className="flex flex-col max-w-[50%] md:max-w-none">
-                            <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-0.5 md:mb-1">Selected Seva</span>
-                            <span className="text-heritage-dark font-bold text-xs md:text-base flex items-center gap-1 md:gap-2 truncate">
-                                {pooja.title} {selectedVariant ? `(${selectedVariant.title || `${selectedVariant.persons} Person${selectedVariant.persons > 1 ? 's' : ''}`})` : "(Select Variant)"}
-                            </span>
+            {/* Enhanced Sticky Bottom Bar - Premium & Responsive */}
+            <div className="fixed bottom-0 left-0 right-0 z-60 bg-white/95 backdrop-blur-md border-t border-marigold/10 py-4 px-4 md:px-8 shadow-[0_-10px_30px_-5px_rgba(196,30,58,0.15)] transform transition-transform duration-300">
+                <div className="max-w-[1400px] mx-auto">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        {/* Seva Info */}
+                        <div className="flex items-center justify-between w-full sm:w-auto sm:gap-10">
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-bold mb-1">YOUR DIVINE SEVA</span>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full bg-sindoor/10 flex items-center justify-center shrink-0">
+                                        <Star className="w-4 h-4 text-sindoor fill-current" />
+                                    </div>
+                                    <span className="text-heritage-dark font-display font-bold text-sm md:text-lg truncate max-w-[150px] md:max-w-[300px]">
+                                        {pooja.title}
+                                        <span className="text-marigold ml-2 text-xs md:text-sm font-sans font-medium">
+                                            {selectedVariant ? `(${selectedVariant.title || `${selectedVariant.persons} Person${selectedVariant.persons > 1 ? 's' : ''}`})` : ""}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="hidden sm:block h-10 w-px bg-stone-100"></div>
+
+                            <div className="flex flex-col text-right sm:text-left">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-bold mb-1">TOTAL DAKSHINA</span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl md:text-3xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
+                                    <span className="text-[10px] text-stone-400 font-medium">INC. GST</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="h-10 w-px bg-stone-200 hidden md:block"></div>
-                        <div className="flex flex-col text-right md:text-left">
-                            <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-stone-500 font-bold mb-0.5 md:mb-1">Total Dakshina</span>
-                            <span className="text-lg md:text-2xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <button
+                                onClick={handleAddToWishlist}
+                                className="h-12 w-12 md:h-14 md:w-14 bg-white border-2 border-marigold/20 text-marigold rounded-2xl hover:bg-marigold hover:text-white hover:border-marigold transition-all duration-300 flex items-center justify-center shrink-0 shadow-sm group"
+                                title="Save to Wishlist"
+                            >
+                                <Heart className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
+                            </button>
+                            <button
+                                onClick={handleBookNow}
+                                className="flex-1 sm:flex-none h-12 md:h-14 px-6 md:px-12 bg-linear-to-r from-sindoor to-sindoor-light text-white rounded-2xl font-black tracking-[0.1em] shadow-lg shadow-sindoor/20 hover:shadow-sindoor/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+                            >
+                                <span className="text-sm md:text-base uppercase">PROCEED TO BOOK</span>
+                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
-                        <button
-                            onClick={handleAddToWishlist}
-                            className="bg-white border-2 border-marigold/30 text-marigold p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-marigold/10 transition-all flex items-center justify-center shrink-0"
-                            title="Add to Wishlist"
-                        >
-                            <Heart className="w-5 h-5 md:w-6 md:h-6" />
-                        </button>
-                        <button
-                            onClick={handleBookNow}
-                            className="bg-sindoor text-white px-4 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center justify-center gap-2 md:gap-3 w-full text-xs md:text-base"
-                        >
-                            PROCEED <span className="hidden sm:inline">TO BOOK</span>
-                            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
                     </div>
                 </div>
             </div>

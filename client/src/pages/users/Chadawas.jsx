@@ -5,9 +5,13 @@ import { generatePureSlug } from "../../utils/slugify";
 import { getAssetUrl } from "../../utils/assets";
 import { Search, X, AlertCircle, RefreshCw, User, ArrowRight } from "lucide-react";
 import { MdVolunteerActivism } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
+
 
 export default function Chadawas() {
+    const { t } = useTranslation();
     const [chadawas, setChadawas] = useState([]);
+
     const [filteredChadawas, setFilteredChadawas] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
@@ -81,15 +85,16 @@ export default function Chadawas() {
                     <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <AlertCircle className="text-red-500 w-10 h-10" />
                     </div>
-                    <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">Oops! Something went wrong</h3>
+                    <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">{t('common.error_title')}</h3>
                     <p className="text-stone-600 mb-6 italic">{error}</p>
                     <button
                         onClick={fetchChadawas}
                         className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2 mx-auto"
                     >
                         <RefreshCw className="w-5 h-5" />
-                        Try Again
+                        {t('common.try_again')}
                     </button>
+
                 </div>
             </div>
         );
@@ -120,21 +125,23 @@ export default function Chadawas() {
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="py-4 text-sm text-stone-600 font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
-                    <Link to="/" className="hover:text-sindoor transition-colors">Home</Link>
+                    <Link to="/" className="hover:text-sindoor transition-colors">{t('nav.home')}</Link>
                     <span className="text-marigold">/</span>
-                    <span className="text-sindoor">Chadawas</span>
+                    <span className="text-sindoor">{t('nav.chadawas')}</span>
                 </div>
+
 
                 <div className="text-center mb-12">
                     <MdVolunteerActivism className="text-marigold text-5xl mb-2 mx-auto" />
                     <h1 className="text-4xl md:text-6xl text-heritage-dark mb-4 font-serif font-bold">
-                        Sacred <span className="text-sindoor">Chadawas</span>
+                        {t('chadawas_page.title')}
                     </h1>
                     <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans leading-relaxed">
-                        Offer your devotion through sacred items. Send your love and prayers to the deity with our verified chadawa services.
+                        {t('chadawas_page.subtitle')}
                     </p>
                     <div className="w-24 h-1 bg-marigold mx-auto mt-6 rounded-full"></div>
                 </div>
+
 
                 <div className="mb-12 bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/50">
                     <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -142,12 +149,13 @@ export default function Chadawas() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5 group-focus-within:text-marigold transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Search chadawas by name or description..."
+                                placeholder={t('chadawas_page.search_placeholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-stone-200 bg-white/50 focus:bg-white focus:border-marigold focus:ring-4 focus:ring-marigold/10 outline-none transition-all font-sans text-stone-700"
                                 aria-label="Search chadawas"
                             />
+
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery("")}
@@ -160,8 +168,9 @@ export default function Chadawas() {
                         </div>
 
                         <div className="text-sm text-stone-600 font-medium px-4 py-2 bg-marigold/10 rounded-full border border-marigold/20">
-                            Showing <span className="text-sindoor font-bold">{filteredChadawas.length}</span> of {chadawas.length} chadawas
+                            {t('common.showing')} <span className="text-sindoor font-bold">{filteredChadawas.length}</span> {t('common.of')} {chadawas.length} {t('nav.chadawas').toLowerCase()}
                         </div>
+
                     </div>
                 </div>
 
@@ -208,9 +217,10 @@ export default function Chadawas() {
                                     <div
                                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-sindoor text-white font-bold rounded-xl group-hover:bg-marigold group-hover:shadow-lg transition-all duration-300"
                                     >
-                                        <span>Send Offering</span>
+                                        <span>{t('chadawas_page.send_offering')}</span>
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </div>
+
                                 </div>
                             </div>
                         </Link>
@@ -222,17 +232,18 @@ export default function Chadawas() {
                         <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                             <Search className="text-sindoor w-8 h-8 opacity-50" />
                         </div>
-                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Chadawas Found</h3>
+                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('chadawas_page.no_results')}</h3>
                         <p className="text-stone-500 font-sans italic mb-4">
-                            We couldn't find any chadawas matching "{searchQuery}".
+                            {t('chadawas_page.no_results_desc')} "{searchQuery}".
                         </p>
                         <button
                             onClick={() => setSearchQuery("")}
                             className="text-marigold font-bold hover:underline flex items-center gap-2 mx-auto"
                         >
                             <RefreshCw className="w-4 h-4" />
-                            Clear Search
+                            {t('panchang.clear_search')}
                         </button>
+
                     </div>
                 )}
 
@@ -241,10 +252,11 @@ export default function Chadawas() {
                         <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                             <MdVolunteerActivism className="text-sindoor text-4xl" />
                         </div>
-                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Chadawas Available</h3>
+                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('chadawas_page.no_available')}</h3>
                         <p className="text-stone-500 font-sans italic">
-                            We are currently updating our chadawa listings. Please check back soon.
+                            {t('chadawas_page.updating_listing')}
                         </p>
+
                     </div>
                 )}
             </div>
