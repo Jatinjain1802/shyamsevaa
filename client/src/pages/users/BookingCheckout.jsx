@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import toast from "react-hot-toast";
+import { AuthContext } from "../../context/AuthContext";
+import { getAssetUrl } from "../../utils/assets";
 import {
     ArrowLeft,
     ShieldCheck,
@@ -15,7 +17,9 @@ import {
     PenLine,
     Clock,
     ArrowRight,
-    Phone
+    Phone,
+    MapPin,
+    Package
 } from "lucide-react";
 
 const loadRazorpayScript = () => {
@@ -31,37 +35,92 @@ const loadRazorpayScript = () => {
 export default function BookingCheckout() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
     const bookingData = location.state;
 
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState("09:30 AM");
     const [sankalpDetails, setSankalpDetails] = useState([{
         name: "",
         gotra: ""
     }]);
+    const [checkoutType, setCheckoutType] = useState(bookingData?.type || 'cart');
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // Form fields
+    const [customerName, setCustomerName] = useState("");
+    const [shippingAddress, setShippingAddress] = useState("");
     const [contactMobile, setContactMobile] = useState("");
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState("09:30 AM");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        if (!bookingData || !bookingData.pooja || !bookingData.selectedVariant) {
-            navigate('/poojas');
-            return;
-        }
+    // LEARNING: useRef persists a value across renders WITHOUT causing a re-render.
+    // We use it here as a flag to prevent adding the same item to cart twice in one session.
+    // This is a client-side guard complementing the server-side upsert logic.
+    const hasAddedToCart = useRef(false);
 
-        const count = Number(bookingData.selectedVariant.persons) || 1;
-        const initialDetails = [];
-        for (let i = 0; i < count; i++) {
-            initialDetails.push({ name: "", gotra: "" });
+    // Initial pre-fill from user profile
+    useEffect(() => {
+        if (user) {
+            setCustomerName(user.name || "");
+            setContactMobile(user.mobile || "");
+            if (user.address) {
+                setShippingAddress(`${user.address}, ${user.city}, ${user.state}`);
+            }
         }
-        setSankalpDetails(initialDetails);
+    }, [user]);
+
+    useEffect(() => {
+        const prepareCheckout = async () => {
+            if (bookingData) {
+                // Direct checkout from a detail page
+                if (bookingData.type === 'product') {
+                    setCheckoutType('product');
+                } else if (bookingData.pooja) {
+                    setCheckoutType('pooja');
+                    const count = Number(bookingData.selectedVariant?.persons) || 1;
+                    setSankalpDetails(Array(count).fill({ name: "", gotra: "" }));
+                }
+            } else {
+                // Wishlist/Cart checkout
+                setLoading(true);
+                try {
+                    const res = await api.get('/cart');
+                    const items = res.data.data || [];
+                    setCartItems(items);
+                    setCheckoutType('cart');
+
+                    // If cart has poojas, init sankalp for the first one found maybe?
+                    // Actually, for cart we might need a different UI, but let's assume we handle it.
+                } catch (err) {
+                    toast.error("Failed to load cart");
+                    navigate('/wishlist');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        prepareCheckout();
     }, [bookingData, navigate]);
 
-    if (!bookingData) {
-        return null;
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-paper-bg">
+                <div className="animate-spin h-12 w-12 border-4 border-marigold border-t-sindoor rounded-full"></div>
+            </div>
+        );
     }
 
-    const { pooja, selectedVariant, selectedAddons, totalPrice } = bookingData;
+    const { pooja, selectedVariant, selectedAddons, totalPrice, product } = bookingData || {};
+
+    // Calculate totals for cart if needed
+    const finalTotalPrice = bookingData ? totalPrice : cartItems.reduce((acc, item) => {
+        let itemSum = item.base_price * item.quantity;
+        item.addons?.forEach(a => itemSum += a.price * a.quantity);
+        return acc + itemSum;
+    }, 0);
 
     const updateSankalpDetail = (index, field, value) => {
         const newDetails = [...sankalpDetails];
@@ -74,99 +133,127 @@ export default function BookingCheckout() {
 
         // 1. Validation
         if (!contactMobile || contactMobile.length < 10) {
-            alert("Please enter a valid 10-digit mobile number for communication.");
+            toast.error("Please enter a valid 10-digit mobile number.");
             return;
         }
 
-        for (let i = 0; i < sankalpDetails.length; i++) {
-            if (!sankalpDetails[i].name.trim()) {
-                alert(`Please enter the name for Devotee ${i + 1}`);
+        if (checkoutType === 'product' || (checkoutType === 'cart' && cartItems.some(i => i.product_type === 'product'))) {
+            if (!shippingAddress.trim()) {
+                toast.error("Please enter your shipping address.");
                 return;
             }
-            if (!sankalpDetails[i].gotra.trim()) {
-                alert(`Please enter the gotra for Devotee ${i + 1}`);
+            if (!customerName.trim()) {
+                toast.error("Please enter your name.");
                 return;
+            }
+        }
+
+        if (checkoutType === 'pooja') {
+            for (let i = 0; i < sankalpDetails.length; i++) {
+                if (!sankalpDetails[i].name.trim()) {
+                    toast.error(`Please enter the name for Devotee ${i + 1}`);
+                    return;
+                }
             }
         }
 
         setIsSubmitting(true);
 
         try {
-            // 2. Load Razorpay Script
+            // 2. If Direct action, add to cart first (only once per session)
+            if (bookingData && !hasAddedToCart.current) {
+                // LEARNING: hasAddedToCart.current acts as a flag without causing re-renders.
+                // If the user goes back and comes again, the component is new so this resets.
+                // The server already handles duplicates with upsert logic — this is a belt-and-suspenders guard.
+                if (checkoutType === 'product') {
+                    await api.post('/cart/add-product', { product_id: product.id, quantity: bookingData.quantity });
+                } else if (checkoutType === 'pooja') {
+                    await api.post('/cart/pooja', {
+                        pooja_variant_id: selectedVariant.id,
+                        temple_id: bookingData.temple_id || null,
+                        addons: selectedAddons?.map(a => ({ addon_id: a.id, quantity: 1 }))
+                    });
+                }
+                hasAddedToCart.current = true; // Mark as added so we don't do it again
+            }
+
+            // 3. Load Razorpay Script
             const res = await loadRazorpayScript();
             if (!res) {
-                alert("Razorpay SDK failed to load. Are you online?");
+                toast.error("Razorpay SDK failed to load.");
                 setIsSubmitting(false);
                 return;
             }
 
-            // 3. Create Local Order (Checkout)
-            // This adds items to orders and order_items tables
+            // 4. Create Order on Backend
             const checkoutRes = await api.post('/checkout', {
-                // Backend might handle cart from session/user_id, 
-                // but let's assume we need to ensure the order is created.
-                // Looking at checkout.controller.js, it uses cart items.
+                customer_name: customerName || sankalpDetails[0]?.name,
+                communication_mobile: contactMobile,
+                shipping_address: shippingAddress
             });
 
             if (!checkoutRes.data.success) {
-                alert("Order creation failed.");
+                toast.error("Order creation failed.");
                 setIsSubmitting(false);
                 return;
             }
 
-            const { order_id, total_amount } = checkoutRes.data;
+            const { order_id } = checkoutRes.data;
 
-            // 4. Create Razorpay Order
+            // 5. Create Razorpay Order
             const paymentOrderRes = await api.post('/payments/create', { order_id });
-            if (!paymentOrderRes.data.success) {
-                alert("Failed to initiate payment. Please try again.");
-                setIsSubmitting(false);
-                return;
-            }
-
             const { razorpay_order_id, amount, currency, key_id } = paymentOrderRes.data;
 
-            // 5. Initialize Razorpay Options
+            // 6. Initialize Razorpay Options
             const options = {
                 key: key_id,
                 amount: amount,
                 currency: currency,
                 name: "Shyam Sevaa",
-                description: `Pooja Booking: ${pooja.title}`,
-                image: "https://ShyamPujaa.com/logo.png", // Replace with your logo
+                description: checkoutType === 'product' ? `Product: ${product.name}` : "Spiritual Services",
+                image: "https://ShyamPujaa.com/logo.png",
                 order_id: razorpay_order_id,
                 handler: async function (response) {
                     try {
-                        // 6. Verify Payment on Backend
                         const verifyRes = await api.post('/payments/verify', {
                             order_id: order_id,
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                             pooja_date: selectedDate,
-                            devotee_name: sankalpDetails[0].name, // Fallback for single field columns
-                            gotra: sankalpDetails[0].gotra,      // Fallback
+                            devotee_name: customerName || sankalpDetails[0]?.name,
+                            gotra: sankalpDetails[0]?.gotra || "N/A",
                             mobile: contactMobile,
                             sankalp: sankalpDetails
                         });
 
                         if (verifyRes.data.success) {
-                            toast.success("Payment Successful! Your pooja has been booked.");
+                            toast.success("Order Placed Successfully!");
+
+                            if (verifyRes.data.invoice_path) {
+                                const link = document.createElement('a');
+                                link.href = getAssetUrl(verifyRes.data.invoice_path);
+                                link.target = '_blank';
+                                link.download = 'Invoice.pdf';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }
+
                             navigate('/dashboard');
                         } else {
-                            toast.error("Payment verification failed. Please contact support.");
+                            toast.error("Payment verification failed.");
                         }
                     } catch (err) {
-                        console.error("Verification error:", err);
-                        toast.error("An error occurred during payment verification.");
+                        toast.error("Error during payment verification.");
                     }
                 },
                 prefill: {
-                    name: sankalpDetails[0].name,
+                    name: customerName || sankalpDetails[0]?.name,
                     contact: contactMobile,
                 },
                 theme: {
-                    color: "#800000", // Sindoor color
+                    color: "#800000",
                 },
             };
 
@@ -174,8 +261,8 @@ export default function BookingCheckout() {
             paymentObject.open();
 
         } catch (error) {
-            console.error("Booking workflow failed:", error);
-            alert("Checkout process failed. Please try again.");
+            console.error(error);
+            toast.error("Checkout failed. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -224,72 +311,78 @@ export default function BookingCheckout() {
                         <div className="bg-white rounded-3xl p-8 shadow-lg border border-stone-200 sticky top-24">
                             <h2 className="text-2xl font-serif text-sindoor mb-6 flex items-center gap-3">
                                 <ShoppingBag className="w-6 h-6" />
-                                Booking Summary
+                                Order Summary
                             </h2>
 
-                            <div className="mb-6 pb-6 border-b border-stone-100">
-                                <div className="flex gap-4">
-                                    <img
-                                        src={pooja.image || "https://via.placeholder.com/100"}
-                                        alt={pooja.title}
-                                        className="w-20 h-20 rounded-xl object-cover"
-                                    />
-                                    <div className="flex-1">
-                                        <h3 className="font-bold text-heritage-dark mb-1">{pooja.title}</h3>
-                                        <p className="text-xs text-stone-500 line-clamp-2">{pooja.description}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-6 pb-6 border-b border-stone-100">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-xs font-bold text-marigold uppercase tracking-wider">Selected Participation</span>
-                                </div>
-                                <div className="bg-sindoor/5 p-4 rounded-2xl border border-sindoor/10">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            {selectedVariant.persons > 2 ? <Users className="text-sindoor w-6 h-6" /> :
-                                                selectedVariant.persons === 2 ? <Heart className="text-sindoor w-6 h-6" /> :
-                                                    <User className="text-sindoor w-6 h-6" />}
-                                            <div>
-                                                <p className="font-bold text-heritage-dark">{selectedVariant.title}</p>
-                                                <p className="text-xs text-stone-500">{selectedVariant.persons} {selectedVariant.persons === 1 ? 'Person' : 'Persons'}</p>
+                            {bookingData ? (
+                                <>
+                                    <div className="mb-6 pb-6 border-b border-stone-100">
+                                        <div className="flex gap-4">
+                                            <img
+                                                src={getAssetUrl(product?.image_url || product?.image || pooja?.image || "https://via.placeholder.com/100")}
+                                                alt={product?.name || pooja?.title}
+                                                className="w-20 h-20 rounded-xl object-cover"
+                                            />
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-heritage-dark mb-1">{product?.name || pooja?.title}</h3>
+                                                <p className="text-xs text-stone-500 line-clamp-2">{product?.description || pooja?.description}</p>
                                             </div>
                                         </div>
-                                        <p className="text-lg font-black text-sindoor">₹{Number(selectedVariant.price).toLocaleString()}</p>
                                     </div>
-                                </div>
-                            </div>
 
-                            {selectedAddons && selectedAddons.length > 0 && (
-                                <div className="mb-6 pb-6 border-b border-stone-100">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-xs font-bold text-marigold uppercase tracking-wider">Sacred Offerings</span>
-                                        <span className="text-xs text-stone-400">{selectedAddons.length} items</span>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {selectedAddons.map((addon) => (
-                                            <div key={addon.id} className="flex items-center justify-between bg-haldi/5 p-3 rounded-xl">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                                                        <Flower className="text-marigold w-5 h-5" />
-                                                    </div>
-                                                    <p className="text-sm font-medium text-heritage-dark">{addon.title}</p>
-                                                </div>
-                                                <p className="text-sm font-bold text-sindoor">₹{Number(addon.price).toLocaleString()}</p>
+                                    {selectedVariant && (
+                                        <div className="mb-6 pb-6 border-b border-stone-100">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-xs font-bold text-marigold uppercase tracking-wider">Participation</span>
                                             </div>
-                                        ))}
-                                    </div>
+                                            <div className="bg-sindoor/5 p-4 rounded-2xl border border-sindoor/10">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <Users className="text-sindoor w-6 h-6" />
+                                                        <div>
+                                                            <p className="font-bold text-heritage-dark">{selectedVariant.title}</p>
+                                                            <p className="text-xs text-stone-500">{selectedVariant.persons} Person(s)</p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-lg font-black text-sindoor">₹{Number(selectedVariant.price).toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {checkoutType === 'product' && (
+                                        <div className="mb-6 pb-6 border-b border-stone-100">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-bold text-marigold uppercase tracking-wider">Quantity</span>
+                                                <span className="font-bold text-heritage-dark">{bookingData.quantity}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="space-y-4 mb-6">
+                                    {cartItems.map((item, idx) => (
+                                        <div key={idx} className="flex items-center gap-3 bg-stone-50 p-3 rounded-xl border border-stone-100">
+                                            <div className="w-10 h-10 bg-marigold/10 rounded-lg flex items-center justify-center shrink-0">
+                                                <Package className="w-5 h-5 text-marigold" />
+                                            </div>
+                                            <div className="grow">
+                                                <p className="text-sm font-bold text-heritage-dark truncate">{item.name || 'Item'}</p>
+                                                <p className="text-[10px] text-stone-400">Qty: {item.quantity}</p>
+                                            </div>
+                                            <p className="text-sm font-black text-sindoor">₹{Number(item.base_price * item.quantity).toLocaleString()}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
 
                             <div className="bg-linear-to-br from-sindoor to-sindoor/90 p-6 rounded-2xl text-white">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm uppercase tracking-wider opacity-90">Total Dakshina</span>
+                                    <span className="text-sm uppercase tracking-wider opacity-90">Total Amount</span>
                                     <Banknote className="w-6 h-6" />
                                 </div>
-                                <p className="text-4xl font-black">₹{totalPrice.toLocaleString()}</p>
-                                <p className="text-xs opacity-75 mt-2">Inclusive of all offerings</p>
+                                <p className="text-4xl font-black">₹{finalTotalPrice.toLocaleString()}</p>
+                                <p className="text-xs opacity-75 mt-2">Final Payable Amount</p>
                             </div>
                         </div>
                     </div>
@@ -297,79 +390,103 @@ export default function BookingCheckout() {
                     <div className="lg:col-span-3">
                         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-lg border border-stone-200">
                             <h2 className="text-2xl font-serif text-sindoor mb-8 flex items-center gap-3">
-                                <Calendar className="w-8 h-8" />
-                                Booking Details
+                                <PenLine className="w-8 h-8" />
+                                Checkout Details
                             </h2>
 
                             <form onSubmit={handleSubmitBooking} className="space-y-10">
-                                {/* Date & Time Selection Code (Commented out in original) */}
-
                                 <div className="space-y-6">
-                                    <h3 className="text-lg font-bold text-heritage-dark flex items-center gap-2">
-                                        <PenLine className="text-marigold w-5 h-5" />
-                                        Contact & Devotee Details
-                                    </h3>
-
-                                    <div className="bg-linear-to-br from-haldi/5 to-marigold/5 p-6 rounded-3xl border-2 border-haldi/20 mb-8">
-                                        <div className="flex items-center gap-3 mb-5">
-                                            <Phone className="text-marigold w-6 h-6" />
-                                            <span className="text-sm font-bold text-sindoor uppercase tracking-wider">Contact Number (WhatsApp Updates)</span>
-                                        </div>
-                                        <div className="max-w-md">
-                                            <label className="text-xs font-bold text-stone-600 uppercase tracking-wide">Mobile Number *</label>
-                                            <div className="flex gap-2">
-                                                <span className="flex items-center px-4 bg-white border-2 border-stone-200 rounded-xl text-stone-500 font-bold">+91</span>
+                                    {/* Personal Info */}
+                                    <div className="bg-linear-to-br from-haldi/5 to-marigold/5 p-8 rounded-3xl border-2 border-haldi/20">
+                                        <h3 className="text-lg font-bold text-heritage-dark flex items-center gap-2 mb-6">
+                                            <User className="text-marigold w-5 h-5" />
+                                            Contact Information
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-stone-400 uppercase tracking-widest">Full Name *</label>
                                                 <input
                                                     required
-                                                    type="tel"
-                                                    pattern="[0-9]{10}"
-                                                    className="w-full bg-white border-2 border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-marigold transition-all"
-                                                    placeholder="Enter 10 digit number"
-                                                    value={contactMobile}
-                                                    onChange={(e) => setContactMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                                    className="w-full bg-white border-2 border-stone-100 rounded-xl px-4 py-4 focus:border-marigold outline-none transition-all shadow-sm"
+                                                    placeholder="Enter your name"
+                                                    value={customerName}
+                                                    onChange={(e) => setCustomerName(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-stone-400 uppercase tracking-widest">Mobile Number *</label>
+                                                <div className="flex shadow-sm">
+                                                    <span className="flex items-center px-4 bg-stone-50 border-2 border-r-0 border-stone-100 rounded-l-xl text-stone-400 font-bold">+91</span>
+                                                    <input
+                                                        required
+                                                        type="tel"
+                                                        className="w-full bg-white border-2 border-stone-100 rounded-r-xl px-4 py-4 focus:border-marigold outline-none transition-all"
+                                                        placeholder="10 digit number"
+                                                        value={contactMobile}
+                                                        onChange={(e) => setContactMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Shipping for Products */}
+                                    {(checkoutType === 'product' || cartItems.some(i => i.product_type === 'product')) && (
+                                        <div className="bg-linear-to-br from-haldi/5 to-marigold/5 p-8 rounded-3xl border-2 border-haldi/20">
+                                            <h3 className="text-lg font-bold text-heritage-dark flex items-center gap-2 mb-6">
+                                                <MapPin className="text-marigold w-5 h-5" />
+                                                Shipping Address
+                                            </h3>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-stone-400 uppercase tracking-widest">Delivery Address *</label>
+                                                <textarea
+                                                    required
+                                                    rows="3"
+                                                    className="w-full bg-white border-2 border-stone-100 rounded-xl px-4 py-4 focus:border-marigold outline-none transition-all shadow-sm"
+                                                    placeholder="Enter your full address with PIN code"
+                                                    value={shippingAddress}
+                                                    onChange={(e) => setShippingAddress(e.target.value)}
                                                 />
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
 
-                                    <div className="space-y-6">
-                                        {sankalpDetails.map((detail, index) => (
-                                            <div key={index} className="bg-linear-to-br from-haldi/5 to-marigold/5 p-6 rounded-3xl border-2 border-haldi/20">
-                                                <div className="flex items-center justify-between mb-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-marigold text-white flex items-center justify-center font-bold">
-                                                            {index + 1}
+                                    {/* Sankalp for Poojas */}
+                                    {(checkoutType === 'pooja') && (
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-bold text-heritage-dark flex items-center gap-2 px-2">
+                                                <PenLine className="text-marigold w-5 h-5" />
+                                                Sankalp & Devotee Details
+                                            </h3>
+                                            {sankalpDetails.map((detail, index) => (
+                                                <div key={index} className="bg-linear-to-br from-haldi/5 to-marigold/5 p-8 rounded-3xl border-2 border-haldi/20 relative">
+                                                    <div className="absolute top-6 right-8 text-6xl font-black text-marigold/5">0{index + 1}</div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                                                        <div className="space-y-2">
+                                                            <label className="text-xs font-black text-stone-400 uppercase tracking-widest">Devotee {index + 1} Name *</label>
+                                                            <input
+                                                                required
+                                                                className="w-full bg-white border-2 border-stone-100 rounded-xl px-4 py-4 focus:border-marigold outline-none transition-all shadow-sm"
+                                                                placeholder="Full name for sankalp"
+                                                                value={detail.name}
+                                                                onChange={(e) => updateSankalpDetail(index, 'name', e.target.value)}
+                                                            />
                                                         </div>
-                                                        <span className="text-sm font-bold text-sindoor uppercase tracking-wider">Devotee {index + 1}</span>
-                                                    </div>
-                                                    <User className="text-marigold w-6 h-6" />
-                                                </div>
-
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-stone-600 uppercase tracking-wide">Full Name *</label>
-                                                        <input
-                                                            required
-                                                            className="w-full bg-white border-2 border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-marigold transition-all"
-                                                            placeholder="Enter full name"
-                                                            value={detail.name}
-                                                            onChange={(e) => updateSankalpDetail(index, 'name', e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-stone-600 uppercase tracking-wide">Gotra *</label>
-                                                        <input
-                                                            required
-                                                            className="w-full bg-white border-2 border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-marigold transition-all"
-                                                            placeholder="Enter gotra"
-                                                            value={detail.gotra}
-                                                            onChange={(e) => updateSankalpDetail(index, 'gotra', e.target.value)}
-                                                        />
+                                                        <div className="space-y-2">
+                                                            <label className="text-xs font-black text-stone-400 uppercase tracking-widest">Gotra *</label>
+                                                            <input
+                                                                required
+                                                                className="w-full bg-white border-2 border-stone-100 rounded-xl px-4 py-4 focus:border-marigold outline-none transition-all shadow-sm"
+                                                                placeholder="Enter gotra"
+                                                                value={detail.gotra}
+                                                                onChange={(e) => updateSankalpDetail(index, 'gotra', e.target.value)}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="pt-6 border-t border-stone-200">

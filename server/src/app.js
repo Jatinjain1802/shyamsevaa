@@ -46,6 +46,9 @@ import adminDashboardRoutes from "./routes/adminDashboard.routes.js";
 // Search
 import searchRoutes from "./routes/search.routes.js";
 
+// Products
+import productRoutes from "./routes/products.routes.js";
+
 // Blogs (optional but DB me hai)
 //import blogRoutes from "./routes/blog.routes.js";
 
@@ -108,6 +111,9 @@ app.use("/api", adminDashboardRoutes);
 
 // Search
 app.use("/api/search", searchRoutes);
+
+// Products
+app.use("/api/products", productRoutes);
 
 // Blogs
 //app.use("/api/blogs", blogRoutes);

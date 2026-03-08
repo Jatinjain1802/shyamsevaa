@@ -22,6 +22,7 @@
     "chadawas": "Chadawas",
     "about": "About Us",
     "blog": "Blog",
+    "products": "Products",
     "contact": "Contact Us"
   },
   "auth": {
@@ -158,6 +159,14 @@
     "no_available": "No Chadawas Available",
     "updating_listing": "We are currently updating our chadawa listings. Please check back soon.",
     "send_offering": "Send Offering"
+  },
+  "products_page": {
+    "title": "Sacred Store",
+    "subtitle": "Bring home the divine essence with our curated collection of authentic puja items and spiritual essentials.",
+    "search_placeholder": "Search sacred items...",
+    "no_results": "No items found",
+    "no_available": "No Products Available",
+    "updating_listing": "We are currently updating our sacred store. Please check back soon."
   },
 
   "about": {

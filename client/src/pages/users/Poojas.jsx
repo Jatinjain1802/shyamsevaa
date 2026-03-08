@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generatePureSlug } from "../../utils/slugify";
@@ -11,12 +11,19 @@ import { useTranslation } from 'react-i18next';
 export default function Poojas() {
     const { t } = useTranslation();
     const [poojas, setPoojas] = useState([]);
-
+    // LEARNING: A separate state for filtered results lets us keep the original full list
+    // intact while showing a filtered/searched subset to the user
     const [filteredPoojas, setFilteredPoojas] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
+
+    // Infinite Scroll state
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 6;
+    const observerTarget = React.useRef(null);
 
     useEffect(() => {
         fetchPoojas();
@@ -56,7 +63,33 @@ export default function Poojas() {
         }
 
         setFilteredPoojas(results);
+        setPage(1); // Reset page on filter/search change
     }, [searchQuery, selectedCategory, poojas]);
+
+    // Intersection Observer for Infinite Scroll
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    setPage(prev => prev + 1);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const target = observerTarget.current;
+        if (target) {
+            observer.observe(target);
+        }
+
+        return () => {
+            if (target) {
+                observer.unobserve(target);
+            }
+        };
+    }, [observerTarget]);
+
+    const displayedPoojas = filteredPoojas.slice(0, page * ITEMS_PER_PAGE);
 
     const SkeletonCard = () => (
         <div className="bg-white rounded-4xl overflow-hidden shadow-xl border border-stone-100 animate-pulse h-[500px]">
@@ -173,7 +206,7 @@ export default function Poojas() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredPoojas.map((pooja) => (
+                    {displayedPoojas.map((pooja) => (
                         <Link
                             to={`/poojas/${generatePureSlug(pooja.title)}`}
                             state={{ id: pooja.id }}
@@ -233,6 +266,14 @@ export default function Poojas() {
                             </div>
                         </Link>
                     ))}
+
+                    {/* Infinite Scroll Target */}
+                    {filteredPoojas.length > displayedPoojas.length && (
+                        <div ref={observerTarget} className="col-span-full py-12 flex items-center justify-center gap-3 text-stone-500 font-bold">
+                            <div className="w-6 h-6 border-4 border-sindoor border-t-transparent rounded-full animate-spin"></div>
+                            <span>Loading more poojas...</span>
+                        </div>
+                    )}
                 </div>
 
                 {filteredPoojas.length === 0 && poojas.length > 0 && (

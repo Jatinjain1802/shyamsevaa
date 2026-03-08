@@ -172,11 +172,11 @@ export default function Poojas() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Pooja Management</h1>
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <h1 className="text-xl lg:text-2xl font-bold">Pooja Management</h1>
         <button
           onClick={openCreate}
-          className="bg-orange-600 text-white px-4 py-2 rounded"
+          className="bg-orange-600 text-white px-4 py-2 rounded text-sm lg:text-base"
         >
           + Add Pooja
         </button>
@@ -186,7 +186,7 @@ export default function Poojas() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
           {poojas.map((p) => (
             <div
               key={p.id}
@@ -256,7 +256,7 @@ export default function Poojas() {
 
             <div className="p-6">
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700">
                       Title

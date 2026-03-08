@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export const findByEmail = async (email) => {
   const [rows] = await db.query(
-    "SELECT id, name, email, password, role, otp, otp_expires_at FROM users WHERE email = ? LIMIT 1",
+    "SELECT id, name, email, mobile, password, role, address, city, state, created_at, otp, otp_expires_at FROM users WHERE email = ? LIMIT 1",
     [email]
   );
   return rows[0];
@@ -10,7 +10,7 @@ export const findByEmail = async (email) => {
 
 export const findById = async (id) => {
   const [rows] = await db.query(
-    "SELECT id, name, email, role, refresh_token FROM users WHERE id = ? LIMIT 1",
+    "SELECT id, name, email, mobile, role, address, city, state, created_at, refresh_token FROM users WHERE id = ? LIMIT 1",
     [id]
   );
   return rows[0];
@@ -59,4 +59,19 @@ export const updatePasswordAndClearOtp = async (email, hashedPassword) => {
   );
 
   return result.affectedRows;
+};
+
+export const getProfile = async (id) => {
+  const [rows] = await db.query(
+    "SELECT id, name, email, mobile, role, address, city, state, created_at FROM users WHERE id = ? LIMIT 1",
+    [id]
+  );
+  return rows[0];
+};
+
+export const updateProfile = async (id, { address, city, state, name, mobile }) => {
+  await db.query(
+    "UPDATE users SET address = ?, city = ?, state = ?, name = ?, mobile = ? WHERE id = ?",
+    [address, city, state, name, mobile, id]
+  );
 };

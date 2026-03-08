@@ -3,6 +3,7 @@ import {
     getCart,
     addPoojaToCart,
     addChadawaToCart,
+    addProductToCart,
     updateCartItemQty,
     updateAddonQty,
     removeCartItem,
@@ -20,6 +21,9 @@ router.post("/pooja", authMiddleware.optional, addPoojaToCart);
 
 // add chadawa item
 router.post("/chadawa", authMiddleware.optional, addChadawaToCart);
+
+// add product
+router.post("/add-product", authMiddleware.optional, addProductToCart);
 
 // update item quantity
 router.put("/items/:cartItemId", authMiddleware.optional, updateCartItemQty);

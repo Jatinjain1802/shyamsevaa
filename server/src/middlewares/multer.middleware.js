@@ -15,6 +15,8 @@ const folderMap = {
   pooja_gallery: "poojas",
   temple_gallery: "temples",
   chadawa_gallery: "chadawas",
+  product_image: "products",
+  image: "products",
 };
 
 // ===============================

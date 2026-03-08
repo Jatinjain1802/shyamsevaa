@@ -134,6 +134,23 @@ export function WishlistProvider({ children }) {
         }
     };
 
+    // Add product to wishlist (via /cart/add-product)
+    const addProductToWishlist = async ({ productId, quantity = 1 }) => {
+        try {
+            const sessionId = getSessionId();
+            await api.post(
+                "/cart/add-product",
+                { product_id: productId, quantity },
+                { headers: { "x-session-id": sessionId } }
+            );
+            await fetchWishlist();
+            return { success: true };
+        } catch (err) {
+            console.error("Failed to add product to wishlist:", err);
+            return { success: false, error: err.message };
+        }
+    };
+
     // Calculate total price
     const calculateTotal = () => {
         return wishlistItems.reduce((total, item) => {
@@ -157,6 +174,7 @@ export function WishlistProvider({ children }) {
         fetchWishlist,
         addPoojaToWishlist,
         addChadawaToWishlist,
+        addProductToWishlist,
         updateItemQuantity,
         updateAddonQuantity,
         removeItem,

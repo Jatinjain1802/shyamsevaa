@@ -14,10 +14,12 @@ import {
     FiEye,
     FiX,
     FiMapPin,
-    FiTag
+    FiTag,
+    FiDownload
 } from "react-icons/fi";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { getAssetUrl } from "../../utils/assets";
 
 export default function Orders() {
     const [orders, setOrders] = useState([]);
@@ -188,14 +190,27 @@ export default function Orders() {
                                     <td className="px-6 py-5">
                                         <StatusBadge status={order.payment_status} />
                                     </td>
-                                    <td className="px-6 py-5 text-center">
-                                        <button
-                                            onClick={() => fetchOrderDetails(order.id)}
-                                            className="p-2 text-stone-500 hover:text-sindoor hover:bg-sindoor/10 rounded-xl transition-all"
-                                            title="View Details"
-                                        >
-                                            <FiEye className="w-5 h-5" />
-                                        </button>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center justify-center gap-3">
+                                            {order.invoice_path && (
+                                                <a
+                                                    href={getAssetUrl(order.invoice_path)}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="p-2 text-stone-500 hover:text-marigold hover:bg-marigold/10 rounded-xl transition-all"
+                                                    title="Download Invoice"
+                                                >
+                                                    <FiDownload className="w-5 h-5" />
+                                                </a>
+                                            )}
+                                            <button
+                                                onClick={() => fetchOrderDetails(order.id)}
+                                                className="p-2 text-stone-500 hover:text-sindoor hover:bg-sindoor/10 rounded-xl transition-all"
+                                                title="View Details"
+                                            >
+                                                <FiEye className="w-5 h-5" />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             )) : (
@@ -212,9 +227,9 @@ export default function Orders() {
 
             {/* Order Details Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
-                    <div className="relative bg-white w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                    <div className="relative bg-white w-full max-w-2xl max-h-[90vh] rounded-4xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
                         {/* Modal Header */}
                         <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50/50">
                             <div>
@@ -236,10 +251,10 @@ export default function Orders() {
                             ) : selectedOrder ? (
                                 <div className="space-y-8">
                                     {/* User & General Info Section */}
-                                    <div className="grid grid-cols-2 gap-6 bg-stone-50 p-6 rounded-2xl border border-stone-100">
-                                        <div>
-                                            <p className="text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-2">Customer Info</p>
-                                            <div className="flex items-center gap-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
+                                            <p className="text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-4">Customer Info</p>
+                                            <div className="flex items-center gap-3 mb-4">
                                                 <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-600 font-bold">
                                                     {selectedOrder.order.user_name?.[0]?.toUpperCase() || "U"}
                                                 </div>
@@ -248,13 +263,39 @@ export default function Orders() {
                                                     <p className="text-xs text-stone-500">{selectedOrder.order.email}</p>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-2">Payment Status</p>
-                                            <div className="flex items-center pt-1">
+                                            <div className="pt-4 border-t border-stone-200">
+                                                <p className="text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-2">Payment Status</p>
                                                 <StatusBadge status={selectedOrder.order.payment_status} />
                                             </div>
                                         </div>
+
+                                        {(selectedOrder.order.shipping_address || selectedOrder.order.communication_mobile) && (
+                                            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
+                                                <p className="text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-4">Delivery & Contact Details</p>
+                                                <div className="space-y-3">
+                                                    {selectedOrder.order.customer_name && (
+                                                        <div className="flex items-start gap-2">
+                                                            <FiUser className="w-4 h-4 text-stone-400 mt-0.5 shrink-0" />
+                                                            <p className="text-xs font-medium text-stone-600">{selectedOrder.order.customer_name}</p>
+                                                        </div>
+                                                    )}
+                                                    {selectedOrder.order.communication_mobile && (
+                                                        <div className="flex items-start gap-2">
+                                                            <FiMapPin className="w-4 h-4 text-stone-400 mt-0.5 shrink-0 bg-transparent rotate-90" style={{ visibility: 'hidden' }} />
+                                                            {/* Hidden icon just for alignment, let's use a real one */}
+                                                            <FiUser className="w-4 h-4 text-stone-400 mt-0.5 shrink-0 opacity-0" />
+                                                            <p className="text-xs font-medium text-stone-600 -ml-6 border border-stone-200 rounded px-2 bg-white">📱 +91 {selectedOrder.order.communication_mobile}</p>
+                                                        </div>
+                                                    )}
+                                                    {selectedOrder.order.shipping_address && (
+                                                        <div className="flex items-start gap-2 pt-2 border-t border-stone-200">
+                                                            <FiMapPin className="w-4 h-4 text-sindoor mt-0.5 shrink-0" />
+                                                            <p className="text-xs font-medium text-stone-600 leading-relaxed">{selectedOrder.order.shipping_address}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Order Items */}
@@ -270,12 +311,21 @@ export default function Orders() {
                                                             <p className="text-sm font-bold text-sindoor">
                                                                 {item.product_type === 'pooja_variant'
                                                                     ? `${item.pooja_title} (${item.pooja_persons} Persons)`
-                                                                    : item.chadawa_item_title || 'Chadawa Offering'}
+                                                                    : item.product_type === 'product'
+                                                                        ? item.product_name || 'Product Order'
+                                                                        : item.chadawa_item_title || 'Chadawa Offering'}
                                                             </p>
-                                                            <div className="flex items-center gap-2 text-xs text-stone-500">
-                                                                <FiMapPin className="text-marigold w-3 h-3" />
-                                                                {item.temple_title || `Temple #${item.temple_id}`}
-                                                            </div>
+                                                            {item.temple_title ? (
+                                                                <div className="flex items-center gap-2 text-xs text-stone-500">
+                                                                    <FiMapPin className="text-marigold w-3 h-3" />
+                                                                    {item.temple_title}
+                                                                </div>
+                                                            ) : item.product_type === 'product' && (
+                                                                <div className="flex items-center gap-2 text-xs text-stone-500">
+                                                                    <FiMapPin className="text-marigold w-3 h-3" />
+                                                                    Physical Delivery
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="text-right">
                                                             <p className="text-sm font-bold text-heritage-dark">{formatCurrency(item.price)}</p>
@@ -312,6 +362,17 @@ export default function Orders() {
                                                 <p className="text-xs font-mono">{selectedOrder.order.payment_id || "NOT GENERATED"}</p>
                                             </div>
                                         </div>
+
+                                        {selectedOrder.order.invoice_path && (
+                                            <a
+                                                href={getAssetUrl(selectedOrder.order.invoice_path)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="mt-4 flex items-center justify-center gap-2 w-full py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl font-bold transition-colors"
+                                            >
+                                                <FiDownload className="w-5 h-5" /> Download User Invoice
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             ) : null}

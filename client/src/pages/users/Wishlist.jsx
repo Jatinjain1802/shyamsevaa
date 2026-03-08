@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext";
+import { getAssetUrl } from "../../utils/assets";
 import {
     Heart,
     Frown,
@@ -55,6 +56,8 @@ export default function Wishlist() {
                 return "Pooja Seva";
             case "chadawa_item":
                 return "Chadawa Offering";
+            case "product":
+                return "Sacred Product";
             default:
                 return "Item";
         }
@@ -66,6 +69,8 @@ export default function Wishlist() {
                 return <MdSelfImprovement className="text-2xl text-marigold" />;
             case "chadawa_item":
                 return <MdVolunteerActivism className="text-2xl text-marigold" />;
+            case "product":
+                return <Sparkles className="text-2xl text-marigold" />;
             default:
                 return <Sparkles className="text-2xl text-marigold" />;
         }
@@ -118,6 +123,13 @@ export default function Wishlist() {
                             <MdVolunteerActivism className="text-xl" />
                             Explore Chadawa
                         </button>
+                        <button
+                            onClick={() => navigate("/products")}
+                            className="bg-haldi text-heritage-dark px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-haldi/90 transition-all shadow-lg"
+                        >
+                            <Sparkles className="text-xl" />
+                            Explore Products
+                        </button>
                     </div>
                 </div>
             </div>
@@ -163,8 +175,16 @@ export default function Wishlist() {
                             >
                                 <div className="p-6 border-b border-stone-50">
                                     <div className="flex items-start gap-4">
-                                        <div className="w-14 h-14 bg-marigold/10 rounded-xl flex items-center justify-center shrink-0">
-                                            {getProductTypeIcon(item.product_type)}
+                                        <div className="w-14 h-14 bg-marigold/10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border border-stone-100">
+                                            {item.image ? (
+                                                <img
+                                                    src={getAssetUrl(item.image)}
+                                                    alt={item.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                getProductTypeIcon(item.product_type)
+                                            )}
                                         </div>
 
                                         <div className="grow">
@@ -174,9 +194,11 @@ export default function Wishlist() {
                                                         {getProductTypeLabel(item.product_type)}
                                                     </span>
                                                     <h3 className="text-lg font-bold text-heritage-dark mt-1">
-                                                        {item.product_type === "pooja_variant"
+                                                        {item.name || (item.product_type === "pooja_variant"
                                                             ? `Pooja Variant #${item.pooja_variant_id}`
-                                                            : `Chadawa Item #${item.chadawa_item_id}`}
+                                                            : item.product_type === "chadawa_item"
+                                                                ? `Chadawa Item #${item.chadawa_item_id}`
+                                                                : `Product #${item.product_id}`)}
                                                     </h3>
                                                     {item.temple_id && (
                                                         <p className="text-sm text-stone-500 flex items-center gap-1 mt-1">
@@ -252,7 +274,7 @@ export default function Wishlist() {
                                                     <div className="flex items-center gap-3">
                                                         <PlusCircle className="text-marigold w-5 h-5" />
                                                         <span className="text-sm font-medium">
-                                                            Addon #{addon.addon_id}
+                                                            {addon.title || `Addon #${addon.addon_id}`}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-4">

@@ -40,6 +40,9 @@ import PrivacyPolicy from "../pages/users/PrivacyPolicy";
 import TermsAndConditions from "../pages/users/TermsAndConditions";
 import RefundPolicy from "../pages/users/RefundPolicy";
 import Contact from "../pages/users/Contact";
+import UserProducts from "../pages/users/Products";
+import ProductDetail from "../pages/users/ProductDetail";
+import AdminProducts from "../pages/admin/Products";
 
 
 export default function AppRoutes() {
@@ -58,6 +61,8 @@ export default function AppRoutes() {
           <Route path="/booking-checkout" element={<BookingCheckout />} />
           <Route path="/chadawas" element={<Chadawass />} />
           <Route path="/chadawas/:slug" element={<ChadawaDetail />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/products" element={<UserProducts />} />
           <Route path="/temples/:slug/chadawas" element={<TempleChadawas />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
@@ -98,6 +103,7 @@ export default function AppRoutes() {
           <Route path="temples" element={<Temples />} />
 
           <Route path="chadawas" element={<Chadawas />} />
+          <Route path="products" element={<AdminProducts />} />
           <Route path="chadawas/:chadawaId/items" element={<ChadawaItems />} />
           <Route path="chadawas/:chadawaId/benefits" element={<ChadawaBenefits />} />
 

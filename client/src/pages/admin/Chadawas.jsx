@@ -243,11 +243,11 @@ export default function Chadawas() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Chadawa Management</h1>
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <h1 className="text-xl lg:text-2xl font-bold">Chadawa Management</h1>
         <button
           onClick={openCreate}
-          className="bg-orange-600 text-white px-4 py-2 rounded"
+          className="bg-orange-600 text-white px-4 py-2 rounded text-sm lg:text-base"
         >
           + Add Chadawa
         </button>
@@ -257,7 +257,7 @@ export default function Chadawas() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
           {chadawas.map((c) => (
             <div
               key={c.id}
@@ -287,7 +287,7 @@ export default function Chadawas() {
                   Date: {c.chadawa_date}
                 </p>
 
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="flex flex-wrap justify-end gap-2 mt-4">
                   <button
                     onClick={() => openTempleModal(c)}
                     className="px-3 py-1 text-sm bg-yellow-500 text-white rounded"
@@ -335,12 +335,12 @@ export default function Chadawas() {
       {/* Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
-          <div className="bg-white/95 w-full max-w-xl rounded-2xl p-8 shadow-2xl border border-white/20">
-            <h2 className="text-2xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6">
+          <div className="bg-white/95 w-full max-w-xl rounded-2xl shadow-2xl border border-white/20 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6 p-8 pb-0">
               {editingId ? "Edit Chadawa" : "Add Chadawa"}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 p-8 pt-6">
               <input
                 name="title"
                 placeholder="Title"

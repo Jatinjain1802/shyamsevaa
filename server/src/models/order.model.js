@@ -1,13 +1,13 @@
 import db from "../config/db.js";
 import crypto from "crypto";
 
-export const createOrder = async ({ user_id, total_amount }) => {
+export const createOrder = async ({ user_id, total_amount, customer_name, communication_mobile, shipping_address }) => {
   const orderNumber = "ORD-" + crypto.randomBytes(4).toString("hex");
 
   const [res] = await db.query(
-    `INSERT INTO orders (user_id, order_number, total_amount)
-     VALUES (?, ?, ?)`,
-    [user_id, orderNumber, total_amount]
+    `INSERT INTO orders (user_id, order_number, total_amount, customer_name, communication_mobile, shipping_address)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [user_id, orderNumber, total_amount, customer_name, communication_mobile, shipping_address]
   );
 
   return res.insertId;
@@ -16,13 +16,14 @@ export const createOrder = async ({ user_id, total_amount }) => {
 export const createOrderItem = async (d) => {
   const [res] = await db.query(
     `INSERT INTO order_items
-     (order_id, product_type, pooja_variant_id, chadawa_item_id, temple_id, quantity, price)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+     (order_id, product_type, pooja_variant_id, chadawa_item_id, product_id, temple_id, quantity, price)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       d.order_id,
       d.product_type,
       d.pooja_variant_id,
       d.chadawa_item_id,
+      d.product_id,
       d.temple_id,
       d.quantity,
       d.price,
@@ -43,7 +44,7 @@ export const createOrderItemAddon = async (d) => {
 
 export const getOrdersByUser = async (userId) => {
   const [rows] = await db.query(
-    `SELECT id, order_number, total_amount, payment_status, created_at
+    `SELECT id, order_number, total_amount, payment_status, created_at, invoice_path
      FROM orders WHERE user_id=? ORDER BY created_at DESC`,
     [userId]
   );
@@ -98,11 +99,13 @@ export const getOrderItems = async (orderId) => {
         p.title as pooja_title,
         pv.persons as pooja_persons,
         ci.title as chadawa_item_title,
+        prod.name as product_name,
         t.title as temple_title
      FROM order_items oi
      LEFT JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
      LEFT JOIN poojas p ON p.id = pv.pooja_id
      LEFT JOIN chadawa_items ci ON ci.id = oi.chadawa_item_id
+     LEFT JOIN products prod ON prod.id = oi.product_id
      LEFT JOIN temples t ON t.id = oi.temple_id
      WHERE oi.order_id = ?`,
     [orderId]
@@ -131,6 +134,7 @@ export const getChadawaOrdersByUser = async (userId) => {
         o.order_number, 
         o.payment_status,
         o.created_at as order_date,
+        o.invoice_path,
         ci.title as chadawa_name,
         t.title as temple_name
      FROM order_items oi

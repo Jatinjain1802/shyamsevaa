@@ -4,6 +4,7 @@ import * as CartModel from "../models/cart.model.js";
 import crypto from "crypto";
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
+import { generateInvoicePDF } from "../utils/invoice.js";
 
 dotenv.config();
 
@@ -100,9 +101,13 @@ export const verifyPayment = async (req, res) => {
     const cart = await CartModel.getOrCreateCart(req);
     await CartModel.clearCart(cart.id);
 
+    // 4️⃣ generate invoice
+    const invoice_path = await generateInvoicePDF(order_id, req.user.id);
+
     res.json({
       success: true,
       message: "Payment verified & booking created",
+      invoice_path
     });
   } catch (err) {
     console.error("VERIFY PAYMENT ERROR:", err);

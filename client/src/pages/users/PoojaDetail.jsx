@@ -446,13 +446,8 @@ export default function PoojaDetail() {
         }
 
         try {
-            // Add to cart first so backend /checkout can find it
-            // We use the existing /cart/pooja endpoint
-            await api.post('/cart/pooja', {
-                pooja_variant_id: selectedVariant.id,
-                temple_id: temples && temples.length > 0 ? temples[0].id : null,
-                addons: selectedAddons.map(a => ({ addon_id: a.id, quantity: 1 }))
-            });
+            // Get the temple ID if available
+            const currentTempleId = temples && temples.length > 0 ? temples[0].id : null;
 
             // Navigate to booking checkout page with all data
             navigate('/booking-checkout', {
@@ -460,7 +455,8 @@ export default function PoojaDetail() {
                     pooja: pooja,
                     selectedVariant: selectedVariant,
                     selectedAddons: selectedAddons,
-                    totalPrice: totalPrice()
+                    totalPrice: totalPrice(),
+                    temple_id: currentTempleId
                 }
             });
         } catch (err) {

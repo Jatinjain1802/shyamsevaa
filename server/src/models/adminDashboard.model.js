@@ -73,13 +73,31 @@ export const getOrderById = async (orderId) => {
 
 export const getOrderItems = async (orderId) => {
   const [items] = await db.query(
-    `SELECT * FROM order_items WHERE order_id=?`,
+    `SELECT 
+        oi.*,
+        p.title as pooja_title,
+        pv.persons as pooja_persons,
+        ci.title as chadawa_item_title,
+        prod.name as product_name,
+        t.title as temple_title
+     FROM order_items oi
+     LEFT JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
+     LEFT JOIN poojas p ON p.id = pv.pooja_id
+     LEFT JOIN chadawa_items ci ON ci.id = oi.chadawa_item_id
+     LEFT JOIN products prod ON prod.id = oi.product_id
+     LEFT JOIN temples t ON t.id = oi.temple_id
+     WHERE oi.order_id = ?`,
     [orderId]
   );
 
   for (const item of items) {
     const [addons] = await db.query(
-      `SELECT * FROM order_item_addons WHERE order_item_id=?`,
+      `SELECT 
+          oia.*,
+          a.title as addon_title
+       FROM order_item_addons oia
+       JOIN addons a ON a.id = oia.addon_id
+       WHERE oia.order_item_id = ?`,
       [item.id]
     );
     item.addons = addons;

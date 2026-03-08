@@ -79,8 +79,8 @@ export default function Users() {
             <p className="text-sm mt-1">Try changing your search filters.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto min-w-[1024px]">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="py-4 px-6 text-sm font-semibold text-gray-600">ID</th>
@@ -123,8 +123,8 @@ export default function Users() {
                     <td className="py-4 px-6">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.role === "admin"
-                            ? "bg-purple-50 text-purple-700 border-purple-200"
-                            : "bg-blue-50 text-blue-700 border-blue-200"
+                          ? "bg-purple-50 text-purple-700 border-purple-200"
+                          : "bg-blue-50 text-blue-700 border-blue-200"
                           }`}
                       >
                         {user.role}

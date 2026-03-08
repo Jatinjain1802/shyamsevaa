@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../utils/axios";
 import { Link } from "react-router-dom";
 import { generatePureSlug } from "../../utils/slugify";
@@ -16,6 +16,11 @@ export default function Chadawas() {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Infinite Scroll state
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 6;
+    const observerTarget = React.useRef(null);
 
     useEffect(() => {
         fetchChadawas();
@@ -49,7 +54,33 @@ export default function Chadawas() {
         );
 
         setFilteredChadawas(results);
+        setPage(1); // Reset page on filter/search change
     }, [searchQuery, chadawas]);
+
+    // Intersection Observer for Infinite Scroll
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    setPage(prev => prev + 1);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const target = observerTarget.current;
+        if (target) {
+            observer.observe(target);
+        }
+
+        return () => {
+            if (target) {
+                observer.unobserve(target);
+            }
+        };
+    }, [observerTarget]);
+
+    const displayedChadawas = filteredChadawas.slice(0, page * ITEMS_PER_PAGE);
 
     const SkeletonCard = () => (
         <div className="bg-white rounded-4xl overflow-hidden shadow-xl border border-stone-100 animate-pulse h-[450px]">
@@ -175,7 +206,7 @@ export default function Chadawas() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredChadawas.map((item) => (
+                    {displayedChadawas.map((item) => (
                         <Link
                             to={`/chadawas/${generatePureSlug(item.title)}`}
                             state={{ id: item.id }}
@@ -225,6 +256,14 @@ export default function Chadawas() {
                             </div>
                         </Link>
                     ))}
+
+                    {/* Infinite Scroll Target */}
+                    {filteredChadawas.length > displayedChadawas.length && (
+                        <div ref={observerTarget} className="col-span-full py-12 flex items-center justify-center gap-3 text-stone-500 font-bold">
+                            <div className="w-6 h-6 border-4 border-sindoor border-t-transparent rounded-full animate-spin"></div>
+                            <span>Loading more Offerings...</span>
+                        </div>
+                    )}
                 </div>
 
                 {filteredChadawas.length === 0 && chadawas.length > 0 && (

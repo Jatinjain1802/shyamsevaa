@@ -179,11 +179,11 @@ export default function Temples() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Temple Management</h1>
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <h1 className="text-xl lg:text-2xl font-bold">Temple Management</h1>
         <button
           onClick={openCreateForm}
-          className="bg-orange-600 text-white px-4 py-2 rounded"
+          className="bg-orange-600 text-white px-4 py-2 rounded text-sm lg:text-base"
         >
           + Add Temple
         </button>
@@ -193,7 +193,7 @@ export default function Temples() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
           {temples.map((t) => (
             <div
               key={t.id}

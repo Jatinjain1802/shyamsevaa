@@ -108,7 +108,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 text-marigold font-bold tracking-widest text-[10px] uppercase bg-marigold/10 w-fit px-3 py-1 rounded-full border border-marigold/20">
               <FiZap className="w-3 h-3 fill-marigold" /> Admin Sanctum
             </div>
-            <h1 className="text-4xl font-black font-serif tracking-tight">
+            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-black font-serif tracking-tight">
               Auspicious Day, <span className="bg-linear-to-r from-haldi to-marigold bg-clip-text text-transparent">{user?.name || "Admin"}</span>!
             </h1>
             <p className="text-stone-400 text-sm max-w-lg font-medium">
@@ -129,15 +129,15 @@ export default function Dashboard() {
       </div>
 
       {/* Main Stats Hub */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 xl:gap-6">
         {/* Revenue Card (Double Span) */}
-        <div className="md:col-span-2 relative overflow-hidden bg-white p-8 rounded-[2rem] border border-stone-100 shadow-sm group hover:shadow-xl hover:border-marigold/20 transition-all duration-500">
+        <div className="md:col-span-2 relative overflow-hidden bg-white p-6 xl:p-8 rounded-4xl border border-stone-100 shadow-sm group hover:shadow-xl hover:border-marigold/20 transition-all duration-500">
           <div className="flex justify-between items-start relative z-10">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-stone-400 font-bold text-[10px] uppercase tracking-widest">
                 <FiTrendingUp className="text-green-500" /> Revenue Growth
               </div>
-              <h3 className="text-5xl font-black text-heritage-dark tracking-tighter">
+              <h3 className="text-3xl xl:text-5xl font-black text-heritage-dark tracking-tighter">
                 {formatCurrency(stats.total_revenue)}
               </h3>
               <p className="text-xs text-stone-400 font-medium italic">Lifetime platform earnings across rituals & offerings</p>
@@ -150,7 +150,7 @@ export default function Dashboard() {
         </div>
 
         {/* Regular Stats Grid */}
-        <div className="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:border-sindoor/10 transition-all group">
+        <div className="bg-white p-6 rounded-4xl border border-stone-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:border-sindoor/10 transition-all group">
           <div className="flex justify-between items-center">
             <div className="h-12 w-12 bg-sindoor/5 rounded-2xl flex items-center justify-center text-sindoor group-hover:bg-sindoor group-hover:text-white transition-all">
               <FiShoppingBag className="w-6 h-6" />
@@ -163,7 +163,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:border-indigo-100 transition-all group">
+        <div className="bg-white p-6 rounded-4xl border border-stone-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:border-indigo-100 transition-all group">
           <div className="flex justify-between items-center">
             <div className="h-12 w-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
               <FiUsers className="w-6 h-6" />
@@ -178,7 +178,7 @@ export default function Dashboard() {
       </div>
 
       {/* Secondary Stats Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 xl:gap-4">
         {[
           { label: "Temples", val: stats.total_temples, icon: FiDatabase, color: "text-amber-600 bg-amber-50" },
           { label: "Poojas", val: stats.total_poojas, icon: FiActivity, color: "text-rose-600 bg-rose-50" },
@@ -198,7 +198,7 @@ export default function Dashboard() {
       </div>
 
       {/* Activity Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8">
 
         {/* Recent Orders - 5 Columns */}
         <div className="lg:col-span-5 bg-white rounded-[2.5rem] border border-stone-100 shadow-sm overflow-hidden flex flex-col">

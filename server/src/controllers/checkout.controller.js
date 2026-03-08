@@ -26,9 +26,14 @@ export const checkout = async (req, res) => {
       totalAmount += itemTotal;
     }
 
+    const { customer_name, communication_mobile, shipping_address } = req.body;
+
     const orderId = await OrderModel.createOrder({
       user_id: userId,
       total_amount: totalAmount,
+      customer_name,
+      communication_mobile,
+      shipping_address
     });
 
     for (const item of cartItems) {
@@ -37,6 +42,7 @@ export const checkout = async (req, res) => {
         product_type: item.product_type,
         pooja_variant_id: item.pooja_variant_id,
         chadawa_item_id: item.chadawa_item_id,
+        product_id: item.product_id,
         temple_id: item.temple_id,
         quantity: item.quantity,
         price: item.base_price,

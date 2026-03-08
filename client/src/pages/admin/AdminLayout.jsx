@@ -41,6 +41,7 @@ export default function AdminLayout() {
         { name: "Poojas", path: "/admin/poojas", icon: FiBook },
         { name: "Pooja Addons", path: "/admin/addons", icon: FiZap },
         { name: "Chadawas", path: "/admin/chadawas", icon: FiShoppingBag },
+        { name: "Products", path: "/admin/products", icon: FiGrid },
       ]
     },
     {
@@ -57,12 +58,12 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-stone-50 flex font-sans antialiased text-heritage-dark">
       {/* Sidebar */}
       <aside
-        className={`sticky top-0 h-screen z-50 bg-[#1e1e1e] text-white shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,-0.1)] shrink-0 flex flex-col border-r border-white/5 ${isSidebarOpen ? "w-72" : "w-24"
+        className={`sticky top-0 h-screen z-50 bg-[#1e1e1e] text-white shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,-0.1)] shrink-0 flex flex-col border-r border-white/5 ${isSidebarOpen ? "w-56 lg:w-64 xl:w-72" : "w-16 lg:w-20 xl:w-24"
           }`}
       >
         <div className="relative z-10 h-full flex flex-col">
           {/* Professional Logo Area */}
-          <div className="h-28 flex items-center px-6 mb-2 border-b border-white/5">
+          <div className="h-20 lg:h-24 xl:h-28 flex items-center px-4 lg:px-5 xl:px-6 mb-2 border-b border-white/5">
             <div className={`flex items-center gap-4 transition-all duration-300 ${!isSidebarOpen && "mx-auto justify-center"}`}>
               <div className="w-12 h-12 bg-linear-to-br from-marigold to-sindoor rounded-xl flex items-center justify-center shadow-lg shrink-0">
                 <span className="text-2xl font-black text-white font-serif">S</span>
@@ -79,7 +80,7 @@ export default function AdminLayout() {
           </div>
 
           {/* Grouped Navigation */}
-          <nav className="flex-1 px-4 py-8 overflow-y-auto no-scrollbar space-y-8">
+          <nav className="flex-1 px-2 lg:px-3 xl:px-4 py-4 lg:py-6 xl:py-8 overflow-y-auto no-scrollbar space-y-4 lg:space-y-6 xl:space-y-8">
             {navGroups.map((group, gIdx) => (
               <div key={gIdx} className="space-y-2">
                 {isSidebarOpen && (
@@ -94,9 +95,9 @@ export default function AdminLayout() {
                       to={item.path}
                       end={item.end}
                       className={({ isActive }) =>
-                        `flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative ${isActive
+                        `flex items-center gap-3 xl:gap-4 px-3 xl:px-5 py-3 xl:py-3.5 rounded-2xl transition-all duration-300 group relative ${isActive
                           ? "bg-white/10 text-white shadow-lg"
-                          : "text-stone-400 hover:text-white hover:bg-white/[0.03]"
+                          : "text-stone-400 hover:text-white hover:bg-white/3"
                         }`
                       }
                     >
@@ -127,7 +128,7 @@ export default function AdminLayout() {
           </nav>
 
           {/* Refined Fixed User Section */}
-          <div className="p-4 mt-auto border-t border-white/5 bg-white/[0.02]">
+          <div className="absolute bottom-0 left-0 right-0 p-3 lg:p-4 xl:p-6 border-t border-white/5 bg-white/2 backdrop-blur-md">
             <div className={`flex items-center gap-3 p-3 rounded-2xl ${!isSidebarOpen && "justify-center"}`}>
               <div className="relative shrink-0">
                 <div className="w-10 h-10 rounded-xl bg-linear-to-br from-stone-700 to-stone-800 border border-white/10 flex items-center justify-center text-marigold font-black text-sm">
@@ -162,7 +163,7 @@ export default function AdminLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 h-20 bg-white/80 backdrop-blur-md border-b border-stone-100 z-40 flex items-center justify-between px-10 shadow-sm shadow-stone-100/50">
+        <header className="sticky top-0 h-16 lg:h-18 xl:h-20 bg-white/80 backdrop-blur-md border-b border-stone-100 z-40 flex items-center justify-between px-4 lg:px-6 xl:px-10 shadow-sm shadow-stone-100/50">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="w-12 h-12 flex items-center justify-center rounded-xl bg-stone-50 text-stone-400 hover:text-marigold hover:bg-white transition-all border border-stone-100/50"
@@ -190,7 +191,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-10 overflow-x-hidden no-scrollbar">
+        <main className="flex-1 p-4 lg:p-6 xl:p-10 overflow-x-hidden no-scrollbar">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>

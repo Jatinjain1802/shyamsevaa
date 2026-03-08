@@ -67,31 +67,33 @@ export default function PoojaFaqs({ poojaId }) {
             <form onSubmit={handleAdd} className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8 shadow-sm">
                 <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Add New Question</h3>
 
-                <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-8 space-y-2">
-                        <label className="text-xs font-semibold text-gray-500 uppercase">Question</label>
-                        <input
-                            type="text"
-                            placeholder="e.g. Can I perform this pooja remotely?"
-                            value={newFaq.question}
-                            onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
-                            className="w-full border p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
-                            required
-                        />
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex-1 space-y-2">
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Question</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. Can I perform this pooja remotely?"
+                                value={newFaq.question}
+                                onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
+                                className="w-full border p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                                required
+                            />
+                        </div>
+
+                        <div className="sm:w-32 space-y-2">
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Sort Order</label>
+                            <input
+                                type="number"
+                                placeholder="0"
+                                value={newFaq.sort_order}
+                                onChange={(e) => setNewFaq({ ...newFaq, sort_order: parseInt(e.target.value) || 0 })}
+                                className="w-full border p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-4 space-y-2">
-                        <label className="text-xs font-semibold text-gray-500 uppercase">Sort Order</label>
-                        <input
-                            type="number"
-                            placeholder="0"
-                            value={newFaq.sort_order}
-                            onChange={(e) => setNewFaq({ ...newFaq, sort_order: parseInt(e.target.value) || 0 })}
-                            className="w-full border p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
-                        />
-                    </div>
-
-                    <div className="col-span-12 space-y-2">
+                    <div className="space-y-2">
                         <label className="text-xs font-semibold text-gray-500 uppercase">Answer</label>
                         <textarea
                             placeholder="Detailed answer for the devotee..."

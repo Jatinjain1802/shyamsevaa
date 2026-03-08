@@ -50,6 +50,21 @@ export const addChadawaToCart = async (req, res) => {
     res.json({ success: true, message: "Chadawa added to cart" });
 };
 
+/* ================= ADD PRODUCT ================= */
+
+export const addProductToCart = async (req, res) => {
+    const { product_id, quantity } = req.body;
+    const cart = await CartModel.getOrCreateCart(req);
+
+    await CartModel.addProductItem({
+        cart_id: cart.id,
+        product_id,
+        quantity,
+    });
+
+    res.json({ success: true, message: "Product added to cart" });
+};
+
 /* ================= UPDATE QTY ================= */
 
 export const updateCartItemQty = async (req, res) => {

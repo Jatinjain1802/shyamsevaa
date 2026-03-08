@@ -109,7 +109,12 @@ export const login = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        mobile: user.mobile,
         role: user.role,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        created_at: user.created_at,
       },
     });
   } catch (error) {
@@ -288,5 +293,34 @@ export const resetPassword = async (req, res) => {
       success: false,
       message: "Server error",
     });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const profile = await AuthModel.getProfile(req.user.id);
+    res.json({ success: true, user: profile });
+  } catch (error) {
+    console.error("GET PROFILE ERROR:", error);
+    res.status(500).json({ success: false, message: "Failed to get profile" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { address, city, state, name, mobile } = req.body;
+    await AuthModel.updateProfile(req.user.id, { address, city, state, name, mobile });
+    
+    // Get updated profile to return
+    const updatedUser = await AuthModel.getProfile(req.user.id);
+
+    res.json({ 
+      success: true, 
+      message: "Profile updated successfully",
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+    res.status(500).json({ success: false, message: "Failed to update profile" });
   }
 };
