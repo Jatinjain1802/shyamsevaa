@@ -49,6 +49,9 @@ import searchRoutes from "./routes/search.routes.js";
 // Products
 import productRoutes from "./routes/products.routes.js";
 
+// WhatsApp
+import whatsappRoutes from "./routes/whatsapp.routes.js";
+
 // Blogs (optional but DB me hai)
 //import blogRoutes from "./routes/blog.routes.js";
 
@@ -63,7 +66,13 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = Buffer.from(buf);
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -114,6 +123,9 @@ app.use("/api/search", searchRoutes);
 
 // Products
 app.use("/api/products", productRoutes);
+
+// WhatsApp
+app.use("/api/whatsapp", whatsappRoutes);
 
 // Blogs
 //app.use("/api/blogs", blogRoutes);

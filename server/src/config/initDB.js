@@ -677,6 +677,132 @@ const tables = [
       { name: "created_at",    definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
     ],
   },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP CONTACTS
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_contacts",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_contacts (
+        id              INT AUTO_INCREMENT PRIMARY KEY,
+        user_id         INT NULL,
+        phone_e164      VARCHAR(20) NOT NULL UNIQUE,
+        name            VARCHAR(255),
+        opt_in_status   VARCHAR(20) DEFAULT 'unknown',
+        opt_in_source   VARCHAR(100),
+        opt_in_at       DATETIME,
+        opt_out_at      DATETIME,
+        last_inbound_at DATETIME,
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `,
+    columns: [
+      { name: "id",              definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "user_id",         definition: "INT NULL" },
+      { name: "phone_e164",      definition: "VARCHAR(20) NOT NULL UNIQUE" },
+      { name: "name",            definition: "VARCHAR(255)" },
+      { name: "opt_in_status",   definition: "VARCHAR(20) DEFAULT 'unknown'" },
+      { name: "opt_in_source",   definition: "VARCHAR(100)" },
+      { name: "opt_in_at",       definition: "DATETIME" },
+      { name: "opt_out_at",      definition: "DATETIME" },
+      { name: "last_inbound_at", definition: "DATETIME" },
+      { name: "created_at",      definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+    ],
+  },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP MESSAGES
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_messages",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_messages (
+        id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+        wamid         VARCHAR(255) UNIQUE,
+        direction     VARCHAR(20) NOT NULL DEFAULT 'outbound',
+        message_type  VARCHAR(30) NOT NULL DEFAULT 'template',
+        phone         VARCHAR(20) NOT NULL,
+        template_name VARCHAR(255),
+        content       TEXT,
+        media_url     TEXT,
+        status        VARCHAR(30) DEFAULT 'queued',
+        order_id      INT NULL,
+        booking_id    INT NULL,
+        error_log     TEXT,
+        sent_at       DATETIME,
+        delivered_at  DATETIME,
+        read_at       DATETIME,
+        failed_at     DATETIME,
+        created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL
+      )
+    `,
+    columns: [
+      { name: "id",            definition: "BIGINT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "wamid",         definition: "VARCHAR(255) UNIQUE" },
+      { name: "direction",     definition: "VARCHAR(20) NOT NULL DEFAULT 'outbound'" },
+      { name: "message_type",  definition: "VARCHAR(30) NOT NULL DEFAULT 'template'" },
+      { name: "phone",         definition: "VARCHAR(20) NOT NULL" },
+      { name: "template_name", definition: "VARCHAR(255)" },
+      { name: "content",       definition: "TEXT" },
+      { name: "media_url",     definition: "TEXT" },
+      { name: "status",        definition: "VARCHAR(30) DEFAULT 'queued'" },
+      { name: "order_id",      definition: "INT NULL" },
+      { name: "booking_id",    definition: "INT NULL" },
+      { name: "error_log",     definition: "TEXT" },
+      { name: "sent_at",       definition: "DATETIME" },
+      { name: "delivered_at",  definition: "DATETIME" },
+      { name: "read_at",       definition: "DATETIME" },
+      { name: "failed_at",     definition: "DATETIME" },
+      { name: "created_at",    definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+    ],
+  },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP JOB QUEUE
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_jobs",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_jobs (
+        id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+        job_type     VARCHAR(50) NOT NULL,
+        status       VARCHAR(20) DEFAULT 'pending',
+        phone        VARCHAR(20) NOT NULL,
+        payload      JSON NOT NULL,
+        order_id     INT NULL,
+        booking_id   INT NULL,
+        attempts     INT DEFAULT 0,
+        max_attempts INT DEFAULT 5,
+        scheduled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        locked_at    DATETIME,
+        last_error   TEXT,
+        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL
+      )
+    `,
+    columns: [
+      { name: "id",           definition: "BIGINT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "job_type",     definition: "VARCHAR(50) NOT NULL" },
+      { name: "status",       definition: "VARCHAR(20) DEFAULT 'pending'" },
+      { name: "phone",        definition: "VARCHAR(20) NOT NULL" },
+      { name: "payload",      definition: "JSON NOT NULL" },
+      { name: "order_id",     definition: "INT NULL" },
+      { name: "booking_id",   definition: "INT NULL" },
+      { name: "attempts",     definition: "INT DEFAULT 0" },
+      { name: "max_attempts", definition: "INT DEFAULT 5" },
+      { name: "scheduled_at", definition: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+      { name: "locked_at",    definition: "DATETIME" },
+      { name: "last_error",   definition: "TEXT" },
+      { name: "created_at",   definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+      { name: "updated_at",   definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    ],
+  },
 ];
 
 // =============================================================================

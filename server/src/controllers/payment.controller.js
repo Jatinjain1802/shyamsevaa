@@ -5,6 +5,7 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
 import { generateInvoicePDF } from "../utils/invoice.js";
+import { queueOrderWhatsappNotifications } from "../utils/whatsappQueue.js";
 
 dotenv.config();
 
@@ -103,6 +104,20 @@ export const verifyPayment = async (req, res) => {
 
     // 4️⃣ generate invoice
     const invoice_path = await generateInvoicePDF(order_id, req.user.id);
+
+    const notificationPhone = mobile || order.communication_mobile;
+    try {
+      await queueOrderWhatsappNotifications({
+        userId: req.user.id,
+        orderId: order_id,
+        customerPhone: notificationPhone,
+        customerName: order.customer_name,
+        orderNumber: order.order_number,
+        invoicePath: invoice_path,
+      });
+    } catch (queueError) {
+      console.error("WHATSAPP QUEUE ERROR:", queueError.message);
+    }
 
     res.json({
       success: true,

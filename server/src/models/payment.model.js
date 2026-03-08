@@ -3,7 +3,7 @@ import db from "../config/db.js";
 export const getOrder = async (orderId, userId) => {
   const [[row]] = await db.query(
     `
-    SELECT id, total_amount, payment_status
+    SELECT id, order_number, customer_name, communication_mobile, total_amount, payment_status
     FROM orders
     WHERE id=? AND user_id=?
     `,

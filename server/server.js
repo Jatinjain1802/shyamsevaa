@@ -5,6 +5,7 @@ import http from "http";
 import { Server } from "socket.io";
 import app from "./src/app.js";
 import "./src/config/db.js";
+import { startWhatsappWorker } from "./src/utils/whatsappQueue.js";
 
 const PORT = process.env.PORT || 7484;
 
@@ -18,6 +19,7 @@ const io = new Server(server, {
 
 // Attach io to app to access in controllers
 app.set("io", io);
+startWhatsappWorker(io);
 
 io.on("connection", (socket) => {
   console.log("🟢 Live dev connected:", socket.id);

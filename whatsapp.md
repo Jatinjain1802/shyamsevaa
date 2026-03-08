@@ -260,3 +260,107 @@ We should NOT copy directly without hardening:
 - Bulk campaign stable and resumable for 100k.
 - Admin chat UI operational with realtime updates.
 - Security checks and logs in place.
+
+## 13) Current Build Status (as of 2026-03-08)
+
+### Implemented in code (Phase 1 foundation)
+- DB tables added:
+  - `whatsapp_contacts`
+  - `whatsapp_messages`
+  - `whatsapp_jobs`
+- Queue worker added in backend startup (`server/server.js`).
+- Payment success now enqueues:
+  - order confirmation template job
+  - invoice document job
+- Webhook endpoints added:
+  - `GET /api/whatsapp/webhook` (verification)
+  - `POST /api/whatsapp/webhook` (status + inbound processing)
+- Status tracking implemented:
+  - `sent`, `delivered`, `read`, `failed`
+- Failed-number tracking implemented:
+  - retries + `last_error` in `whatsapp_jobs`
+  - permanent failures marked in `whatsapp_messages`
+- Realtime updates wired to Socket.IO events:
+  - `whatsapp_job_sent`
+  - `whatsapp_status_update`
+  - `whatsapp_inbound_message`
+
+### Designed but not yet fully wired in business flow
+- Pooja completed video template queue function exists; trigger integration to booking completion flow is pending.
+- Bulk campaign management APIs + UI are pending.
+- Admin chat conversation APIs + UI are pending.
+- Webhook signature verification (`X-Hub-Signature-256`) is implemented.
+  - It is enforced when `WHATSAPP_APP_SECRET` (or `META_APP_SECRET`) is set.
+
+## 14) Example Flows (Concrete)
+
+### 14.1 Example A: Order Confirmation + Invoice (automated)
+1. User pays order successfully.
+2. `verifyPayment` marks order paid and generates invoice.
+3. System enqueues 1-2 jobs in `whatsapp_jobs`:
+   - `order_confirmation_template`
+   - `invoice_document` (if public invoice URL is available)
+4. Worker picks jobs, sends via Meta API, writes `wamid` in `whatsapp_messages`.
+5. Meta webhook sends status callbacks (`delivered/read/failed`).
+6. Webhook updates DB and emits realtime socket event for admin dashboard.
+
+Sample queue payloads:
+```json
+{
+  "job_type": "order_confirmation_template",
+  "phone": "9198XXXXXXXX",
+  "payload": {
+    "templateName": "order_confirm_v1",
+    "languageCode": "en_US",
+    "customerName": "Arjun",
+    "orderNumber": "ORD-10231"
+  }
+}
+```
+
+```json
+{
+  "job_type": "invoice_document",
+  "phone": "9198XXXXXXXX",
+  "payload": {
+    "documentUrl": "https://api.example.com/uploads/invoices/invoice_ORD-10231.pdf",
+    "fileName": "invoice_ORD-10231.pdf",
+    "caption": "Invoice for order ORD-10231"
+  }
+}
+```
+
+### 14.2 Example B: Pooja Completed + Video Link
+1. Admin completes booking and saves `video_url`.
+2. System calls `queuePoojaVideoNotification(...)`.
+3. Worker sends approved template containing video link.
+4. Read/failure tracked through webhook like transactional flow.
+
+Sample template parameters:
+```json
+{
+  "templateName": "pooja_completed_v1",
+  "languageCode": "en_US",
+  "customerName": "Arjun",
+  "videoUrl": "https://cdn.example.com/pooja/booking-445.mp4"
+}
+```
+
+### 14.3 Example C: Bulk Campaign (next phase)
+1. Admin uploads CSV (for example 50,000 contacts).
+2. System validates numbers, deduplicates, and stores recipient rows.
+3. Dispatcher creates batched queue jobs (for example chunks of 500-2000).
+4. Worker pool sends with rate limiting and retry policy.
+5. Dashboard updates in near-real-time:
+   - queued
+   - sent
+   - delivered
+   - read
+   - failed
+
+## 15) Automation Clarification for Client
+- Yes, correct approach is:
+  1. Build reliable messaging infrastructure first.
+  2. Attach business events (payment success, booking completion, campaign schedule).
+  3. Then enable full automation with retries, monitoring, and controls.
+- This prevents message loss and makes scale (1k to 100k) safe.
