@@ -113,6 +113,8 @@ export const verifyPayment = async (req, res) => {
         customerPhone: notificationPhone,
         customerName: order.customer_name,
         orderNumber: order.order_number,
+        itemName: order.primary_item_name,
+        productType: order.primary_product_type,
         invoicePath: invoice_path,
       });
     } catch (queueError) {

@@ -3,7 +3,7 @@ import db from "./db.js";
 // =============================================================================
 // DATABASE SCHEMA DEFINITION
 // =============================================================================
-// 📚 LEARNING: This is a "single source of truth" pattern.
+// ðŸ“š LEARNING: This is a "single source of truth" pattern.
 //   - All table structures are defined here in ONE place.
 //   - The `columns` array in each table is used for AUTO-MIGRATION.
 //   - When you add a new column to `columns`, the system automatically
@@ -12,9 +12,9 @@ import db from "./db.js";
 // =============================================================================
 
 const tables = [
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // USERS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "users",
     query: `
@@ -33,7 +33,7 @@ const tables = [
         created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `,
-    // 📚 LEARNING: `columns` mirrors the CREATE TABLE above.
+    // ðŸ“š LEARNING: `columns` mirrors the CREATE TABLE above.
     //   Each entry has: name, definition (used in ALTER TABLE ADD COLUMN),
     //   and optionally `after` (which column it should appear after).
     columns: [
@@ -52,9 +52,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // TEMPLES
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "temples",
     query: `
@@ -79,9 +79,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // TEMPLE GALLERY
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "temple_gallery",
     query: `
@@ -101,9 +101,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJAS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "poojas",
     query: `
@@ -128,9 +128,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJA FAQs
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "pooja_faqs",
     query: `
@@ -154,9 +154,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJA VARIANTS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "pooja_variants",
     query: `
@@ -178,9 +178,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJA TEMPLES (pivot / junction table)
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "pooja_temples",
     query: `
@@ -199,9 +199,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJA GALLERY
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "pooja_gallery",
     query: `
@@ -221,9 +221,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // ADDONS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "addons",
     query: `
@@ -248,9 +248,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // POOJA ADDONS (pivot)
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "pooja_addons",
     query: `
@@ -269,9 +269,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWAS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawas",
     query: `
@@ -296,9 +296,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWA ITEMS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawa_items",
     query: `
@@ -320,9 +320,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWA BENEFITS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawa_benefits",
     query: `
@@ -342,9 +342,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWA TEMPLES (pivot)
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawa_temples",
     query: `
@@ -363,9 +363,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWA REVIEWS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawa_reviews",
     query: `
@@ -389,9 +389,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CHADAWA GALLERY
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "chadawa_gallery",
     query: `
@@ -411,9 +411,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // REVIEWS (Pooja reviews)
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "reviews",
     query: `
@@ -437,9 +437,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // PRODUCTS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "products",
     query: `
@@ -468,9 +468,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CARTS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "carts",
     query: `
@@ -490,9 +490,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CART ITEMS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "cart_items",
     query: `
@@ -526,9 +526,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CART ITEM ADDONS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "cart_item_addons",
     query: `
@@ -551,9 +551,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // ORDERS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "orders",
     query: `
@@ -587,9 +587,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // ORDER ITEMS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "order_items",
     query: `
@@ -623,9 +623,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // ORDER ITEM ADDONS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "order_item_addons",
     query: `
@@ -648,9 +648,9 @@ const tables = [
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // BOOKINGS
-  // ─────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     name: "bookings",
     query: `
@@ -678,6 +678,79 @@ const tables = [
     ],
   },
 
+  // -----------------------------------------------------------------------------
+  // WHATSAPP TEMPLATES
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_templates",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_templates (
+        id               INT AUTO_INCREMENT PRIMARY KEY,
+        name             VARCHAR(191) NOT NULL,
+        category         VARCHAR(30) NOT NULL,
+        language         VARCHAR(20) NOT NULL DEFAULT 'en_US',
+        structure_json   JSON NOT NULL,
+        status           VARCHAR(30) NOT NULL DEFAULT 'local_pending',
+        meta_template_id VARCHAR(255),
+        meta_status      VARCHAR(30),
+        rejection_reason TEXT,
+        sample_media_url TEXT,
+        is_active        TINYINT(1) NOT NULL DEFAULT 1,
+        created_by       INT NULL,
+        last_synced_at   DATETIME,
+        created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY uk_whatsapp_templates_name_lang (name, language),
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `,
+    columns: [
+      { name: "id",               definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "name",             definition: "VARCHAR(191) NOT NULL" },
+      { name: "category",         definition: "VARCHAR(30) NOT NULL" },
+      { name: "language",         definition: "VARCHAR(20) NOT NULL DEFAULT 'en_US'" },
+      { name: "structure_json",   definition: "JSON NOT NULL" },
+      { name: "status",           definition: "VARCHAR(30) NOT NULL DEFAULT 'local_pending'" },
+      { name: "meta_template_id", definition: "VARCHAR(255)" },
+      { name: "meta_status",      definition: "VARCHAR(30)" },
+      { name: "rejection_reason", definition: "TEXT" },
+      { name: "sample_media_url", definition: "TEXT" },
+      { name: "is_active",        definition: "TINYINT(1) NOT NULL DEFAULT 1" },
+      { name: "created_by",       definition: "INT NULL" },
+      { name: "last_synced_at",   definition: "DATETIME" },
+      { name: "created_at",       definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+      { name: "updated_at",       definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    ],
+  },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP TEMPLATE USECASE MAPPINGS
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_template_usecases",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_template_usecases (
+        id               INT AUTO_INCREMENT PRIMARY KEY,
+        use_case         VARCHAR(100) NOT NULL UNIQUE,
+        template_id      INT NOT NULL,
+        variable_mapping JSON,
+        updated_by       INT NULL,
+        created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (template_id) REFERENCES whatsapp_templates(id) ON DELETE CASCADE,
+        FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `,
+    columns: [
+      { name: "id",               definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "use_case",         definition: "VARCHAR(100) NOT NULL UNIQUE" },
+      { name: "template_id",      definition: "INT NOT NULL" },
+      { name: "variable_mapping", definition: "JSON" },
+      { name: "updated_by",       definition: "INT NULL" },
+      { name: "created_at",       definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+      { name: "updated_at",       definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    ],
+  },
   // -----------------------------------------------------------------------------
   // WHATSAPP CONTACTS
   // -----------------------------------------------------------------------------
@@ -775,6 +848,7 @@ const tables = [
         payload      JSON NOT NULL,
         order_id     INT NULL,
         booking_id   INT NULL,
+        campaign_id  INT NULL,
         attempts     INT DEFAULT 0,
         max_attempts INT DEFAULT 5,
         scheduled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -783,7 +857,8 @@ const tables = [
         created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
-        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL,
+        FOREIGN KEY (campaign_id) REFERENCES whatsapp_campaigns(id) ON DELETE SET NULL
       )
     `,
     columns: [
@@ -794,6 +869,7 @@ const tables = [
       { name: "payload",      definition: "JSON NOT NULL" },
       { name: "order_id",     definition: "INT NULL" },
       { name: "booking_id",   definition: "INT NULL" },
+      { name: "campaign_id",  definition: "INT NULL", after: "booking_id" },
       { name: "attempts",     definition: "INT DEFAULT 0" },
       { name: "max_attempts", definition: "INT DEFAULT 5" },
       { name: "scheduled_at", definition: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
@@ -803,35 +879,142 @@ const tables = [
       { name: "updated_at",   definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
     ],
   },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP CAMPAIGNS
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_campaigns",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_campaigns (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        template_id INT NULL,
+        template_meta_id VARCHAR(255) NOT NULL,
+        template_name VARCHAR(255) NOT NULL,
+        status ENUM('draft', 'scheduled', 'processing', 'completed', 'paused', 'failed') DEFAULT 'draft',
+        total_recipients INT DEFAULT 0,
+        sent_count INT DEFAULT 0,
+        delivered_count INT DEFAULT 0,
+        read_count INT DEFAULT 0,
+        failed_count INT DEFAULT 0,
+        variable_mapping JSON,
+        custom_media_url TEXT,
+        scheduled_at DATETIME NULL,
+        created_by INT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB;
+    `,
+    columns: [
+      { name: "id",                definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "name",              definition: "VARCHAR(255) NOT NULL" },
+      { name: "template_id",       definition: "INT NULL" },
+      { name: "template_meta_id",  definition: "VARCHAR(255) NOT NULL", after: "template_id" },
+      { name: "template_name",     definition: "VARCHAR(255) NOT NULL" },
+      { name: "status",            definition: "ENUM('draft', 'scheduled', 'processing', 'completed', 'paused', 'failed') DEFAULT 'draft'" },
+      { name: "total_recipients",   definition: "INT DEFAULT 0" },
+      { name: "sent_count",        definition: "INT DEFAULT 0" },
+      { name: "delivered_count",   definition: "INT DEFAULT 0" },
+      { name: "read_count",        definition: "INT DEFAULT 0" },
+      { name: "failed_count",      definition: "INT DEFAULT 0" },
+      { name: "variable_mapping",  definition: "JSON" },
+      { name: "custom_media_url",  definition: "TEXT", after: "variable_mapping" },
+      { name: "scheduled_at",      definition: "DATETIME NULL" },
+      { name: "created_by",        definition: "INT NULL" },
+      { name: "created_at",        definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+      { name: "updated_at",        definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    ],
+  },
+
+  // -----------------------------------------------------------------------------
+  // WHATSAPP CAMPAIGN LOGS
+  // -----------------------------------------------------------------------------
+  {
+    name: "whatsapp_campaign_logs",
+    query: `
+      CREATE TABLE IF NOT EXISTS whatsapp_campaign_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        campaign_id INT NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        wamid VARCHAR(255) NULL,
+        status VARCHAR(50) DEFAULT 'queued',
+        error_message TEXT NULL,
+        context JSON NULL,
+        sent_at DATETIME NULL,
+        delivered_at DATETIME NULL,
+        read_at DATETIME NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (campaign_id) REFERENCES whatsapp_campaigns(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `,
+    columns: [
+      { name: "id",            definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "campaign_id",   definition: "INT NOT NULL" },
+      { name: "phone",         definition: "VARCHAR(20) NOT NULL" },
+      { name: "wamid",         definition: "VARCHAR(255) NULL" },
+      { name: "status",        definition: "VARCHAR(50) DEFAULT 'queued'" },
+      { name: "error_message",  definition: "TEXT NULL" },
+      { name: "context",       definition: "JSON NULL" },
+      { name: "sent_at",       definition: "DATETIME NULL" },
+      { name: "delivered_at",  definition: "DATETIME NULL" },
+      { name: "read_at",       definition: "DATETIME NULL" },
+      { name: "updated_at",    definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    ],
+  },
 ];
 
 // =============================================================================
 // AUTO-MIGRATION ENGINE
 // =============================================================================
-// 📚 LEARNING: This function handles the "existing database" problem.
+// ðŸ“š LEARNING: This function handles the "existing database" problem.
 //   When the server starts, for each table it:
 //     1. Runs SHOW COLUMNS to get what's currently in the database.
 //     2. Compares it against the `columns` array defined above.
-//     3. If a column is missing → runs ALTER TABLE ADD COLUMN automatically.
+//     3. If a column is missing â†’ runs ALTER TABLE ADD COLUMN automatically.
 //
 //   This means you NEVER have to manually write ALTER TABLE in production.
 //   Just add the column to the `columns` array in the table definition above
-//   and it will appear automatically on the next server restart. ✨
+//   and it will appear automatically on the next server restart. âœ¨
 // =============================================================================
 
 const migrateTableColumns = async (table) => {
   // Step 1: Get all columns that currently exist in this table
   const [existingColumns] = await db.query(`SHOW COLUMNS FROM \`${table.name}\``);
   const existingColumnNames = existingColumns.map((c) => c.Field);
+  const existingColumnMap = existingColumns.reduce((acc, c) => ({ ...acc, [c.Field]: c }), {});
 
   let migrationsRun = 0;
 
   // Step 2: Loop over all expected columns (from our schema definition)
   for (const col of table.columns) {
-    // Skip columns that already exist
-    if (existingColumnNames.includes(col.name)) continue;
+    if (existingColumnNames.includes(col.name)) {
+      // PRO TIP: This is advanced. If column exists, we check if we should MODIFY it.
+      // For now, we only handle explicit NULL/NOT NULL changes or common type fixes.
+      // But avoid MODIFY for Primary Keys or Auto Incs.
+      if (col.definition.toLowerCase().includes("auto_increment")) continue;
 
-    // Skip primary key — MySQL can't ADD COLUMN for AUTO_INCREMENT PK on existing table
+      // To keep it safe, we'll only run MODIFY if explicitly required by user logic
+      // For this task, we want to fix template_id in whatsapp_campaigns specifically.
+      if (table.name === "whatsapp_campaigns" && col.name === "template_id") {
+        const isCurrentlyNotNull = existingColumnMap[col.name].Null === 'NO';
+        if (isCurrentlyNotNull && col.definition.toLowerCase().includes("null")) {
+          // Drop Foreign Key first if it exists to avoid error
+          try {
+            await db.query(`ALTER TABLE \`${table.name}\` DROP FOREIGN KEY \`whatsapp_campaigns_ibfk_1\``);
+            console.log(`  âœ¨ [${table.name}] Dropped strict FK on 'template_id' for flexibility.`);
+          } catch(e) { /* ignore if not exists */ }
+
+          await db.query(`ALTER TABLE \`${table.name}\` MODIFY COLUMN \`${col.name}\` ${col.definition}`);
+          console.log(`  âœ¨ [${table.name}] Modified column: '${col.name}' to ${col.definition}`);
+          migrationsRun++;
+        }
+      }
+      continue;
+    }
+
+    // Skip primary key â€” MySQL can't ADD COLUMN for AUTO_INCREMENT PK on existing table
     if (col.definition.includes("AUTO_INCREMENT")) continue;
 
     // Build the ALTER TABLE statement
@@ -840,7 +1023,7 @@ const migrateTableColumns = async (table) => {
     const sql = `ALTER TABLE \`${table.name}\` ADD COLUMN \`${col.name}\` ${col.definition}${afterClause}`;
 
     await db.query(sql);
-    console.log(`  ✨ [${table.name}] Added missing column: '${col.name}'`);
+    console.log(`  âœ¨ [${table.name}] Added missing column: '${col.name}'`);
     migrationsRun++;
   }
 
@@ -850,13 +1033,13 @@ const migrateTableColumns = async (table) => {
 // =============================================================================
 // MAIN EXPORT: initializeDatabase
 // =============================================================================
-// 📚 LEARNING: This is called once at server startup (see server.js / app.js).
+// ðŸ“š LEARNING: This is called once at server startup (see server.js / app.js).
 //   It runs CREATE TABLE IF NOT EXISTS for each table (safe to run every time),
 //   then runs the auto-migration engine to patch any missing columns.
 // =============================================================================
 
 export const initializeDatabase = async () => {
-  console.log("\n--- 🛠️  Database Initialization Started ---");
+  console.log("\n--- ðŸ› ï¸  Database Initialization Started ---");
 
   let totalMigrations = 0;
 
@@ -864,21 +1047,25 @@ export const initializeDatabase = async () => {
     try {
       // Step 1: Create table if it doesn't exist (safe for fresh installs)
       await db.query(table.query);
-      console.log(`✅ Table '${table.name}' checked/created.`);
+      console.log(`âœ… Table '${table.name}' checked/created.`);
 
       // Step 2: Auto-migrate any missing columns in existing tables
       const migrations = await migrateTableColumns(table);
       totalMigrations += migrations;
     } catch (error) {
-      console.error(`❌ Error on table '${table.name}':`, error.message);
+      console.error(`âŒ Error on table '${table.name}':`, error.message);
     }
   }
 
   if (totalMigrations === 0) {
-    console.log("🎉 All tables are up-to-date. No migrations needed.");
+    console.log("ðŸŽ‰ All tables are up-to-date. No migrations needed.");
   } else {
-    console.log(`🚀 Migration complete: ${totalMigrations} column(s) added.`);
+    console.log(`ðŸš€ Migration complete: ${totalMigrations} column(s) added.`);
   }
 
-  console.log("--- ✅ Database Initialization Completed ---\n");
+  console.log("--- âœ… Database Initialization Completed ---\n");
 };
+
+
+
+

@@ -51,6 +51,7 @@ import productRoutes from "./routes/products.routes.js";
 
 // WhatsApp
 import whatsappRoutes from "./routes/whatsapp.routes.js";
+import whatsappCampaignRoutes from "./routes/whatsappCampaign.routes.js";
 
 // Blogs (optional but DB me hai)
 //import blogRoutes from "./routes/blog.routes.js";
@@ -126,6 +127,7 @@ app.use("/api/products", productRoutes);
 
 // WhatsApp
 app.use("/api/whatsapp", whatsappRoutes);
+app.use("/api/whatsapp/admin/campaigns", whatsappCampaignRoutes);
 
 // Blogs
 //app.use("/api/blogs", blogRoutes);

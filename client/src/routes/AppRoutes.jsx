@@ -43,7 +43,10 @@ import Contact from "../pages/users/Contact";
 import UserProducts from "../pages/users/Products";
 import ProductDetail from "../pages/users/ProductDetail";
 import AdminProducts from "../pages/admin/Products";
-
+import WhatsAppTemplates from "../pages/admin/WhatsAppTemplates";
+import WhatsAppCampaigns from "../pages/admin/WhatsAppCampaigns";
+import WhatsAppChat from "../pages/admin/WhatsAppChat";
+import WhatsAppDashboard from "../pages/admin/WhatsAppDashboard";
 
 export default function AppRoutes() {
   return (
@@ -54,7 +57,6 @@ export default function AppRoutes() {
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Home />} />
           <Route path="/temples" element={<Templess />} />
-          {/* LEARNING: Using :slug parameter for SEO-friendly URLs */}
           <Route path="/temples/:slug" element={<TempleDetail />} />
           <Route path="/poojas" element={<Poojass />} />
           <Route path="/poojas/:slug" element={<PoojaDetail />} />
@@ -74,19 +76,19 @@ export default function AppRoutes() {
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/contact" element={<Contact />} />
-
         </Route>
-
-        {/* Dedicated Dashboard Route with custom layout logic */}
+ 
+        {/* Dedicated Dashboard Route */}
         <Route path="/dashboard" element={<UserDashboard />} />
-
+ 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
+ 
         {/* Auth Flow Routes */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+ 
         {/* Admin Dashboard Routes */}
         <Route
           path="/admin"
@@ -97,20 +99,21 @@ export default function AppRoutes() {
           }
         >
           <Route index element={<Dashboard />} />
-
           <Route path="poojas" element={<Poojas />} />
           <Route path="addons" element={<Addons />} />
           <Route path="temples" element={<Temples />} />
-
           <Route path="chadawas" element={<Chadawas />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="chadawas/:chadawaId/items" element={<ChadawaItems />} />
           <Route path="chadawas/:chadawaId/benefits" element={<ChadawaBenefits />} />
-
           <Route path="pandits" element={<Pandits />} />
           <Route path="bookings" element={<Bookings />} />
           <Route path="users" element={<Users />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="whatsapp/templates" element={<WhatsAppTemplates />} />
+          <Route path="whatsapp/campaigns" element={<WhatsAppCampaigns />} />
+          <Route path="whatsapp/chats" element={<WhatsAppChat />} />
+          <Route path="whatsapp/dashboard" element={<WhatsAppDashboard />} />
         </Route>
       </Routes>
     </>

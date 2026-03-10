@@ -180,6 +180,31 @@ flowchart TD
 - `POST /api/admin/whatsapp/chat/send`
 - `PUT /api/admin/whatsapp/chat/read/:phone`
 
+### 6.5 Template APIs (Phase-1 implemented)
+- `POST /api/whatsapp/admin/templates`
+  - Create template from admin payload and submit to Meta.
+- `GET /api/whatsapp/admin/templates`
+  - List local template registry with Meta status, active flag, mapped use-cases.
+- `POST /api/whatsapp/admin/templates/sync`
+  - Pull template statuses from Meta and sync local DB.
+- `PATCH /api/whatsapp/admin/templates/:id/toggle-active`
+  - Activate/deactivate local template.
+- `DELETE /api/whatsapp/admin/templates/:id`
+  - Delete local template (optional Meta delete via query flag).
+- `GET /api/whatsapp/admin/template-usecases`
+  - Get available use-cases + current mappings.
+- `PUT /api/whatsapp/admin/template-usecases/:useCase`
+  - Assign approved template and variable mapping to event use-case.
+
+### 6.6 Admin UI (Phase-1 implemented)
+- Admin page path: `/admin/whatsapp/templates`
+- Features:
+  - create UTILITY/MARKETING template
+  - sync template approvals from Meta
+  - manage active/inactive state
+  - map templates to `order_confirmed` and `pooja_completed`
+  - variable mapping and preview before saving
+
 ## 7) Scale Strategy (1k to 100k)
 
 ### 7.1 Queue and Workers
@@ -284,6 +309,8 @@ We should NOT copy directly without hardening:
   - `whatsapp_job_sent`
   - `whatsapp_status_update`
   - `whatsapp_inbound_message`
+- Hardcoded template body creation removed from code.
+- Order confirmation now prefers use-case mapping (`order_confirmed`) and falls back to env if mapping is missing.
 
 ### Designed but not yet fully wired in business flow
 - Pooja completed video template queue function exists; trigger integration to booking completion flow is pending.
@@ -364,3 +391,5 @@ Sample template parameters:
   2. Attach business events (payment success, booking completion, campaign schedule).
   3. Then enable full automation with retries, monitoring, and controls.
 - This prevents message loss and makes scale (1k to 100k) safe.
+
+

@@ -53,14 +53,15 @@ export const enqueueWhatsappJob = async ({
   payload,
   orderId = null,
   bookingId = null,
+  campaignId = null,
   scheduledAt = null,
   maxAttempts = 5,
 }) => {
   const [result] = await db.query(
     `
       INSERT INTO whatsapp_jobs
-      (job_type, status, phone, payload, order_id, booking_id, max_attempts, scheduled_at)
-      VALUES (?, 'pending', ?, ?, ?, ?, ?, ?)
+      (job_type, status, phone, payload, order_id, booking_id, campaign_id, max_attempts, scheduled_at)
+      VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       jobType,
@@ -68,6 +69,7 @@ export const enqueueWhatsappJob = async ({
       JSON.stringify(payload || {}),
       orderId,
       bookingId,
+      campaignId,
       maxAttempts,
       scheduledAt || new Date(),
     ]
@@ -246,3 +248,105 @@ export const updateWhatsappMessageStatusByWamid = async ({
     [status, errorLog, deliveredAt, readAt, failedAt, wamid]
   );
 };
+
+export const getWhatsappContacts = async () => {
+  const [rows] = await db.query(
+    `
+      SELECT *
+      FROM whatsapp_contacts
+      ORDER BY last_inbound_at DESC, created_at DESC
+    `
+  );
+  return rows;
+};
+
+export const getWhatsappContactByPhone = async (phone) => {
+  const [rows] = await db.query(
+    `SELECT * FROM whatsapp_contacts WHERE phone_e164 = ? LIMIT 1`,
+    [phone]
+  );
+  return rows[0] || null;
+};
+
+export const saveOutboundWhatsappMessage = async ({
+  wamid,
+  phone,
+  messageType,
+  content,
+  mediaUrl = null,
+  status = "sent",
+  sentAt = null,
+}) => {
+  await createWhatsappMessageLog({
+    wamid,
+    direction: "outbound",
+    messageType,
+    phone,
+    content,
+    mediaUrl,
+    status,
+    sentAt: sentAt || new Date(),
+  });
+};
+
+
+export const getWhatsappMessageHistory = async (phone) => {
+  const [rows] = await db.query(
+    `
+      SELECT *
+      FROM whatsapp_messages
+      WHERE phone = ?
+      ORDER BY created_at ASC
+    `,
+    [phone]
+  );
+  return rows;
+};
+
+export const getWhatsappDashboardStats = async () => {
+  // 1. Total Messages Sent (Outbound)
+  const [totalOutbound] = await db.query(
+    "SELECT COUNT(*) as count FROM whatsapp_messages WHERE direction = 'outbound'"
+  );
+
+  // 2. Message Status Breakdown
+  const [statusBreakdown] = await db.query(
+    "SELECT status, COUNT(*) as count FROM whatsapp_messages WHERE direction = 'outbound' GROUP BY status"
+  );
+
+  // 3. Total Campaigns
+  const [totalCampaigns] = await db.query(
+    "SELECT COUNT(*) as count FROM whatsapp_campaigns"
+  );
+
+  // 4. Campaign Stats (Recipients, Sent, etc.)
+  const [campaignStats] = await db.query(
+    `SELECT 
+      SUM(total_recipients) as total_recipients,
+      SUM(sent_count) as sent_count,
+      SUM(delivered_count) as delivered_count,
+      SUM(read_count) as read_count,
+      SUM(failed_count) as failed_count
+     FROM whatsapp_campaigns`
+  );
+
+  // 5. Total Templates
+  const [totalTemplates] = await db.query(
+    "SELECT COUNT(*) as count FROM whatsapp_templates"
+  );
+
+  // 6. Total Contacts
+  const [totalContacts] = await db.query(
+    "SELECT COUNT(*) as count FROM whatsapp_contacts"
+  );
+
+  return {
+    totalOutbound: totalOutbound[0].count,
+    statusBreakdown: statusBreakdown.reduce((acc, curr) => ({ ...acc, [curr.status]: curr.count }), {}),
+    totalCampaigns: totalCampaigns[0].count,
+    campaignAggregates: campaignStats[0],
+    totalTemplates: totalTemplates[0].count,
+    totalContacts: totalContacts[0].count
+  };
+};
+

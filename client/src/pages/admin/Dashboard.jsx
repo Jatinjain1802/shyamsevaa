@@ -129,9 +129,9 @@ export default function Dashboard() {
       </div>
 
       {/* Main Stats Hub */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 xl:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
         {/* Revenue Card (Double Span) */}
-        <div className="md:col-span-2 relative overflow-hidden bg-white p-6 xl:p-8 rounded-4xl border border-stone-100 shadow-sm group hover:shadow-xl hover:border-marigold/20 transition-all duration-500">
+        <div className="sm:col-span-2 relative overflow-hidden bg-white p-6 xl:p-8 rounded-4xl border border-stone-100 shadow-sm group hover:shadow-xl hover:border-marigold/20 transition-all duration-500">
           <div className="flex justify-between items-start relative z-10">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-stone-400 font-bold text-[10px] uppercase tracking-widest">
@@ -198,7 +198,7 @@ export default function Dashboard() {
       </div>
 
       {/* Activity Sections */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8">
 
         {/* Recent Orders - 5 Columns */}
         <div className="lg:col-span-5 bg-white rounded-[2.5rem] border border-stone-100 shadow-sm overflow-hidden flex flex-col">

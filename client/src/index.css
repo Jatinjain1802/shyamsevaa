@@ -518,6 +518,34 @@
     scrollbar-width: none;
   }
 
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .custom-scrollbar-dark::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar-dark::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
   /* ===== SCROLL ANIMATIONS ===== */
   .fade-in-up {
     animation: var(--animate-slide-up);
