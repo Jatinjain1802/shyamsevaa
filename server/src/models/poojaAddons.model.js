@@ -6,17 +6,19 @@ import db from "../config/db.js";
 
 export const createAddon = async ({
     title,
+    title_hi,
     image,
     description,
+    description_hi,
     price,
     is_common,
 }) => {
     const [res] = await db.query(
         `
-    INSERT INTO addons (title, image, description, price, is_common)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO addons (title, title_hi, image, description, description_hi, price, is_common)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
-        [title, image, description, price, is_common ? 1 : 0]
+        [title, title_hi, image, description, description_hi, price, is_common ? 1 : 0]
     );
     return res.insertId;
 };
@@ -26,8 +28,10 @@ export const updateAddon = async (id, data) => {
     const values = [];
 
     if (data.title !== undefined) { fields.push("title=?"); values.push(data.title); }
+    if (data.title_hi !== undefined) { fields.push("title_hi=?"); values.push(data.title_hi); }
     if (data.image !== undefined) { fields.push("image=?"); values.push(data.image); }
     if (data.description !== undefined) { fields.push("description=?"); values.push(data.description); }
+    if (data.description_hi !== undefined) { fields.push("description_hi=?"); values.push(data.description_hi); }
     if (data.price !== undefined) { fields.push("price=?"); values.push(data.price); }
     if (data.is_common !== undefined) { fields.push("is_common=?"); values.push(data.is_common ? 1 : 0); }
 
@@ -78,7 +82,7 @@ export const removeAddonFromPooja = async (mapId) => {
 // all addons (admin)
 export const getAllAddons = async () => {
     const [rows] = await db.query(
-        `SELECT id, title, price FROM addons ORDER BY created_at DESC`
+        `SELECT id, title, title_hi, price, image, is_common FROM addons ORDER BY created_at DESC`
     );
     return rows;
 };
@@ -87,14 +91,18 @@ export const getAllAddons = async () => {
 export const getAddonsByPooja = async (poojaId) => {
     const [rows] = await db.query(
         `
-    SELECT 
-      pa.id AS mapId,
-      a.id AS addonId,
+    SELECT DISTINCT
+      a.id AS id,
       a.title,
-      a.price
-    FROM pooja_addons pa
-    JOIN addons a ON a.id = pa.addon_id
-    WHERE pa.pooja_id = ?
+      a.title_hi,
+      a.price,
+      a.image,
+      a.description,
+      a.description_hi,
+      pa.id AS mapId
+    FROM addons a
+    LEFT JOIN pooja_addons pa ON a.id = pa.addon_id AND pa.pooja_id = ?
+    WHERE a.is_common = 1 OR pa.pooja_id IS NOT NULL
     `,
         [poojaId]
     );

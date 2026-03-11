@@ -12,6 +12,9 @@ import {
 import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 
+import upload from "../middlewares/multer.middleware.js";
+import compressImage from "../middlewares/compressImage.middleware.js";
+
 const router = express.Router();
 
 // ===== ADDONS MASTER (ADMIN) =====
@@ -21,6 +24,8 @@ router.post(
     "/admin/addons",
     authMiddleware,
     adminMiddleware,
+    upload.single("addon_image"),
+    compressImage,
     createAddon
 );
 
@@ -29,6 +34,8 @@ router.put(
     "/admin/addons/:addonId",
     authMiddleware,
     adminMiddleware,
+    upload.single("addon_image"),
+    compressImage,
     updateAddon
 );
 

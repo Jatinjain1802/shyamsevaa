@@ -80,7 +80,7 @@ export default function AdminLayout() {
           </div>
 
           {/* Grouped Navigation */}
-          <nav className="flex-1 px-2 lg:px-3 xl:px-4 py-4 lg:py-6 xl:py-8 overflow-y-auto no-scrollbar space-y-4 lg:space-y-6 xl:space-y-8">
+          <nav className="flex-1 px-2 lg:px-3 xl:px-4 py-4 lg:py-6 xl:py-8 overflow-y-auto premium-scrollbar space-y-4 lg:space-y-6 xl:space-y-8">
             {navGroups.map((group, gIdx) => (
               <div key={gIdx} className="space-y-2">
                 {isSidebarOpen && (
@@ -128,7 +128,7 @@ export default function AdminLayout() {
           </nav>
 
           {/* Refined Fixed User Section */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 lg:p-4 xl:p-6 border-t border-white/5 bg-white/2 backdrop-blur-md">
+          <div className="p-3 lg:p-4 xl:p-6 border-t border-white/5 bg-white/2 backdrop-blur-md">
             <div className={`flex items-center gap-3 p-3 rounded-2xl ${!isSidebarOpen && "justify-center"}`}>
               <div className="relative shrink-0">
                 <div className="w-10 h-10 rounded-xl bg-linear-to-br from-stone-700 to-stone-800 border border-white/10 flex items-center justify-center text-marigold font-black text-sm">
@@ -191,7 +191,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-6 xl:p-10 overflow-x-hidden no-scrollbar">
+        <main className="flex-1 p-4 lg:p-6 xl:p-10 overflow-x-hidden overflow-y-auto premium-scrollbar">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>

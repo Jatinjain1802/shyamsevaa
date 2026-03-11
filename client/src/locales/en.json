@@ -270,5 +270,20 @@
     "a2": "Yes, all rituals are performed by certified pandits at the specified temples. You will receive a video/photo proof of the ceremony.",
     "q3": "Can I have multiple family members in a pooja?",
     "a3": "Most poojas allow including names of immediate family members. Please specify the details during the post-booking consultation."
+  },
+  "pooja_detail": {
+    "sacred_significance": "Sacred Significance",
+    "blessings_fruits": "Blessings & Fruits",
+    "sacred_offerings": "Sacred Offerings (Chadawa)",
+    "enhance_ritual": "Enhance your ritual with these traditional offerings",
+    "total_dakshina": "TOTAL DAKSHINA",
+    "inc_gst": "INC. GST",
+    "proceed_to_book": "PROCEED TO BOOK",
+    "available_daily": "Available Daily",
+    "next_muhurat": "Next Muhurat",
+    "dakshina_from": "Dakshina from",
+    "revered_ritual": "Most Revered Ritual",
+    "remove": "REMOVE",
+    "add_seva": "ADD SEVA"
   }
 }

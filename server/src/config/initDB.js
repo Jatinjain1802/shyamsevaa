@@ -110,9 +110,12 @@ const tables = [
       CREATE TABLE IF NOT EXISTS poojas (
         id          INT AUTO_INCREMENT PRIMARY KEY,
         title       VARCHAR(255) NOT NULL,
+        title_hi    VARCHAR(255),
         image       VARCHAR(255),
         description TEXT,
+        description_hi TEXT,
         benefits    TEXT,
+        benefits_hi TEXT,
         pooja_date  DATE,
         created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -120,9 +123,12 @@ const tables = [
     columns: [
       { name: "id",          definition: "INT AUTO_INCREMENT PRIMARY KEY" },
       { name: "title",       definition: "VARCHAR(255) NOT NULL" },
+      { name: "title_hi",    definition: "VARCHAR(255)", after: "title" },
       { name: "image",       definition: "VARCHAR(255)" },
       { name: "description", definition: "TEXT" },
+      { name: "description_hi", definition: "TEXT", after: "description" },
       { name: "benefits",    definition: "TEXT" },
+      { name: "benefits_hi",    definition: "TEXT", after: "benefits" },
       { name: "pooja_date",  definition: "DATE" },
       { name: "created_at",  definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
     ],
@@ -230,8 +236,10 @@ const tables = [
       CREATE TABLE IF NOT EXISTS addons (
         id          INT AUTO_INCREMENT PRIMARY KEY,
         title       VARCHAR(255) NOT NULL,
+        title_hi    VARCHAR(255),
         image       VARCHAR(255),
         description TEXT,
+        description_hi TEXT,
         price       DECIMAL(10, 2) NOT NULL,
         is_common   TINYINT DEFAULT 0,
         created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -240,8 +248,10 @@ const tables = [
     columns: [
       { name: "id",          definition: "INT AUTO_INCREMENT PRIMARY KEY" },
       { name: "title",       definition: "VARCHAR(255) NOT NULL" },
+      { name: "title_hi",    definition: "VARCHAR(255)", after: "title" },
       { name: "image",       definition: "VARCHAR(255)" },
       { name: "description", definition: "TEXT" },
+      { name: "description_hi", definition: "TEXT", after: "description" },
       { name: "price",       definition: "DECIMAL(10, 2) NOT NULL" },
       { name: "is_common",   definition: "TINYINT DEFAULT 0" },
       { name: "created_at",  definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },

@@ -15,6 +15,8 @@ export default function Addons() {
         price: "",
         is_common: false,
     });
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
 
     /* =====================
        FETCH
@@ -47,6 +49,14 @@ export default function Addons() {
         });
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const openCreate = () => {
         setEditingId(null);
         setForm({
@@ -56,6 +66,8 @@ export default function Addons() {
             price: "",
             is_common: false,
         });
+        setImageFile(null);
+        setImagePreview("");
         setShowForm(true);
     };
 
@@ -68,6 +80,8 @@ export default function Addons() {
             price: addon.price,
             is_common: addon.is_common === 1,
         });
+        setImageFile(null);
+        setImagePreview(addon.image ? getAssetUrl(addon.image) : "");
         setShowForm(true);
     };
 
@@ -78,11 +92,26 @@ export default function Addons() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append("title", form.title);
+        formData.append("description", form.description);
+        formData.append("price", form.price);
+        formData.append("is_common", form.is_common ? 1 : 0);
+        if (imageFile) {
+            formData.append("addon_image", imageFile);
+        } else {
+            formData.append("image", form.image);
+        }
+
         try {
             if (editingId) {
-                await api.put(`/admin/addons/${editingId}`, form);
+                await api.put(`/admin/addons/${editingId}`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
             } else {
-                await api.post("/admin/addons", form);
+                await api.post("/admin/addons", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
             }
 
             setShowForm(false);
@@ -228,8 +257,15 @@ export default function Addons() {
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-gray-700">
-                                        Image URL
+                                        Upload Image
                                     </label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        className="w-full border border-gray-300 px-4 py-2 rounded-lg outline-none cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 transition-all"
+                                    />
+                                    <div className="text-[10px] text-gray-400 font-medium">Or provide URL below</div>
                                     <input
                                         name="image"
                                         placeholder="https://..."
@@ -239,13 +275,12 @@ export default function Addons() {
                                     />
                                 </div>
 
-                                {form.image && (
+                                {imagePreview && (
                                     <div className="h-40 w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
                                         <img
-                                            src={getAssetUrl(form.image)}
+                                            src={imagePreview}
                                             alt="Preview"
                                             className="w-full h-full object-cover"
-                                            onError={(e) => (e.target.style.display = "none")}
                                         />
                                     </div>
                                 )}

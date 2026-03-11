@@ -11,6 +11,8 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 
+import compressImage from "../middlewares/compressImage.middleware.js";
+
 const router = express.Router();
 
 /* ================= ADMIN ================= */
@@ -21,6 +23,7 @@ router.post(
   authMiddleware,
   adminMiddleware,
   upload.single("product_image"),
+  compressImage,
   createProduct
 );
 
@@ -30,6 +33,7 @@ router.put(
   authMiddleware,
   adminMiddleware,
   upload.single("product_image"),
+  compressImage,
   updateProduct
 );
 

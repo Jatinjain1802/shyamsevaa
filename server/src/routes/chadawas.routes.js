@@ -23,14 +23,16 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 
+import compressImage from "../middlewares/compressImage.middleware.js";
+
 const router = express.Router();
 
 /* ========== ADMIN APIs ========== */
 
 // chadawa CRUD
 // chadawa CRUD
-router.post("/admin/chadawas", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), createChadawa);
-router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), updateChadawa);
+router.post("/admin/chadawas", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), compressImage, createChadawa);
+router.put("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'chadawa_image', maxCount: 1 }, { name: 'chadawa_gallery', maxCount: 10 }]), compressImage, updateChadawa);
 router.delete("/admin/chadawas/:chadawaId", authMiddleware, adminMiddleware, deleteChadawa);
 router.delete("/admin/chadawas/gallery/:imageId", authMiddleware, adminMiddleware, deleteChadawaGalleryImage);
 

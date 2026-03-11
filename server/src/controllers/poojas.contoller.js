@@ -1,4 +1,5 @@
 import * as PoojaModel from "../models/poojas.model.js";
+import { translateObject } from "../utils/translation.js";
 
 /* ================= ADMIN ================= */
 
@@ -18,11 +19,17 @@ export const createPooja = async (req, res) => {
       imagePath = `/uploads/poojas/${req.files['pooja_image'][0].filename}`;
     }
 
+    // Auto-translate to Hindi
+    const translations = await translateObject(req.body, ["title", "description", "benefits"]);
+
     const poojaId = await PoojaModel.createPooja({
       title,
+      title_hi: translations.title_hi,
       image: imagePath,
       description,
+      description_hi: translations.description_hi,
       benefits,
+      benefits_hi: translations.benefits_hi,
       pooja_date,
     });
 
@@ -60,6 +67,15 @@ export const updatePooja = async (req, res) => {
 
     if (req.files && req.files['pooja_image']) {
       updateData.image = `/uploads/poojas/${req.files['pooja_image'][0].filename}`;
+    }
+
+    // Auto-translate to Hindi if any translatable field is updated
+    const translatableFields = ["title", "description", "benefits"];
+    const needsTranslation = translatableFields.some(field => updateData[field] !== undefined);
+    
+    if (needsTranslation) {
+      const translations = await translateObject(updateData, translatableFields);
+      Object.assign(updateData, translations);
     }
 
     const updated = await PoojaModel.updatePooja(

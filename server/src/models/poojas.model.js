@@ -3,11 +3,11 @@ import db from "../config/db.js";
 
 /* POOJA */
 
-export const createPooja = async ({ title, image, description, benefits, pooja_date }) => {
+export const createPooja = async ({ title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date }) => {
   const [res] = await db.query(
-    `INSERT INTO poojas (title,image,description,benefits,pooja_date)
-     VALUES (?,?,?,?,?)`,
-    [title, image, description, benefits, pooja_date]
+    `INSERT INTO poojas (title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date)
+     VALUES (?,?,?,?,?,?,?,?)`,
+    [title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date]
   );
   return res.insertId;
 };
@@ -19,14 +19,23 @@ export const updatePooja = async (id, data) => {
   if (data.title !== undefined) fields.push("title=?");
   if (data.title !== undefined) values.push(data.title);
 
+  if (data.title_hi !== undefined) fields.push("title_hi=?");
+  if (data.title_hi !== undefined) values.push(data.title_hi);
+
   if (data.image !== undefined) fields.push("image=?");
   if (data.image !== undefined) values.push(data.image);
 
   if (data.description !== undefined) fields.push("description=?");
   if (data.description !== undefined) values.push(data.description);
 
+  if (data.description_hi !== undefined) fields.push("description_hi=?");
+  if (data.description_hi !== undefined) values.push(data.description_hi);
+
   if (data.benefits !== undefined) fields.push("benefits=?");
   if (data.benefits !== undefined) values.push(data.benefits);
+
+  if (data.benefits_hi !== undefined) fields.push("benefits_hi=?");
+  if (data.benefits_hi !== undefined) values.push(data.benefits_hi);
 
   if (data.pooja_date !== undefined) fields.push("pooja_date=?");
   if (data.pooja_date !== undefined) values.push(data.pooja_date);
@@ -108,10 +117,10 @@ export const getVariantsByPooja = async (poojaId) => {
 export const getAddonsByPooja = async (poojaId) => {
   const [rows] = await db.query(
     `
-    SELECT a.id, a.title, a.price, a.image, a.description
-    FROM pooja_addons pa
-    JOIN addons a ON a.id = pa.addon_id
-    WHERE pa.pooja_id = ?
+    SELECT DISTINCT a.id, a.title, a.price, a.image, a.description
+    FROM addons a
+    LEFT JOIN pooja_addons pa ON a.id = pa.addon_id AND pa.pooja_id = ?
+    WHERE a.is_common = 1 OR pa.pooja_id IS NOT NULL
     `,
     [poojaId]
   );

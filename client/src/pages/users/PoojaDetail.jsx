@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { extractIdFromSlug, generateSlug, slugify } from "../../utils/slugify";
 import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
+import { useLanguage } from "../../context/LanguageContext";
 import {
     ChevronRight,
     Home,
@@ -212,6 +213,7 @@ export default function PoojaDetail() {
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
     const { addPoojaToWishlist } = useWishlist();
+    const { language, t } = useLanguage();
 
     // Helper function to format benefits text as beautiful cards
     const formatBenefitsText = (text) => {
@@ -532,14 +534,16 @@ export default function PoojaDetail() {
                         <nav className="flex items-center gap-2 text-sm text-stone-500 font-medium" aria-label="Breadcrumb">
                             <Link to="/" className="hover:text-sindoor transition-colors flex items-center gap-1">
                                 <Home className="w-3 h-3" />
-                                Home
+                                {t('nav.home')}
                             </Link>
                             <ChevronRight className="w-3 h-3" />
                             <Link to="/poojas" className="hover:text-sindoor transition-colors">
-                                Poojas
+                                {t('nav.poojas')}
                             </Link>
                             <ChevronRight className="w-3 h-3" />
-                            <span className="text-sindoor font-bold truncate max-w-xs">{pooja.title}</span>
+                            <span className="text-sindoor font-bold truncate max-w-xs">
+                                {language === "hi" ? pooja.title_hi || pooja.title : pooja.title}
+                            </span>
                         </nav>
                     </div>
                 </div>
@@ -563,10 +567,10 @@ export default function PoojaDetail() {
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 text-marigold mb-4 font-bold text-sm tracking-widest uppercase">
                                 <Star className="w-4 h-4 fill-current" />
-                                Most Revered Ritual
+                                {t('pooja_detail.revered_ritual')}
                             </div>
                             <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-sindoor mb-4 leading-tight">
-                                {pooja.title}
+                                {language === "hi" ? pooja.title_hi || pooja.title : pooja.title}
                             </h1>
                             {temples && temples.length > 0 && (
                                 <div className="flex items-center gap-3 text-stone-500 mb-8 border-l-2 border-marigold pl-4">
@@ -575,22 +579,24 @@ export default function PoojaDetail() {
                                 </div>
                             )}
                             <p className="text-lg text-stone-600 leading-relaxed max-w-lg mb-10 italic">
-                                {pooja.description || "Invoke the blessings of the divine for prosperity, wisdom, and the removal of all obstacles in your life's journey."}
+                                {language === "hi" 
+                                    ? pooja.description_hi || pooja.description 
+                                    : pooja.description || "Invoke the blessings of the divine for prosperity, wisdom, and the removal of all obstacles in your life's journey."}
                             </p>
                             <div className="flex flex-wrap items-center gap-6 sm:gap-8">
                                 <div>
-                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Dakshina from</p>
+                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">{t('pooja_detail.dakshina_from')}</p>
                                     <p className="text-3xl sm:text-4xl font-black text-sindoor">
                                         ₹{variants.length > 0 ? Number(variants[0].price).toLocaleString() : "1,101"}
                                     </p>
                                 </div>
                                 <div className="hidden sm:block h-12 w-px bg-stone-200"></div>
                                 <div>
-                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">Next Muhurat</p>
+                                    <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">{t('pooja_detail.next_muhurat')}</p>
                                     {pooja.pooja_date ? (
                                         <CountdownDisplay targetDate={pooja.pooja_date} />
                                     ) : (
-                                        <p className="text-xl font-bold text-heritage-dark">Available Daily</p>
+                                        <p className="text-xl font-bold text-heritage-dark">{t('pooja_detail.available_daily')}</p>
                                     )}
                                 </div>
                             </div>
@@ -605,19 +611,21 @@ export default function PoojaDetail() {
                             <div className="w-full md:w-1/2">
                                 <h2 className="text-2xl md:text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
                                     <span className="w-8 md:w-12 h-px bg-marigold"></span>
-                                    Sacred Significance
+                                    {t('pooja_detail.sacred_significance')}
                                 </h2>
                                 <p className="text-lg text-stone-700 leading-relaxed mb-6">
-                                    {pooja.description || "This sacred ritual is performed with strict Vedic protocols to invoke divine blessings and spiritual power. Worshipping at the start of any new venture ensures the removal of karmic hurdles and brings prosperity to your household."}
+                                    {language === "hi" 
+                                        ? pooja.description_hi || pooja.description 
+                                        : pooja.description || "This sacred ritual is performed with strict Vedic protocols to invoke divine blessings and spiritual power. Worshipping at the start of any new venture ensures the removal of karmic hurdles and brings prosperity to your household."}
                                 </p>
 
                             </div>
                             <div className="w-full md:w-1/2">
                                 <h2 className="text-2xl md:text-4xl text-sindoor font-serif mb-8 flex items-center gap-4">
-                                    Blessings & Fruits
+                                    {t('pooja_detail.blessings_fruits')}
                                     <span className="w-8 md:w-12 h-px bg-marigold"></span>
                                 </h2>
-                                {formatBenefitsText(pooja.benefits)}
+                                {formatBenefitsText(language === "hi" ? pooja.benefits_hi || pooja.benefits : pooja.benefits)}
                             </div>
                         </div>
                     </div>
@@ -679,60 +687,72 @@ export default function PoojaDetail() {
                         <div className="max-w-[1280px] mx-auto">
                             <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-4 text-center md:text-left">
                                 <div>
-                                    <h2 className="text-3xl md:text-4xl text-sindoor font-serif mb-2">Sacred Offerings (Chadawa)</h2>
-                                    <p className="text-stone-500">Enhance your ritual with these traditional offerings</p>
+                                    <h2 className="text-3xl md:text-4xl text-sindoor font-serif mb-2">{t('pooja_detail.sacred_offerings')}</h2>
+                                    <p className="text-stone-500">{t('pooja_detail.enhance_ritual')}</p>
                                 </div>
                                 <div className="hidden md:block h-px grow mx-10 bg-marigold/20"></div>
-                            </div>
-
-                            {/* Improved Grid: 2 columns on mobile, 3 on small tablets, 6 on desktop */}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-8">
+                            </div>                            {/* Improved Grid: Responsive and well-spaced */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
                                 {addons.map((addon, i) => {
                                     const isSelected = selectedAddons.find(a => a.id === addon.id);
                                     return (
                                         <div
                                             key={addon.id}
-                                            className={`group relative bg-white p-5 rounded-[2.5rem] shadow-sm border-2 transition-all duration-500 flex flex-col items-center flex-1 ${isSelected
-                                                ? 'border-marigold bg-marigold/5 shadow-marigold/10'
-                                                : 'border-white hover:border-marigold/30 hover:shadow-xl'
+                                            className={`group relative bg-white p-4 sm:p-5 rounded-4xl border-2 transition-all duration-500 flex flex-col items-center ${isSelected
+                                                ? 'border-marigold bg-marigold/5 shadow-lg shadow-marigold/10'
+                                                : 'border-stone-50 hover:border-marigold/40 hover:shadow-2xl hover:-translate-y-2'
                                                 }`}
                                         >
-                                            {/* Circular Image Wrapper */}
-                                            <div className="relative w-full aspect-square rounded-full overflow-hidden mb-5 border-4 border-paper-bg shadow-inner group-hover:scale-105 transition-transform duration-500">
-                                                {addon.images?.[0] ? (
-                                                    <img className="w-full h-full object-cover" src={getAssetUrl(addon.images[0])} alt={addon.title} />
+                                            {/* Circular Image Wrapper with Premium Border */}
+                                            <div className="relative w-full aspect-square rounded-full overflow-hidden mb-4 border-2 border-paper-bg shadow-md group-hover:scale-105 transition-transform duration-700">
+                                                <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10"></div>
+                                                {addon.image ? (
+                                                    <img className="w-full h-full object-cover" src={getAssetUrl(addon.image)} alt={addon.title} />
                                                 ) : (
                                                     <img className="w-full h-full object-cover" src={addonImages[i % addonImages.length]} alt={addon.title} />
                                                 )}
+                                                
                                                 {isSelected && (
-                                                    <div className="absolute inset-0 bg-marigold/20 backdrop-blur-[2px] flex items-center justify-center animate-fade-in">
-                                                        <div className="bg-white rounded-full p-2 shadow-lg">
-                                                            <Check className="w-6 h-6 text-marigold" />
+                                                    <div className="absolute inset-0 bg-marigold/30 backdrop-blur-[1px] flex items-center justify-center z-20 animate-fade-in">
+                                                        <div className="bg-white rounded-full p-2 shadow-xl transform scale-110">
+                                                            <Check className="w-5 h-5 text-marigold stroke-3" />
                                                         </div>
                                                     </div>
                                                 )}
                                             </div>
-
-                                            <h5 className="text-sm font-bold text-heritage-dark mb-1 text-center line-clamp-1 group-hover:text-sindoor transition-colors">{addon.title}</h5>
-                                            <div className="flex items-center gap-1.5 mb-5">
-                                                <span className="text-xs font-black text-sindoor">₹{Number(addon.price).toLocaleString()}</span>
-                                                <span className="text-[9px] text-stone-400 font-bold uppercase tracking-tighter">Dakshina</span>
+ 
+                                            <div className="flex-1 flex flex-col items-center w-full">
+                                                <h5 className="text-[13px] sm:text-sm font-bold text-heritage-dark mb-1 text-center line-clamp-1 group-hover:text-sindoor transition-colors px-1">
+                                                    {language === "hi" ? addon.title_hi || addon.title : addon.title}
+                                                </h5>
+                                                
+                                                <div className="flex flex-col items-center gap-0.5 mb-4">
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[10px] text-stone-400 font-bold">₹</span>
+                                                        <span className="text-sm sm:text-base font-black text-sindoor">{Number(addon.price).toLocaleString()}</span>
+                                                    </div>
+                                                    {(addon.description || addon.description_hi) && (
+                                                        <span className="text-[10px] text-stone-500 font-medium text-center line-clamp-2 italic px-1 opacity-80 leading-tight">
+                                                            {language === "hi" ? addon.description_hi || addon.description : addon.description}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
-
+ 
                                             <button
                                                 onClick={() => toggleAddon(addon)}
-                                                className={`mt-auto w-full py-2.5 rounded-2xl flex items-center justify-center transition-all duration-300 font-bold text-xs tracking-widest ${isSelected
-                                                    ? 'bg-sindoor text-white shadow-lg shadow-sindoor/20'
-                                                    : 'bg-stone-50 text-stone-600 hover:bg-marigold hover:text-white'
+                                                className={`w-full py-2.5 rounded-xl flex items-center justify-center transition-all duration-300 font-black text-[9px] sm:text-[10px] tracking-widest ${isSelected
+                                                    ? 'bg-sindoor text-white shadow-md shadow-sindoor/20'
+                                                    : 'bg-stone-50 text-stone-500 group-hover:bg-marigold group-hover:text-white group-hover:shadow-lg group-hover:shadow-marigold/20'
                                                     }`}
                                             >
                                                 {isSelected ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <Minus className="w-4 h-4" /> REMOVE
+                                                    <div className="flex items-center gap-1.5 animate-in slide-in-from-bottom-1">
+                                                        <Minus className="w-3 h-3 sm:w-4 sm:h-4" /> {t('pooja_detail.remove')}
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center gap-2">
-                                                        <Plus className="w-4 h-4" /> ADD SEVA
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Plus className="w-3 h-3 sm:w-4 sm:h-4" /> {t('pooja_detail.add_seva')}
                                                     </div>
                                                 )}
                                             </button>
@@ -986,7 +1006,7 @@ export default function PoojaDetail() {
                                         <Star className="w-4 h-4 text-sindoor fill-current" />
                                     </div>
                                     <span className="text-heritage-dark font-display font-bold text-sm md:text-lg truncate max-w-[150px] md:max-w-[300px]">
-                                        {pooja.title}
+                                        {language === "hi" ? pooja.title_hi || pooja.title : pooja.title}
                                         <span className="text-marigold ml-2 text-xs md:text-sm font-sans font-medium">
                                             {selectedVariant ? `(${selectedVariant.title || `${selectedVariant.persons} Person${selectedVariant.persons > 1 ? 's' : ''}`})` : ""}
                                         </span>
@@ -997,10 +1017,10 @@ export default function PoojaDetail() {
                             <div className="hidden sm:block h-10 w-px bg-stone-100"></div>
 
                             <div className="flex flex-col text-right sm:text-left">
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-bold mb-1">TOTAL DAKSHINA</span>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-bold mb-1">{t('pooja_detail.total_dakshina')}</span>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-2xl md:text-3xl font-black text-sindoor">₹{totalPrice().toLocaleString()}</span>
-                                    <span className="text-[10px] text-stone-400 font-medium">INC. GST</span>
+                                    <span className="text-[10px] text-stone-400 font-medium">{t('pooja_detail.inc_gst')}</span>
                                 </div>
                             </div>
                         </div>
@@ -1016,9 +1036,9 @@ export default function PoojaDetail() {
                             </button>
                             <button
                                 onClick={handleBookNow}
-                                className="flex-1 sm:flex-none h-12 md:h-14 px-6 md:px-12 bg-linear-to-r from-sindoor to-sindoor-light text-white rounded-2xl font-black tracking-[0.1em] shadow-lg shadow-sindoor/20 hover:shadow-sindoor/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+                                className="flex-1 sm:flex-none h-12 md:h-14 px-6 md:px-12 bg-linear-to-r from-sindoor to-sindoor-light text-white rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:shadow-sindoor/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
                             >
-                                <span className="text-sm md:text-base uppercase">PROCEED TO BOOK</span>
+                                <span className="text-sm md:text-base uppercase">{t('pooja_detail.proceed_to_book')}</span>
                                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
                             </button>
                         </div>

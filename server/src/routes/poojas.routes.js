@@ -16,14 +16,16 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 import adminMiddleware from "../middlewares/admin.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 
+import compressImage from "../middlewares/compressImage.middleware.js";
+
 const router = express.Router();
 /* ================= ADMIN ================= */
 
 // CREATE
-router.post("/", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), createPooja);
+router.post("/", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), compressImage, createPooja);
 
 // UPDATE
-router.put("/:poojaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), updatePooja);
+router.put("/:poojaId", authMiddleware, adminMiddleware, upload.fields([{ name: 'pooja_image', maxCount: 1 }, { name: 'pooja_gallery', maxCount: 10 }]), compressImage, updatePooja);
 
 // DELETE
 router.delete("/:poojaId", authMiddleware, adminMiddleware, deletePooja);

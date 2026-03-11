@@ -1,48 +1,85 @@
 
 import * as PoojaModel from "../models/poojaAddons.model.js";
+import { translateObject } from "../utils/translation.js";
+
 /* =======================
    ADDONS (ADMIN)
 ======================= */
 
 export const createAddon = async (req, res) => {
-    const { title, image, description, price, is_common } = req.body;
+    try {
+        let { title, description, price, is_common } = req.body;
 
-    if (!title || !price) {
-        return res.status(400).json({
-            success: false,
-            message: "Title and price are required",
+        if (!title || !price) {
+            return res.status(400).json({
+                success: false,
+                message: "Title and price are required",
+            });
+        }
+
+        // Auto-translate to Hindi
+        const translations = await translateObject({ title, description }, ["title", "description"]);
+
+        let imagePath = req.body.image; // fallback to URL if provided in body
+        if (req.file) {
+            imagePath = `/uploads/addons/${req.file.filename}`;
+        }
+
+        const addonId = await PoojaModel.createAddon({
+            title,
+            ...translations,
+            image: imagePath,
+            description,
+            price,
+            is_common,
         });
+
+        res.status(201).json({
+            success: true,
+            message: "Addon created",
+            addonId,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-
-    const addonId = await PoojaModel.createAddon({
-        title,
-        image,
-        description,
-        price,
-        is_common,
-    });
-
-    res.status(201).json({
-        success: true,
-        message: "Addon created",
-        addonId,
-    });
 };
 
 export const updateAddon = async (req, res) => {
-    const updated = await PoojaModel.updateAddon(
-        req.params.addonId,
-        req.body
-    );
+    try {
+        const updateData = { ...req.body };
 
-    if (!updated) {
-        return res.status(404).json({
-            success: false,
-            message: "Addon not found",
-        });
+        // Handle auto-translation if fields are updated
+        if (updateData.title || updateData.description) {
+            const translatable = {};
+            if (updateData.title) translatable.title = updateData.title;
+            if (updateData.description) translatable.description = updateData.description;
+            
+            const translations = await translateObject(translatable, Object.keys(translatable));
+            Object.assign(updateData, translations);
+        }
+
+        if (req.file) {
+            updateData.image = `/uploads/addons/${req.file.filename}`;
+        }
+
+        const updated = await PoojaModel.updateAddon(
+            req.params.addonId,
+            updateData
+        );
+
+        if (!updated) {
+            return res.status(404).json({
+                success: false,
+                message: "Addon not found",
+            });
+        }
+
+        res.json({ success: true, message: "Addon updated" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.json({ success: true, message: "Addon updated" });
 };
 
 export const deleteAddon = async (req, res) => {
