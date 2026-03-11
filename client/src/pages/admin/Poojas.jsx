@@ -207,21 +207,40 @@ export default function Poojas() {
               </div>
 
               <div className="p-4">
-                <h3 className="text-lg font-semibold">{p.title}</h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-bold text-gray-800 line-clamp-1 flex-1">{p.title}</h3>
+                  <button 
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const newStatus = p.status === 1 ? 0 : 1;
+                      try {
+                        await api.put(`/poojas/${p.id}`, { status: newStatus });
+                        fetchPoojas();
+                      } catch (err) { alert("Failed to update status"); }
+                    }}
+                    className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${
+                      p.status === 1 
+                        ? "bg-green-100 text-green-700 hover:bg-green-200" 
+                        : "bg-red-100 text-red-700 hover:bg-red-200"
+                    }`}
+                  >
+                    {p.status === 1 ? "● Active" : "○ Inactive"}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px]">
                   {p.description}
                 </p>
 
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-50">
                   <button
                     onClick={() => openEdit(p)}
-                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
+                    className="flex-1 px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                    className="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                   >
                     Delete
                   </button>

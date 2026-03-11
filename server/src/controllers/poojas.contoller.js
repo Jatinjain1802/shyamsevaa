@@ -5,7 +5,7 @@ import { translateObject } from "../utils/translation.js";
 
 export const createPooja = async (req, res) => {
   try {
-    const { title, image, description, benefits, pooja_date } = req.body;
+    const { title, image, description, benefits, pooja_date, status } = req.body;
 
     if (!title || !description) {
       return res.status(400).json({
@@ -31,6 +31,7 @@ export const createPooja = async (req, res) => {
       benefits,
       benefits_hi: translations.benefits_hi,
       pooja_date,
+      status: status !== undefined ? parseInt(status) : 1,
     });
 
     // Handle Gallery Images
@@ -64,6 +65,10 @@ export const createPooja = async (req, res) => {
 export const updatePooja = async (req, res) => {
   try {
     const updateData = { ...req.body };
+
+    if (updateData.status !== undefined) {
+      updateData.status = parseInt(updateData.status);
+    }
 
     if (req.files && req.files['pooja_image']) {
       updateData.image = `/uploads/poojas/${req.files['pooja_image'][0].filename}`;
@@ -160,7 +165,14 @@ export const getPoojasByTemple = async (req, res) => {
 
 export const getAllPoojas = async (req, res) => {
   try {
-    const data = await PoojaModel.getAllPoojas();
+    const { status } = req.query;
+    let data = await PoojaModel.getAllPoojas();
+
+    if (status !== undefined) {
+      const s = parseInt(status);
+      data = data.filter(p => p.status === s);
+    }
+
     res.json({ success: true, data });
   } catch (err) {
     console.error(err);

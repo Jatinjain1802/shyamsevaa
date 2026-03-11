@@ -13,11 +13,11 @@ import {
   AlertCircle
 } from "lucide-react";
 import { MdTempleHindu } from "react-icons/md";
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from "../../context/LanguageContext";
 
 
 export default function Temples() {
-  const { t } = useTranslation();
+  const { language, t } = useLanguage();
   const [temples, setTemples] = useState([]);
 
   const [filteredTemples, setFilteredTemples] = useState([]);
@@ -50,11 +50,16 @@ export default function Temples() {
   useEffect(() => {
     let results = [...temples];
     if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
       results = results.filter(temple =>
-        temple.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        temple.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        temple.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        temple.state?.toLowerCase().includes(searchQuery.toLowerCase())
+        temple.title.toLowerCase().includes(q) ||
+        temple.title_hi?.toLowerCase().includes(q) ||
+        temple.description?.toLowerCase().includes(q) ||
+        temple.description_hi?.toLowerCase().includes(q) ||
+        temple.city?.toLowerCase().includes(q) ||
+        temple.city_hi?.toLowerCase().includes(q) ||
+        temple.state?.toLowerCase().includes(q) ||
+        temple.state_hi?.toLowerCase().includes(q)
       );
     }
     setFilteredTemples(results);
@@ -171,9 +176,12 @@ export default function Temples() {
             <UnifiedCard
               key={temple.id}
               image={getAssetUrl(temple.image)}
-              title={temple.title}
-              location={temple.city && temple.state ? `${temple.city}, ${temple.state}` : temple.city || temple.state}
-              description={temple.description}
+              title={language === "hi" ? temple.title_hi || temple.title : temple.title}
+              location={language === "hi" 
+                ? (temple.city_hi && temple.state_hi ? `${temple.city_hi}, ${temple.state_hi}` : temple.city_hi || temple.state_hi || temple.city || temple.state)
+                : (temple.city && temple.state ? `${temple.city}, ${temple.state}` : temple.city || temple.state)
+              }
+              description={language === "hi" ? temple.description_hi || temple.description : temple.description}
               link={`/temples/${generatePureSlug(temple.title)}`}
               state={{ id: temple.id }}
               buttonText={t('common.view_details')}

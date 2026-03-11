@@ -1,4 +1,5 @@
 import * as ProductModel from "../models/products.model.js";
+import { translateObject } from "../utils/translation.js";
 
 export const createProduct = async (req, res) => {
   try {
@@ -16,13 +17,19 @@ export const createProduct = async (req, res) => {
       finalImageUrl = `/uploads/products/${req.file.filename}`;
     }
 
+    // Auto-translation
+    const translated = await translateObject({ name, description, category });
+
     const productId = await ProductModel.createProduct({
       name,
+      name_hi: translated.name_hi,
       description,
+      description_hi: translated.description_hi,
+      category,
+      category_hi: translated.category_hi,
       price,
       stock_quantity,
       image_url: finalImageUrl,
-      category,
     });
 
     res.status(201).json({
@@ -43,6 +50,19 @@ export const updateProduct = async (req, res) => {
 
     if (req.file) {
       updateData.image_url = `/uploads/products/${req.file.filename}`;
+    }
+
+    // Auto-translation for fields that are being updated
+    const translationInputs = {};
+    if (updateData.name) translationInputs.name = updateData.name;
+    if (updateData.description) translationInputs.description = updateData.description;
+    if (updateData.category) translationInputs.category = updateData.category;
+
+    if (Object.keys(translationInputs).length > 0) {
+      const translated = await translateObject(translationInputs);
+      if (translated.name_hi) updateData.name_hi = translated.name_hi;
+      if (translated.description_hi) updateData.description_hi = translated.description_hi;
+      if (translated.category_hi) updateData.category_hi = translated.category_hi;
     }
 
     const updated = await ProductModel.updateProduct(productId, updateData);

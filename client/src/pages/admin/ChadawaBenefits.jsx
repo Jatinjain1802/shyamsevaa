@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 
-export default function ChadawaBenefits() {
-    const { chadawaId } = useParams();
+export default function ChadawaBenefits({ chadawaId: propId }) {
+    const { chadawaId: paramId } = useParams();
     const navigate = useNavigate();
+    const cid = propId || paramId;
+    const isComponent = !!propId;
 
     const [benefits, setBenefits] = useState([]);
     const [chadawas, setChadawas] = useState([]); // List of all chadawas for header context
@@ -20,7 +22,7 @@ export default function ChadawaBenefits() {
 
     const fetchBenefits = async () => {
         try {
-            const res = await api.get(`/chadawas/${chadawaId}`);
+            const res = await api.get(`/chadawas/${cid}`);
             setBenefits(res.data.data.benefits || []);
         } catch (err) {
             console.error(err);
@@ -42,7 +44,7 @@ export default function ChadawaBenefits() {
     useEffect(() => {
         fetchBenefits();
         fetchAllChadawas();
-    }, [chadawaId]);
+    }, [cid]);
 
     /* ================= FORM ================= */
 
@@ -60,7 +62,7 @@ export default function ChadawaBenefits() {
         try {
             // Add Benefit
             await api.post(
-                `/admin/chadawas/${chadawaId}/benefits`,
+                `/admin/chadawas/${cid}/benefits`,
                 form
             );
 
@@ -88,22 +90,36 @@ export default function ChadawaBenefits() {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <button onClick={() => navigate("/admin/chadawas")} className="text-sm text-gray-500 hover:underline mb-1">
-                        &larr; Back to Chadawas
+            {!isComponent && (
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <button onClick={() => navigate("/admin/chadawas")} className="text-sm text-gray-500 hover:underline mb-1">
+                            &larr; Back to Chadawas
+                        </button>
+                        <h1 className="text-2xl font-bold">
+                            Benefits for {chadawas.find(c => c.id == cid)?.title || "Chadawa"}
+                        </h1>
+                    </div>
+                    <button
+                        onClick={openCreate}
+                        className="bg-orange-600 text-white px-4 py-2 rounded"
+                    >
+                        + Add Benefit
                     </button>
-                    <h1 className="text-2xl font-bold">
-                        Benefits for {chadawas.find(c => c.id == chadawaId)?.title || "Chadawa"}
-                    </h1>
                 </div>
-                <button
-                    onClick={openCreate}
-                    className="bg-orange-600 text-white px-4 py-2 rounded"
-                >
-                    + Add Benefit
-                </button>
-            </div>
+            )}
+
+            {isComponent && (
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-heritage-dark">Chadawa Benefits</h3>
+                    <button
+                        onClick={openCreate}
+                        className="bg-sindoor text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
+                    >
+                        + Add New Benefit
+                    </button>
+                </div>
+            )}
 
             {/* Table */}
             {loading ? (

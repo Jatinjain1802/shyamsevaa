@@ -5,11 +5,11 @@ import { useEffect, useState, useRef } from "react";
 import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 import { getAssetUrl } from "../../utils/assets";
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from "../../context/LanguageContext";
 
 
 export default function ChadawaSection() {
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const [chadawas, setChadawas] = useState([]);
 
     const scrollContainerRef = useRef(null);
@@ -17,8 +17,7 @@ export default function ChadawaSection() {
     useEffect(() => {
         const fetchChadawas = async () => {
             try {
-                const res = await api.get("/chadawas");
-                console.log("Chadawas API Response:", res.data);
+                const res = await api.get("/chadawas?status=1");
                 setChadawas(res.data.data ? res.data.data : []);
             } catch (err) {
                 console.error("Failed to fetch chadawas", err);
@@ -39,13 +38,24 @@ export default function ChadawaSection() {
         }
     };
 
+    // Localized fields mapping
+    const getLocalizedField = (obj, field) => {
+        if (!obj) return "";
+        const hiField = `${field}_hi`;
+        return (language === 'hi' && obj[hiField]) ? obj[hiField] : obj[field];
+    };
+
     if (!chadawas.length) return null;
 
     // Helper to format date
     const formatDate = (dateString) => {
         if (!dateString) return null;
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+        });
     };
 
     return (
@@ -85,7 +95,7 @@ export default function ChadawaSection() {
                         </div>
                         <h2 className="text-5xl md:text-7xl font-serif font-bold text-heritage-dark mb-6 leading-[1.1]">
                             {t('home.chadawas_title')} <span className="text-sindoor relative italic">
-                                {t('nav.chadawas')}
+                                {t('nav.offerings')}
 
                                 <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
                                     <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="#B32D2D" strokeWidth="2" opacity="0.3" />
@@ -131,7 +141,11 @@ export default function ChadawaSection() {
                     className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-16 scrollbar-none items-stretch -mx-4 px-4 md:mx-0 md:px-0"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {chadawas.map((item) => (
+                    {chadawas.map((item) => {
+                        const title = getLocalizedField(item, 'title');
+                        const desc = getLocalizedField(item, 'description');
+                        
+                        return (
                         <Link
                             to={`/chadawas/${generatePureSlug(item.title)}`}
                             state={{ id: item.id }}
@@ -154,7 +168,7 @@ export default function ChadawaSection() {
 
                                 <img
                                     src={getAssetUrl(item.image)}
-                                    alt={item.title}
+                                    alt={title}
                                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-115"
                                 />
 
@@ -174,15 +188,17 @@ export default function ChadawaSection() {
                                 </div>
 
                                 <div className="mb-4 flex items-center gap-2 text-marigold/80 text-xs font-bold uppercase tracking-[0.15em]">
-                                    <span className="bg-marigold/10 px-3 py-1 rounded-lg">Sacred Item</span>
+                                    <span className="bg-marigold/10 px-3 py-1 rounded-lg">
+                                        {language === 'hi' ? 'पवित्र अर्पण' : 'Sacred Item'}
+                                    </span>
                                 </div>
 
                                 <h3 className="text-3xl font-serif font-bold text-heritage-dark mb-4 leading-[1.2] group-hover:text-sindoor transition-colors duration-300">
-                                    {item.title}
+                                    {title}
                                 </h3>
 
                                 <p className="text-stone-500 text-base mb-10 line-clamp-3 leading-relaxed flex-1 font-medium">
-                                    {item.description}
+                                    {desc}
                                 </p>
 
                                 <div className="mt-auto">
@@ -199,7 +215,8 @@ export default function ChadawaSection() {
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Mobile View All Button */}
@@ -208,7 +225,7 @@ export default function ChadawaSection() {
                         to="/chadawas"
                         className="inline-flex items-center px-6 py-3 bg-linear-to-r from-sindoor to-marigold text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:shadow-sindoor/30 transition-all duration-300"
                     >
-                        View All Offerings
+                        {t('common.view_all')}
                         <ChevronRight className="ml-2 w-5 h-5" />
                     </Link>
                 </div>

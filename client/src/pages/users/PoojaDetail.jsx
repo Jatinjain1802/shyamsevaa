@@ -210,6 +210,17 @@ export default function PoojaDetail() {
     // Priority: 1. ID from location state, 2. ID from slug (old links), 3. Finding by slug string later
     const [poojaId, setPoojaId] = useState(location.state?.id || extractIdFromSlug(slug));
 
+    // SYNC poojaId when navigation to another pooja happens within the same component
+    useEffect(() => {
+        const idFromState = location.state?.id;
+        const idFromSlug = extractIdFromSlug(slug);
+        const resolvedId = idFromState || idFromSlug;
+        
+        if (resolvedId && resolvedId !== poojaId) {
+            setPoojaId(resolvedId);
+        }
+    }, [location.state, slug]);
+
     const navigate = useNavigate();
     const { toasts, showToast } = useToast();
     const { addPoojaToWishlist } = useWishlist();
@@ -417,6 +428,7 @@ export default function PoojaDetail() {
     }
 
     const { pooja, variants, addons, temples, gallery } = data;
+    const isExpired = pooja.pooja_date && new Date(pooja.pooja_date) < new Date();
 
     const toggleAddon = (addon) => {
         const exists = selectedAddons.find((a) => a.id === addon.id);
@@ -438,6 +450,12 @@ export default function PoojaDetail() {
     // LEARNING: Better UX with toast notifications instead of alerts
     const handleBookNow = async (e) => {
         e.preventDefault();
+
+        // Check if pooja date has passed
+        if (isExpired) {
+            showToast(t('pooja_detail.wait_next_muhurat'), 'info');
+            return;
+        }
 
         // Validation with user-friendly feedback
         if (!selectedVariant) {
@@ -953,15 +971,12 @@ export default function PoojaDetail() {
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                                 {similarPoojas.map((item) => (
-                                    <div
+                                    <Link
                                         key={item.id}
-                                        onClick={() => {
-                                            navigate(`/poojas/${generatePureSlug(item.title)}`, {
-                                                state: { id: item.id }
-                                            });
-                                            window.scrollTo(0, 0);
-                                        }}
-                                        className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group cursor-pointer"
+                                        to={`/poojas/${slugify(item.title)}`}
+                                        state={{ id: item.id }}
+                                        onClick={() => window.scrollTo(0, 0)}
+                                        className="bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-100 hover:border-marigold transition-all group block"
                                     >
                                         <div className="h-52 relative overflow-hidden">
                                             <img
@@ -982,10 +997,10 @@ export default function PoojaDetail() {
                                                 <span className="text-xl font-black text-sindoor">
                                                     ₹{item.variants?.[0]?.price ? Number(item.variants[0].price).toLocaleString() : "1,101"}
                                                 </span>
-                                                <button className="text-marigold font-bold text-sm hover:underline">EXPLORE</button>
+                                                <span className="text-marigold font-bold text-sm hover:underline">EXPLORE</span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         )}
@@ -1036,10 +1051,16 @@ export default function PoojaDetail() {
                             </button>
                             <button
                                 onClick={handleBookNow}
-                                className="flex-1 sm:flex-none h-12 md:h-14 px-6 md:px-12 bg-linear-to-r from-sindoor to-sindoor-light text-white rounded-2xl font-black tracking-widest shadow-lg shadow-sindoor/20 hover:shadow-sindoor/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+                                disabled={isExpired}
+                                className={`flex-1 sm:flex-none h-12 md:h-14 px-6 md:px-12 rounded-2xl font-black tracking-widest shadow-lg transition-all duration-300 flex items-center justify-center gap-3 group ${isExpired 
+                                    ? 'bg-stone-300 text-stone-500 cursor-not-allowed shadow-none' 
+                                    : 'bg-linear-to-r from-sindoor to-sindoor-light text-white shadow-sindoor/20 hover:shadow-sindoor/40 hover:-translate-y-0.5 active:translate-y-0'
+                                }`}
                             >
-                                <span className="text-sm md:text-base uppercase">{t('pooja_detail.proceed_to_book')}</span>
-                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+                                <span className="text-sm md:text-base uppercase">
+                                    {isExpired ? t('pooja_detail.wait_next_muhurat') : t('pooja_detail.proceed_to_book')}
+                                </span>
+                                {!isExpired && <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />}
                             </button>
                         </div>
                     </div>

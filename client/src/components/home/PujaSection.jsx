@@ -6,11 +6,11 @@ import { useEffect, useState, useRef } from "react";
 import { generatePureSlug } from "../../utils/slugify";
 import { Link } from "react-router-dom";
 import { getAssetUrl } from "../../utils/assets";
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from "../../context/LanguageContext";
 
 
 export default function PujaSection() {
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const [pujas, setPujas] = useState([]);
 
     const scrollContainerRef = useRef(null);
@@ -18,8 +18,7 @@ export default function PujaSection() {
     useEffect(() => {
         const fetchPujas = async () => {
             try {
-                const res = await api.get("/poojas"); // Removed limit to fetch all
-                // console.log("Pujas data:", res.data.data);
+                const res = await api.get("/poojas?status=1"); // Fetch only active items
                 setPujas(res.data.data || []);
             } catch (err) {
                 console.error("Failed to fetch pujas for home section", err);
@@ -38,6 +37,13 @@ export default function PujaSection() {
                 behavior: 'smooth'
             });
         }
+    };
+
+    // Localized fields mapping
+    const getLocalizedField = (obj, field) => {
+        if (!obj) return "";
+        const hiField = `${field}_hi`;
+        return (language === 'hi' && obj[hiField]) ? obj[hiField] : obj[field];
     };
 
     if (!pujas.length) return null;
@@ -99,7 +105,14 @@ export default function PujaSection() {
                     className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-12 scrollbar-none items-stretch -mx-4 px-4 md:mx-0 md:px-0"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {pujas.map((puja) => (
+                    {pujas.map((puja) => {
+                        const title = getLocalizedField(puja, 'title');
+                        const desc = getLocalizedField(puja, 'description');
+                        const templeName = getLocalizedField(puja, 'temple_name');
+                        const templeCity = getLocalizedField(puja, 'temple_city');
+                        const templeState = getLocalizedField(puja, 'temple_state');
+
+                        return (
                         <Link
                             to={`/poojas/${generatePureSlug(puja.title)}`}
                             state={{ id: puja.id }}
@@ -112,7 +125,7 @@ export default function PujaSection() {
                                 <div className="absolute" />
                                 <img
                                     src={getAssetUrl(puja.image)}
-                                    alt={puja.title}
+                                    alt={title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
@@ -127,25 +140,25 @@ export default function PujaSection() {
 
                                 <div className="mb-2 flex items-center gap-2 text-stone-500 text-sm font-medium">
                                     <MdTempleHindu className="text-marigold text-lg" />
-                                    <span className="truncate">{puja.temple_name || "Ancient Temple"}</span>
+                                    <span className="truncate">{templeName || (language === 'hi' ? "प्राचीन मंदिर" : "Ancient Temple")}</span>
                                 </div>
 
                                 <h3 className="text-2xl font-serif font-bold text-heritage-dark mb-3 leading-snug group-hover:text-sindoor transition-colors line-clamp-2">
-                                    {puja.title}
+                                    {title}
                                 </h3>
 
                                 <div className="flex items-center gap-2 mb-4 text-stone-500 text-sm">
                                     <MapPin className="w-4 h-4 text-marigold" />
                                     <span>
-                                        {puja.temple_city && puja.temple_state
-                                            ? `${puja.temple_city}, ${puja.temple_state}`
-                                            : puja.temple_city || puja.temple_state || "Ujjain, Madhya Pradesh"
+                                        {templeCity && templeState
+                                            ? `${templeCity}, ${templeState}`
+                                            : templeCity || templeState || (language === 'hi' ? "उज्जैन, मध्य प्रदेश" : "Ujjain, Madhya Pradesh")
                                         }
                                     </span>
                                 </div>
 
                                 <p className="text-stone-600 mb-8 line-clamp-2 leading-relaxed flex-1">
-                                    {puja.description}
+                                    {desc}
                                 </p>
 
                                 <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between">
@@ -156,10 +169,14 @@ export default function PujaSection() {
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </div>
 
+
+                                    {/* Bottom Decorative Pattern */}
+                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-marigold/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="mt-16 text-center md:hidden">
@@ -167,7 +184,7 @@ export default function PujaSection() {
                         to="/poojas"
                         className="inline-flex items-center px-8 py-4 bg-white border-2 border-marigold text-marigold rounded-full font-bold hover:bg-marigold hover:text-white transition-all duration-300 shadow-lg"
                     >
-                        View All Services
+                        {t('common.view_all')}
                         <ChevronRight className="ml-2 w-5 h-5" />
                     </Link>
                 </div>

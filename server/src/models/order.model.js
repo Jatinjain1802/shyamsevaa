@@ -79,17 +79,59 @@ export const getOrderByAdmin = async (orderId) => {
   return row;
 };
 
-export const getAllOrders = async () => {
+export const getAllOrders = async ({ search = "", type = "", status = "", page = 1, limit = 10 } = {}) => {
+  const offset = (page - 1) * limit;
+  let params = [];
+  let whereClauses = [];
+
+  if (search) {
+    whereClauses.push(`(o.order_number LIKE ? OR u.name LIKE ? OR u.email LIKE ?)`);
+    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+  }
+
+  if (status) {
+    whereClauses.push(`o.payment_status = ?`);
+    params.push(status);
+  }
+
+  // To filter by order_type (which is from order_items), 
+  // we do a sub-select filter or join. Sub-select is easier for first item type.
+  if (type) {
+    whereClauses.push(`(SELECT product_type FROM order_items WHERE order_id = o.id LIMIT 1) = ?`);
+    params.push(type);
+  }
+
+  const whereStr = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+  // Get total count
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) as total FROM orders o
+     LEFT JOIN users u ON u.id = o.user_id
+     ${whereStr}`,
+    params
+  );
+
+  // Get records
   const [rows] = await db.query(
     `SELECT 
       o.*, 
       u.name AS user_name, 
-      u.email 
+      u.email,
+      (SELECT product_type FROM order_items WHERE order_id = o.id LIMIT 1) as order_type
      FROM orders o
      LEFT JOIN users u ON u.id = o.user_id
-     ORDER BY o.created_at DESC`
+     ${whereStr}
+     ORDER BY o.created_at DESC
+     LIMIT ? OFFSET ?`,
+    [...params, parseInt(limit), parseInt(offset)]
   );
-  return rows;
+
+  return {
+    data: rows,
+    total,
+    page: parseInt(page),
+    totalPages: Math.ceil(total / limit)
+  };
 };
 
 export const getOrderItems = async (orderId) => {

@@ -2,8 +2,8 @@ import db from "../config/db.js";
 
 export const createBookingsFromOrder = async (d) => {
   const [items] = await db.query(
-    `SELECT id FROM order_items
-     WHERE order_id=? AND product_type='pooja_variant'`,
+    `SELECT id, product_type FROM order_items
+     WHERE order_id=? AND product_type IN ('pooja_variant', 'chadawa_item')`,
     [d.order_id]
   );
 
@@ -12,8 +12,8 @@ export const createBookingsFromOrder = async (d) => {
       for (const person of d.sankalp) {
         await db.query(
           `INSERT INTO bookings
-           (order_item_id, pooja_date, devotee_name, gotra, mobile)
-           VALUES (?, ?, ?, ?, ?)`,
+           (order_item_id, pooja_date, devotee_name, gotra, mobile, status)
+           VALUES (?, ?, ?, ?, ?, 'confirmed')`,
           [
             item.id,
             d.pooja_date,
@@ -26,8 +26,8 @@ export const createBookingsFromOrder = async (d) => {
     } else {
       await db.query(
         `INSERT INTO bookings
-         (order_item_id, pooja_date, devotee_name, gotra, mobile)
-         VALUES (?, ?, ?, ?, ?)`,
+         (order_item_id, pooja_date, devotee_name, gotra, mobile, status)
+         VALUES (?, ?, ?, ?, ?, 'confirmed')`,
         [
           item.id,
           d.pooja_date,
@@ -46,15 +46,17 @@ export const getBookingsByUser = async (userId) => {
         b.*, 
         o.order_number,
         pv.persons as variant_persons,
-        p.title as pooja_title,
+        COALESCE(p.title, ci.title) as pooja_title,
         p.image as pooja_image,
         t.title as temple_title,
-        oi.price as base_price
+        oi.price as base_price,
+        oi.product_type
      FROM bookings b
      JOIN order_items oi ON oi.id = b.order_item_id
      JOIN orders o ON o.id = oi.order_id
-     JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
-     JOIN poojas p ON p.id = pv.pooja_id
+     LEFT JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
+     LEFT JOIN poojas p ON p.id = pv.pooja_id
+     LEFT JOIN chadawa_items ci ON ci.id = oi.chadawa_item_id
      JOIN temples t ON t.id = oi.temple_id
      WHERE o.user_id = ?
      ORDER BY b.created_at DESC`,
@@ -70,14 +72,16 @@ export const getAllBookings = async () => {
         o.order_number,
         u.name as user_name,
         u.email as user_email,
-        p.title as pooja_title,
-        t.title as temple_title
+        COALESCE(p.title, ci.title) as pooja_title,
+        t.title as temple_title,
+        oi.product_type
      FROM bookings b
      JOIN order_items oi ON oi.id = b.order_item_id
      JOIN orders o ON o.id = oi.order_id
-     JOIN users u ON u.id = o.user_id
-     JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
-     JOIN poojas p ON p.id = pv.pooja_id
+     LEFT JOIN users u ON u.id = o.user_id
+     LEFT JOIN pooja_variants pv ON pv.id = oi.pooja_variant_id
+     LEFT JOIN poojas p ON p.id = pv.pooja_id
+     LEFT JOIN chadawa_items ci ON ci.id = oi.chadawa_item_id
      JOIN temples t ON t.id = oi.temple_id
      ORDER BY b.created_at DESC`
   );

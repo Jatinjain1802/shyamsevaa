@@ -1,4 +1,5 @@
 import * as poojaFaqModel from "../models/pojaFaq.model.js";
+import { translateObject } from "../utils/translation.js";
 
 /* ================= GET FAQs BY POOJA ================= */
 export const getPoojaFaqs = async (req, res) => {
@@ -34,9 +35,13 @@ export const createPoojaFaq = async (req, res) => {
             });
         }
 
+        // Auto-translate to Hindi
+        const translations = await translateObject({ question, answer }, ["question", "answer"]);
+
         const faqId = await poojaFaqModel.createFaq({
             pooja_id,
             question,
+            ...translations,
             answer,
             sort_order,
         });

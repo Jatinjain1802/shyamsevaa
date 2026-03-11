@@ -81,6 +81,8 @@ export default function BookingCheckout() {
                     setCheckoutType('pooja');
                     const count = Number(bookingData.selectedVariant?.persons) || 1;
                     setSankalpDetails(Array(count).fill({ name: "", gotra: "" }));
+                } else if (bookingData.type === 'chadawa') {
+                    setCheckoutType('chadawa');
                 }
             } else {
                 // Wishlist/Cart checkout
@@ -113,7 +115,7 @@ export default function BookingCheckout() {
         );
     }
 
-    const { pooja, selectedVariant, selectedAddons, totalPrice, product } = bookingData || {};
+    const { pooja, selectedVariant, selectedAddons, totalPrice, product, chadawa, selectedItems } = bookingData || {};
 
     // Calculate totals for cart if needed
     const finalTotalPrice = bookingData ? totalPrice : cartItems.reduce((acc, item) => {
@@ -173,6 +175,15 @@ export default function BookingCheckout() {
                         temple_id: bookingData.temple_id || null,
                         addons: selectedAddons?.map(a => ({ addon_id: a.id, quantity: 1 }))
                     });
+                } else if (checkoutType === 'chadawa') {
+                    // Add each selected chadawa item to cart
+                    for (const item of selectedItems) {
+                        await api.post('/cart/chadawa', {
+                            chadawa_item_id: item.id,
+                            temple_id: bookingData.temple_id || null,
+                            quantity: 1
+                        });
+                    }
                 }
                 hasAddedToCart.current = true; // Mark as added so we don't do it again
             }
@@ -209,9 +220,9 @@ export default function BookingCheckout() {
                 key: key_id,
                 amount: amount,
                 currency: currency,
-                name: "Shyam Sevaa",
-                description: checkoutType === 'product' ? `Product: ${product.name}` : "Spiritual Services",
-                image: "https://ShyamPujaa.com/logo.png",
+                name: "Shyampuja",
+                description: checkoutType === 'product' ? `Product: ${product?.name}` : (checkoutType === 'chadawa' ? `Chadawa: ${chadawa?.title}` : "Spiritual Services"),
+                image: "/logo.png",
                 order_id: razorpay_order_id,
                 handler: async function (response) {
                     try {
@@ -324,11 +335,27 @@ export default function BookingCheckout() {
                                                 className="w-20 h-20 rounded-xl object-cover"
                                             />
                                             <div className="flex-1">
-                                                <h3 className="font-bold text-heritage-dark mb-1">{product?.name || pooja?.title}</h3>
-                                                <p className="text-xs text-stone-500 line-clamp-2">{product?.description || pooja?.description}</p>
+                                                <h3 className="font-bold text-heritage-dark mb-1">{product?.name || pooja?.title || chadawa?.title}</h3>
+                                                <p className="text-xs text-stone-500 line-clamp-2">{product?.description || pooja?.description || chadawa?.description}</p>
                                             </div>
                                         </div>
                                     </div>
+
+                                    {checkoutType === 'chadawa' && selectedItems && (
+                                        <div className="mb-6 pb-6 border-b border-stone-100">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-xs font-bold text-marigold uppercase tracking-wider">Offering Items</span>
+                                            </div>
+                                            <div className="space-y-2">
+                                                {selectedItems.map((item, idx) => (
+                                                    <div key={idx} className="bg-sindoor/5 p-3 rounded-xl border border-sindoor/10 flex justify-between items-center text-sm">
+                                                        <span className="font-bold text-heritage-dark">{item.title}</span>
+                                                        <span className="font-black text-sindoor">₹{Number(item.price).toLocaleString()}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {selectedVariant && (
                                         <div className="mb-6 pb-6 border-b border-stone-100">

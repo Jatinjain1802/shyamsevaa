@@ -12,12 +12,12 @@ export const getFaqsByPoojaId = async (poojaId) => {
 };
 
 // Create FAQ
-export const createFaq = async ({ pooja_id, question, answer, sort_order }) => {
+export const createFaq = async ({ pooja_id, question, question_hi, answer, answer_hi, sort_order }) => {
     const [result] = await db.query(
         `INSERT INTO pooja_faqs 
-     (pooja_id, question, answer, sort_order) 
-     VALUES (?, ?, ?, ?)`,
-        [pooja_id, question, answer, sort_order || 0]
+     (pooja_id, question, question_hi, answer, answer_hi, sort_order) 
+     VALUES (?, ?, ?, ?, ?, ?)`,
+        [pooja_id, question, question_hi, answer, answer_hi, sort_order || 0]
     );
 
     return result.insertId;

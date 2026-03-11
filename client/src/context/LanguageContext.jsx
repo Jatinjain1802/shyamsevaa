@@ -22,9 +22,19 @@ export const LanguageProvider = ({ children }) => {
     /**
      * Translate function
      * @param {string} path - string path (e.g., 'nav.home')
+     * @param {object} params - object containing variables for interpolation (e.g., { count: 5 })
      */
-    const t = (path) => {
-        return path.split(".").reduce((obj, key) => obj?.[key], translationsData) || path;
+    const t = (path, params = {}) => {
+        let text = path.split(".").reduce((obj, key) => obj?.[key], translationsData) || path;
+
+        // Handle interpolation for placeholders like {{var}}
+        if (typeof text === 'string' && params) {
+            Object.entries(params).forEach(([key, value]) => {
+                text = text.replace(new RegExp(`{{${key}}}`, 'g'), value);
+            });
+        }
+
+        return text;
     };
 
     const changeLanguage = (lang) => {

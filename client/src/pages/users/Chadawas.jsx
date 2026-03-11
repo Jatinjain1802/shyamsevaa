@@ -5,11 +5,11 @@ import { generatePureSlug } from "../../utils/slugify";
 import { getAssetUrl } from "../../utils/assets";
 import { Search, X, AlertCircle, RefreshCw, User, ArrowRight } from "lucide-react";
 import { MdVolunteerActivism } from "react-icons/md";
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from "../../context/LanguageContext";
 
 
 export default function Chadawas() {
-    const { t } = useTranslation();
+    const { language, t } = useLanguage();
     const [chadawas, setChadawas] = useState([]);
 
     const [filteredChadawas, setFilteredChadawas] = useState([]);
@@ -30,12 +30,12 @@ export default function Chadawas() {
         try {
             setLoading(true);
             setError(null);
-            const res = await api.get("/chadawas");
+            const res = await api.get("/chadawas?status=1");
             setChadawas(res.data.data || []);
             setFilteredChadawas(res.data.data || []);
         } catch (err) {
             console.error("Failed to load chadawas", err);
-            setError(err.response?.data?.message || "Failed to load chadawas. Please try again.");
+            setError(err.response?.data?.message || t("common.error"));
         } finally {
             setLoading(false);
         }
@@ -48,10 +48,17 @@ export default function Chadawas() {
         }
 
         const query = searchQuery.toLowerCase();
-        const results = chadawas.filter(chadawa =>
-            chadawa.title.toLowerCase().includes(query) ||
-            chadawa.description?.toLowerCase().includes(query)
-        );
+        const results = chadawas.filter(item => {
+            const title = item.title?.toLowerCase() || "";
+            const title_hi = item.title_hi?.toLowerCase() || "";
+            const desc = item.description?.toLowerCase() || "";
+            const desc_hi = item.description_hi?.toLowerCase() || "";
+            
+            return title.includes(query) || 
+                   title_hi.includes(query) || 
+                   desc.includes(query) || 
+                   desc_hi.includes(query);
+        });
 
         setFilteredChadawas(results);
         setPage(1); // Reset page on filter/search change
@@ -116,7 +123,7 @@ export default function Chadawas() {
                     <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <AlertCircle className="text-red-500 w-10 h-10" />
                     </div>
-                    <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">{t('common.error_title')}</h3>
+                    <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">{t('common.error')}</h3>
                     <p className="text-stone-600 mb-6 italic">{error}</p>
                     <button
                         onClick={fetchChadawas}
@@ -158,7 +165,7 @@ export default function Chadawas() {
                 <div className="py-4 text-sm text-stone-600 font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
                     <Link to="/" className="hover:text-sindoor transition-colors">{t('nav.home')}</Link>
                     <span className="text-marigold">/</span>
-                    <span className="text-sindoor">{t('nav.chadawas')}</span>
+                    <span className="text-sindoor">{t('nav.offerings')}</span>
                 </div>
 
 
@@ -199,14 +206,18 @@ export default function Chadawas() {
                         </div>
 
                         <div className="text-sm text-stone-600 font-medium px-4 py-2 bg-marigold/10 rounded-full border border-marigold/20">
-                            {t('common.showing')} <span className="text-sindoor font-bold">{filteredChadawas.length}</span> {t('common.of')} {chadawas.length} {t('nav.chadawas').toLowerCase()}
+                            {t('common.showing')} <span className="text-sindoor font-bold">{filteredChadawas.length}</span> {t('common.of')} {chadawas.length} {t('nav.offerings').toLowerCase()}
                         </div>
 
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayedChadawas.map((item) => (
+                    {displayedChadawas.map((item) => {
+                        const title = language === 'hi' && item.title_hi ? item.title_hi : item.title;
+                        const desc = language === 'hi' && item.description_hi ? item.description_hi : item.description;
+                        
+                        return (
                         <Link
                             to={`/chadawas/${generatePureSlug(item.title)}`}
                             state={{ id: item.id }}
@@ -218,7 +229,7 @@ export default function Chadawas() {
                                 <div className="absolute" />
                                 <img
                                     src={getAssetUrl(item.image)}
-                                    alt={item.title}
+                                    alt={title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-80" />
@@ -233,15 +244,15 @@ export default function Chadawas() {
 
                                 <div className="mb-2 flex items-center gap-2 text-stone-500 text-sm font-medium">
                                     <User className="text-marigold w-4 h-4" />
-                                    <span className="truncate">Devotees' Choice</span>
+                                    <span className="truncate">{language === 'hi' ? 'भक्तों की पसंद' : "Devotees' Choice"}</span>
                                 </div>
 
                                 <h3 className="text-2xl font-serif font-bold text-heritage-dark mb-3 leading-snug group-hover:text-sindoor transition-colors line-clamp-2">
-                                    {item.title}
+                                    {title}
                                 </h3>
 
                                 <p className="text-stone-600 mb-8 line-clamp-3 leading-relaxed flex-1">
-                                    {item.description}
+                                    {desc}
                                 </p>
 
                                 <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between">
@@ -255,13 +266,14 @@ export default function Chadawas() {
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                        );
+                    })}
 
                     {/* Infinite Scroll Target */}
                     {filteredChadawas.length > displayedChadawas.length && (
                         <div ref={observerTarget} className="col-span-full py-12 flex items-center justify-center gap-3 text-stone-500 font-bold">
                             <div className="w-6 h-6 border-4 border-sindoor border-t-transparent rounded-full animate-spin"></div>
-                            <span>Loading more Offerings...</span>
+                            <span>{language === 'hi' ? 'और चढ़ावा लोड हो रहा है...' : 'Loading more Offerings...'}</span>
                         </div>
                     )}
                 </div>

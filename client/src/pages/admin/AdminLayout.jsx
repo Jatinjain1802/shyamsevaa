@@ -71,7 +71,7 @@ export default function AdminLayout() {
               {isSidebarOpen && (
                 <div className="animate-in fade-in slide-in-from-left-4 duration-500 overflow-hidden">
                   <h1 className="text-xl font-black font-serif tracking-tight leading-none text-white uppercase italic">
-                    Shyam Sevaa
+                    Shyam Pooja
                   </h1>
                   <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-marigold block mt-1 opacity-80">Professional Dashboard</span>
                 </div>

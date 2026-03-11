@@ -34,7 +34,7 @@ export default function Poojas() {
             setLoading(true);
             setError(null);
 
-            const res = await api.get("/poojas");
+            const res = await api.get("/poojas?status=1");
             const data = res.data.data || [];
             setPoojas(data);
             setFilteredPoojas(data);

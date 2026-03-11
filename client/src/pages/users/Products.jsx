@@ -5,12 +5,12 @@ import { generateSlug } from "../../utils/slugify";
 import { getAssetUrl } from "../../utils/assets";
 import { Search, X, AlertCircle, RefreshCw, ShoppingBag, ArrowRight, Package, IndianRupee } from "lucide-react";
 import { MdStorefront } from "react-icons/md";
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from "../../context/LanguageContext";
 import toast from "react-hot-toast";
 
 export default function Products() {
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,6 +26,12 @@ export default function Products() {
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    const getLocalizedField = (obj, field) => {
+        if (!obj) return "";
+        const hiField = `${field}_hi`;
+        return (language === 'hi' && obj[hiField]) ? obj[hiField] : obj[field];
+    };
 
     const fetchProducts = async () => {
         try {
@@ -49,10 +55,12 @@ export default function Products() {
         let results = [...products];
 
         if (searchQuery.trim()) {
-            results = results.filter(product =>
-                product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                product.description?.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            results = results.filter(product => {
+                const name = getLocalizedField(product, 'name');
+                const description = getLocalizedField(product, 'description');
+                return name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    description?.toLowerCase().includes(searchQuery.toLowerCase());
+            });
         }
 
         if (selectedCategory !== "all") {
@@ -61,7 +69,7 @@ export default function Products() {
 
         setFilteredProducts(results);
         setPage(1); // Reset page on filter/search change
-    }, [searchQuery, selectedCategory, products]);
+    }, [searchQuery, selectedCategory, products, language]);
 
     // Intersection Observer for Infinite Scroll
     useEffect(() => {
@@ -102,7 +110,8 @@ export default function Products() {
         });
     };
 
-    const categories = ["all", ...new Set(products.map(p => p.category).filter(Boolean))];
+    const rawCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
+    const categories = ["all", ...rawCategories];
 
     const SkeletonCard = () => (
         <div className="bg-white rounded-4xl overflow-hidden shadow-xl border border-stone-100 animate-pulse h-[500px]">
@@ -209,105 +218,117 @@ export default function Products() {
 
                         {/* Category Filter */}
                         <div className="flex flex-wrap gap-2">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat)}
-                                    className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${selectedCategory === cat
-                                        ? "bg-marigold text-white shadow-lg"
-                                        : "bg-white/50 text-stone-600 hover:bg-white hover:text-marigold"
-                                        }`}
-                                >
-                                    {cat === "all" ? "All Items" : cat}
-                                </button>
-                            ))}
+                            {categories.map((cat) => {
+                                // Find any product in this category to get category_hi
+                                const productWithCat = products.find(p => p.category === cat);
+                                const localizedCatName = cat === "all" ? t('common.all') : getLocalizedField(productWithCat, 'category');
+
+                                return (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${selectedCategory === cat
+                                                ? "bg-marigold text-white shadow-lg"
+                                                : "bg-white/50 text-stone-600 hover:bg-white hover:text-marigold"
+                                            }`}
+                                    >
+                                        {localizedCatName}
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         <div className="text-sm text-stone-600 font-medium px-4 py-2 bg-marigold/10 rounded-full border border-marigold/20 shrink-0">
-                            {t('common.showing')} <span className="text-sindoor font-bold">{filteredProducts.length}</span> {t('common.of')} {products.length} Items
+                            {t('common.showing')} <span className="text-sindoor font-bold">{filteredProducts.length}</span> {t('common.of')} {products.length} {t('common.items')}
                         </div>
                     </div>
                 </div>
 
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayedProducts.map((product) => (
-                        <Link
-                            to={`/product/${generateSlug(product.name, product.id)}`}
-                            state={{ id: product.id }}
-                            key={product.id}
-                            className="group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-marigold/10 transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col h-full"
-                        >
-                            {/* Stock Badge */}
-                            {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
-                                <div className="absolute top-4 left-4 z-20 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse shadow-md">
-                                    Only {product.stock_quantity} Left
-                                </div>
-                            )}
-                            {product.stock_quantity === 0 && (
-                                <div className="absolute top-4 left-4 z-20 bg-stone-500/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
-                                    Out of Stock
-                                </div>
-                            )}
+                    {displayedProducts.map((product) => {
+                        const localizedName = getLocalizedField(product, 'name');
+                        const localizedDesc = getLocalizedField(product, 'description');
+                        const localizedCat = getLocalizedField(product, 'category');
 
-                            {/* Image Container */}
-                            <div className="relative aspect-4/3 w-full overflow-hidden shrink-0 bg-stone-50">
-                                <img
-                                    src={getAssetUrl(product.image_url || product.image)}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                            </div>
+                        return (
+                            <Link
+                                to={`/product/${generateSlug(product.name, product.id)}`}
+                                state={{ id: product.id }}
+                                key={product.id}
+                                className="group relative bg-white rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-marigold/10 transition-all duration-500 hover:-translate-y-2 border border-stone-100 flex flex-col h-full"
+                            >
+                                {/* Stock Badge */}
+                                {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
+                                    <div className="absolute top-4 left-4 z-20 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse shadow-md">
+                                        Only {product.stock_quantity} Left
+                                    </div>
+                                )}
+                                {product.stock_quantity === 0 && (
+                                    <div className="absolute top-4 left-4 z-20 bg-stone-500/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                                        {t('common.out_of_stock')}
+                                    </div>
+                                )}
 
-                            {/* Content */}
-                            <div className="relative p-6 sm:p-8 flex flex-col flex-1 bg-white">
-                                <div className="absolute -top-7 right-6 sm:right-8 w-14 h-14 bg-marigold rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-sindoor transition-all duration-300 z-10 border-4 border-white">
-                                    <ShoppingBag className="text-white w-5 h-5" />
-                                </div>
-
-                                <div className="mb-3 flex items-center gap-2 text-stone-500 text-sm font-bold">
-                                    <Package className="text-marigold w-5 h-5" />
-                                    <span className="capitalize">{product.category || "Sacred Item"}</span>
+                                {/* Image Container */}
+                                <div className="relative aspect-4/3 w-full overflow-hidden shrink-0 bg-stone-50">
+                                    <img
+                                        src={getAssetUrl(product.image_url || product.image)}
+                                        alt={localizedName}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
                                 </div>
 
-                                <h3 className="text-2xl font-serif font-black text-heritage-dark mb-2 leading-tight group-hover:text-sindoor transition-colors line-clamp-2">
-                                    {product.name}
-                                </h3>
-
-                                <p className="text-stone-500 mb-6 line-clamp-2 leading-relaxed text-sm flex-1 font-medium">
-                                    {product.description}
-                                </p>
-
-                                <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between gap-4">
-                                    <div className="flex flex-col shrink-0">
-                                        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-black">Price</p>
-                                        <div className="flex items-center gap-1 font-black text-2xl text-sindoor">
-                                            <IndianRupee className="w-5 h-5" />
-                                            <span>{Number(product.price).toLocaleString()}</span>
-                                        </div>
+                                {/* Content */}
+                                <div className="relative p-6 sm:p-8 flex flex-col flex-1 bg-white">
+                                    <div className="absolute -top-7 right-6 sm:right-8 w-14 h-14 bg-marigold rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-sindoor transition-all duration-300 z-10 border-4 border-white">
+                                        <ShoppingBag className="text-white w-5 h-5" />
                                     </div>
 
-                                    <button
-                                        onClick={(e) => handleOrderNow(e, product)}
-                                        disabled={product.stock_quantity === 0}
-                                        className={`px-6 py-3.5 rounded-xl font-black transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 whitespace-nowrap ${product.stock_quantity === 0
-                                            ? "bg-stone-100 text-stone-400 cursor-not-allowed shadow-none"
-                                            : "bg-marigold text-white hover:bg-sindoor hover:shadow-sindoor/30"
-                                            }`}
-                                    >
-                                        <ShoppingBag className="w-5 h-5" />
-                                        {product.stock_quantity === 0 ? "Sold Out" : "Order Now"}
-                                    </button>
+                                    <div className="mb-3 flex items-center gap-2 text-stone-500 text-sm font-bold">
+                                        <Package className="text-marigold w-5 h-5" />
+                                        <span className="capitalize">{localizedCat || t('common.sacred_item')}</span>
+                                    </div>
+
+                                    <h3 className="text-2xl font-serif font-black text-heritage-dark mb-2 leading-tight group-hover:text-sindoor transition-colors line-clamp-2">
+                                        {localizedName}
+                                    </h3>
+
+                                    <p className="text-stone-500 mb-6 line-clamp-2 leading-relaxed text-sm flex-1 font-medium">
+                                        {localizedDesc}
+                                    </p>
+
+                                    <div className="mt-auto pt-6 border-t border-stone-100 flex items-center justify-between gap-4">
+                                        <div className="flex flex-col shrink-0">
+                                            <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-black">{t('common.price')}</p>
+                                            <div className="flex items-center gap-1 font-black text-2xl text-sindoor">
+                                                <IndianRupee className="w-5 h-5" />
+                                                <span>{Number(product.price).toLocaleString()}</span>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={(e) => handleOrderNow(e, product)}
+                                            disabled={product.stock_quantity === 0}
+                                            className={`px-6 py-3.5 rounded-xl font-black transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 whitespace-nowrap ${product.stock_quantity === 0
+                                                    ? "bg-stone-100 text-stone-400 cursor-not-allowed shadow-none"
+                                                    : "bg-marigold text-white hover:bg-sindoor hover:shadow-sindoor/30"
+                                                }`}
+                                        >
+                                            <ShoppingBag className="w-5 h-5" />
+                                            {product.stock_quantity === 0 ? t('common.sold_out') : t('common.order_now')}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        );
+                    })}
 
                     {/* Infinite Scroll Target */}
                     {filteredProducts.length > displayedProducts.length && (
                         <div ref={observerTarget} className="col-span-full py-12 flex items-center justify-center gap-3 text-stone-500 font-bold">
                             <div className="w-6 h-6 border-4 border-sindoor border-t-transparent rounded-full animate-spin"></div>
-                            <span>Loading more sacred items...</span>
+                            <span>{t('common.loading_more')}</span>
                         </div>
                     )}
                 </div>
@@ -318,14 +339,14 @@ export default function Products() {
                         <Search className="text-sindoor w-12 h-12 opacity-30 mx-auto mb-4" />
                         <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('products_page.no_results')}</h3>
                         <p className="text-stone-500 font-sans italic mb-6">
-                            We couldn't find any sacred items matching "{searchQuery}".
+                            {t('products_page.no_results_desc', { query: searchQuery })}
                         </p>
                         <button
                             onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}
                             className="text-marigold font-bold hover:underline flex items-center gap-2 mx-auto"
                         >
                             <RefreshCw className="w-4 h-4" />
-                            Clear all filters
+                            {t('common.clear_all_filters')}
                         </button>
                     </div>
                 )}

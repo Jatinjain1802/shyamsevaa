@@ -3,11 +3,11 @@ import db from "../config/db.js";
 
 /* POOJA */
 
-export const createPooja = async ({ title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date }) => {
+export const createPooja = async ({ title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date, status }) => {
   const [res] = await db.query(
-    `INSERT INTO poojas (title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date)
-     VALUES (?,?,?,?,?,?,?,?)`,
-    [title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date]
+    `INSERT INTO poojas (title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date, status)
+     VALUES (?,?,?,?,?,?,?,?,?)`,
+    [title, title_hi, image, description, description_hi, benefits, benefits_hi, pooja_date, status !== undefined ? status : 1]
   );
   return res.insertId;
 };
@@ -16,29 +16,15 @@ export const updatePooja = async (id, data) => {
   const fields = [];
   const values = [];
 
-  if (data.title !== undefined) fields.push("title=?");
-  if (data.title !== undefined) values.push(data.title);
-
-  if (data.title_hi !== undefined) fields.push("title_hi=?");
-  if (data.title_hi !== undefined) values.push(data.title_hi);
-
-  if (data.image !== undefined) fields.push("image=?");
-  if (data.image !== undefined) values.push(data.image);
-
-  if (data.description !== undefined) fields.push("description=?");
-  if (data.description !== undefined) values.push(data.description);
-
-  if (data.description_hi !== undefined) fields.push("description_hi=?");
-  if (data.description_hi !== undefined) values.push(data.description_hi);
-
-  if (data.benefits !== undefined) fields.push("benefits=?");
-  if (data.benefits !== undefined) values.push(data.benefits);
-
-  if (data.benefits_hi !== undefined) fields.push("benefits_hi=?");
-  if (data.benefits_hi !== undefined) values.push(data.benefits_hi);
-
-  if (data.pooja_date !== undefined) fields.push("pooja_date=?");
-  if (data.pooja_date !== undefined) values.push(data.pooja_date);
+  if (data.title !== undefined) { fields.push("title=?"); values.push(data.title); }
+  if (data.title_hi !== undefined) { fields.push("title_hi=?"); values.push(data.title_hi); }
+  if (data.image !== undefined) { fields.push("image=?"); values.push(data.image); }
+  if (data.description !== undefined) { fields.push("description=?"); values.push(data.description); }
+  if (data.description_hi !== undefined) { fields.push("description_hi=?"); values.push(data.description_hi); }
+  if (data.benefits !== undefined) { fields.push("benefits=?"); values.push(data.benefits); }
+  if (data.benefits_hi !== undefined) { fields.push("benefits_hi=?"); values.push(data.benefits_hi); }
+  if (data.pooja_date !== undefined) { fields.push("pooja_date=?"); values.push(data.pooja_date); }
+  if (data.status !== undefined) { fields.push("status=?"); values.push(data.status); }
 
   if (fields.length === 0) return 0;
 
@@ -89,7 +75,7 @@ export const getAllPoojas = async () => {
 export const getPoojasByTemple = async (templeId) => {
   const [rows] = await db.query(
     `
-    SELECT p.id, p.title, p.image
+    SELECT p.id, p.title, p.title_hi, p.image, p.description, p.description_hi
     FROM pooja_temples pt
     JOIN poojas p ON p.id = pt.pooja_id
     WHERE pt.temple_id = ?
@@ -117,7 +103,7 @@ export const getVariantsByPooja = async (poojaId) => {
 export const getAddonsByPooja = async (poojaId) => {
   const [rows] = await db.query(
     `
-    SELECT DISTINCT a.id, a.title, a.price, a.image, a.description
+    SELECT DISTINCT a.id, a.title, a.title_hi, a.price, a.image, a.description, a.description_hi
     FROM addons a
     LEFT JOIN pooja_addons pa ON a.id = pa.addon_id AND pa.pooja_id = ?
     WHERE a.is_common = 1 OR pa.pooja_id IS NOT NULL
@@ -147,7 +133,7 @@ export const getReviewsByPooja = async (poojaId) => {
 export const getTemplesByPooja = async (poojaId) => {
   const [rows] = await db.query(
     `
-    SELECT t.id, t.title, t.image, t.description, t.city, t.state
+    SELECT t.id, t.title, t.title_hi, t.image, t.description, t.description_hi, t.city, t.city_hi, t.state, t.state_hi
     FROM pooja_temples pt
     JOIN temples t ON t.id = pt.temple_id
     WHERE pt.pooja_id = ?

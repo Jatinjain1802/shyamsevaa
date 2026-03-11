@@ -1,4 +1,5 @@
 import * as TempleModel from "../models/temples.model.js";
+import { translateObject } from "../utils/translation.js";
 
 export const createTemple = async (req, res) => {
   try {
@@ -11,6 +12,10 @@ export const createTemple = async (req, res) => {
       });
     }
 
+    // Handle auto-translation
+    const translatableFields = { title, description, city, state };
+    const translated = await translateObject(translatableFields);
+
     // Handle file upload
     let imagePath = image;
     if (req.files && req.files['temple_image']) {
@@ -21,10 +26,14 @@ export const createTemple = async (req, res) => {
 
     const id = await TempleModel.createTemple({
       title,
+      title_hi: translated.title_hi,
       image: imagePath,
       description,
+      description_hi: translated.description_hi,
       city,
+      city_hi: translated.city_hi,
       state,
+      state_hi: translated.state_hi,
     });
 
     // Handle Gallery Images
@@ -91,6 +100,18 @@ export const getTempleById = async (req, res) => {
 export const updateTemple = async (req, res) => {
   try {
     const updateData = { ...req.body };
+
+    // Handle auto-translation if fields are updated
+    if (updateData.title || updateData.description || updateData.city || updateData.state) {
+      const translatableFields = {};
+      if (updateData.title) translatableFields.title = updateData.title;
+      if (updateData.description) translatableFields.description = updateData.description;
+      if (updateData.city) translatableFields.city = updateData.city;
+      if (updateData.state) translatableFields.state = updateData.state;
+
+      const translated = await translateObject(translatableFields);
+      Object.assign(updateData, translated);
+    }
 
     // Handle file upload
     if (req.files && req.files['temple_image']) {

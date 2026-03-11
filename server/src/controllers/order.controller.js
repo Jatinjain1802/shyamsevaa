@@ -21,8 +21,9 @@ export const getUserOrderDetail = async (req, res) => {
 /* ADMIN */
 
 export const getAllOrders = async (req, res) => {
-  const orders = await OrderModel.getAllOrders();
-  res.json({ success: true, data: orders });
+  const { search, type, status, page, limit } = req.query;
+  const result = await OrderModel.getAllOrders({ search, type, status, page, limit });
+  res.json({ success: true, ...result });
 };
 
 export const getAdminOrderDetail = async (req, res) => {

@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 
-export default function ChadawaItems() {
-  const { chadawaId } = useParams();
+export default function ChadawaItems({ chadawaId: propId }) {
+  const { chadawaId: paramId } = useParams();
   const navigate = useNavigate();
+  const cid = propId || paramId;
+  const isComponent = !!propId;
 
   const [items, setItems] = useState([]);
   const [chadawas, setChadawas] = useState([]); // List of all chadawas for dropdown
@@ -23,7 +25,7 @@ export default function ChadawaItems() {
 
   const fetchItems = async () => {
     try {
-      const res = await api.get(`/chadawas/${chadawaId}`);
+      const res = await api.get(`/chadawas/${cid}`);
       setItems(res.data.data.items || []);
     } catch (err) {
       console.error(err);
@@ -45,7 +47,7 @@ export default function ChadawaItems() {
   useEffect(() => {
     fetchItems();
     fetchAllChadawas();
-  }, [chadawaId]);
+  }, [cid]);
 
   /* ================= FORM ================= */
 
@@ -54,7 +56,7 @@ export default function ChadawaItems() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ title: "", description: "", price: "", chadawaId: chadawaId });
+    setForm({ title: "", description: "", price: "", chadawaId: cid });
     setShowForm(true);
   };
 
@@ -64,7 +66,7 @@ export default function ChadawaItems() {
       title: item.title,
       description: item.description || "",
       price: item.price,
-      chadawaId: chadawaId, // Default to current, assuming item belongs here
+      chadawaId: cid, // Default to current
     });
     setShowForm(true);
   };
@@ -111,22 +113,36 @@ export default function ChadawaItems() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <button onClick={() => navigate("/admin/chadawas")} className="text-sm text-gray-500 hover:underline mb-1">
-            &larr; Back to Chadawas
+      {!isComponent && (
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <button onClick={() => navigate("/admin/chadawas")} className="text-sm text-gray-500 hover:underline mb-1">
+              &larr; Back to Chadawas
+            </button>
+            <h1 className="text-2xl font-bold">
+              Items for {chadawas.find(c => c.id == cid)?.title || "Chadawa"}
+            </h1>
+          </div>
+          <button
+            onClick={openCreate}
+            className="bg-orange-600 text-white px-4 py-2 rounded"
+          >
+            + Add Item
           </button>
-          <h1 className="text-2xl font-bold">
-            Items for {chadawas.find(c => c.id == chadawaId)?.title || "Chadawa"}
-          </h1>
         </div>
-        <button
-          onClick={openCreate}
-          className="bg-orange-600 text-white px-4 py-2 rounded"
-        >
-          + Add Item
-        </button>
-      </div>
+      )}
+
+      {isComponent && (
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-heritage-dark">Chadawa Items</h3>
+          <button
+            onClick={openCreate}
+            className="bg-sindoor text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
+          >
+            + Add New Item
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (

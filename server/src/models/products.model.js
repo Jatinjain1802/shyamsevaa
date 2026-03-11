@@ -1,10 +1,11 @@
 import db from "../config/db.js";
 
-export const createProduct = async ({ name, description, price, stock_quantity, image_url, category }) => {
+export const createProduct = async (data) => {
+  const { name, name_hi, description, description_hi, price, stock_quantity, image_url, category, category_hi } = data;
   const [res] = await db.query(
-    `INSERT INTO products (name, description, price, stock_quantity, image_url, category)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, description, price, stock_quantity, image_url, category]
+    `INSERT INTO products (name, name_hi, description, description_hi, price, stock_quantity, image_url, category, category_hi)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [name, name_hi || null, description || null, description_hi || null, price, stock_quantity || 0, image_url || null, category || null, category_hi || null]
   );
   return res.insertId;
 };
@@ -13,34 +14,25 @@ export const updateProduct = async (id, data) => {
   const fields = [];
   const values = [];
 
-  if (data.name !== undefined) {
-    fields.push("name=?");
-    values.push(data.name);
-  }
-  if (data.description !== undefined) {
-    fields.push("description=?");
-    values.push(data.description);
-  }
-  if (data.price !== undefined) {
-    fields.push("price=?");
-    values.push(data.price);
-  }
-  if (data.stock_quantity !== undefined) {
-    fields.push("stock_quantity=?");
-    values.push(data.stock_quantity);
-  }
-  if (data.image_url !== undefined) {
-    fields.push("image_url=?");
-    values.push(data.image_url);
-  }
-  if (data.category !== undefined) {
-    fields.push("category=?");
-    values.push(data.category);
-  }
-  if (data.status !== undefined) {
-    fields.push("status=?");
-    values.push(data.status);
-  }
+  const updateableFields = [
+    "name",
+    "name_hi",
+    "description",
+    "description_hi",
+    "price",
+    "stock_quantity",
+    "image_url",
+    "category",
+    "category_hi",
+    "status",
+  ];
+
+  updateableFields.forEach((field) => {
+    if (data[field] !== undefined) {
+      fields.push(`${field}=?`);
+      values.push(data[field]);
+    }
+  });
 
   if (fields.length === 0) return 0;
 

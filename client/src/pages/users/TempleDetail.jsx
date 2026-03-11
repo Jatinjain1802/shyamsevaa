@@ -4,9 +4,10 @@ import api from "../../utils/axios";
 import UnifiedCard from "../../components/common/UnifiedCard";
 import { getAssetUrl } from "../../utils/assets";
 import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify";
+import { useLanguage } from "../../context/LanguageContext";
 import {
   Share2,
-  Home,
+  Home as HomeIcon,
   ChevronRight,
   ArrowRight,
   RefreshCw,
@@ -127,6 +128,7 @@ export default function TempleDetail() {
   const [id, setId] = useState(location.state?.id || extractIdFromSlug(slug));
   const navigate = useNavigate();
   const { toasts, showToast } = useToast();
+  const { language, t } = useLanguage();
 
   const [temple, setTemple] = useState(null);
   const [poojas, setPoojas] = useState([]);
@@ -159,7 +161,7 @@ export default function TempleDetail() {
       }
 
       if (!finalId) {
-        setError("Temple not found. Please check the URL.");
+        setError(t("temple_detail.not_found_desc"));
         setLoading(false);
         return;
       }
@@ -175,30 +177,31 @@ export default function TempleDetail() {
       setChadawas(chadawasRes.data.data || []);
     } catch (err) {
       console.error("Failed to load temple details", err);
-      setError(err.response?.data?.message || "Failed to load temple details. Please try again.");
+      setError(err.response?.data?.message || t("common.error"));
     } finally {
       setLoading(false);
     }
   };
 
   const handleShare = async () => {
+    const templeTitle = language === 'hi' && temple?.title_hi ? temple.title_hi : temple?.title;
     const shareData = {
-      title: temple?.title,
-      text: `Check out this divine temple: ${temple?.title}`,
+      title: templeTitle,
+      text: `${t("temple_detail.sacred_destination")}: ${templeTitle}`,
       url: window.location.href
     };
     try {
       if (navigator.share) {
         await navigator.share(shareData);
-        showToast('Shared successfully!', 'success');
+        showToast(language === 'hi' ? 'सफलतापूर्वक साझा किया गया!' : 'Shared successfully!', 'success');
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        showToast('Link copied to clipboard!', 'success');
+        showToast(language === 'hi' ? 'लिंक कॉपी किया गया!' : 'Link copied to clipboard!', 'success');
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.error('Error sharing:', err);
-        showToast('Failed to share', 'error');
+        showToast(t("common.error"), 'error');
       }
     }
   };
@@ -246,10 +249,10 @@ export default function TempleDetail() {
             <span className="material-symbols-outlined text-red-500 text-4xl">error</span>
           </div>
           <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">
-            {!temple ? "Temple Not Found" : "Oops! Something went wrong"}
+            {!temple ? t("temple_detail.temple_not_found") : t("common.error")}
           </h3>
           <p className="text-stone-600 mb-6 italic">
-            {error || "The temple you're looking for doesn't exist or has been removed."}
+            {error || t("temple_detail.not_found_desc")}
           </p>
           <div className="flex gap-4 justify-center">
             <button
@@ -257,7 +260,7 @@ export default function TempleDetail() {
               className="bg-marigold text-white px-6 py-3 rounded-xl font-bold hover:bg-marigold/90 transition-all shadow-lg flex items-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
-              Browse Temples
+              {t("temple_detail.browse_temples")}
             </button>
             {error && (
               <button
@@ -265,7 +268,7 @@ export default function TempleDetail() {
                 className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2"
               >
                 <RefreshCw className="w-5 h-5" />
-                Try Again
+                {t("common.try_again")}
               </button>
             )}
           </div>
@@ -273,6 +276,12 @@ export default function TempleDetail() {
       </div>
     );
   }
+
+  // Localized Fields
+  const templeTitle = language === 'hi' && temple.title_hi ? temple.title_hi : temple.title;
+  const templeDescription = language === 'hi' && temple.description_hi ? temple.description_hi : (temple.description || t("temple_detail.sacred_destination"));
+  const templeCity = language === 'hi' && temple.city_hi ? temple.city_hi : temple.city;
+  const templeState = language === 'hi' && temple.state_hi ? temple.state_hi : temple.state;
 
   return (
     <div className="flex flex-col min-h-screen pb-24">
@@ -301,15 +310,15 @@ export default function TempleDetail() {
           <div className="max-w-[1280px] mx-auto px-6">
             <nav className="flex items-center gap-2 text-sm text-stone-500 font-medium" aria-label="Breadcrumb">
               <Link to="/" className="hover:text-sindoor transition-colors flex items-center gap-1">
-                <Home className="w-4 h-4" />
-                Home
+                <HomeIcon className="w-4 h-4" />
+                {t("nav.home")}
               </Link>
               <ChevronRight className="w-3 h-3" />
               <Link to="/temples" className="hover:text-sindoor transition-colors">
-                Temples
+                {t("nav.temples")}
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-sindoor font-bold truncate max-w-xs">{temple.title}</span>
+              <span className="text-sindoor font-bold truncate max-w-xs">{templeTitle}</span>
             </nav>
           </div>
         </div>
@@ -320,7 +329,7 @@ export default function TempleDetail() {
             <HeroSlideshow
               gallery={temple.gallery}
               mainImage={getAssetUrl(temple.image)}
-              title={temple.title}
+              title={templeTitle}
               onShare={handleShare}
             />
           </div>
@@ -330,21 +339,21 @@ export default function TempleDetail() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 text-marigold mb-4 font-bold text-sm tracking-widest uppercase">
                 <MdTempleHindu className="text-xl" />
-                Sacred Destination
+                {t("temple_detail.sacred_destination")}
               </div>
               <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-sindoor mb-4 leading-tight">
-                {temple.title}
+                {templeTitle}
               </h1>
-              {(temple.city || temple.state) && (
+              {(templeCity || templeState) && (
                 <div className="flex items-center gap-3 text-stone-500 mb-8 border-l-2 border-marigold pl-4">
                   <MapPin className="text-marigold w-5 h-5" />
                   <span className="text-xl font-medium">
-                    {temple.city && temple.state ? `${temple.city}, ${temple.state}` : temple.city || temple.state}
+                    {templeCity && templeState ? `${templeCity}, ${templeState}` : templeCity || templeState}
                   </span>
                 </div>
               )}
               <p className="text-lg text-stone-600 leading-relaxed max-w-lg mb-10 italic">
-                {temple.description || "A divine place of worship and spiritual solace."}
+                {templeDescription}
               </p>
             </div>
           </div>
@@ -354,7 +363,7 @@ export default function TempleDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl text-sindoor mb-8 font-serif text-center">
-              Sacred Offerings
+              {t("temple_detail.sacred_offerings")}
             </h2>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
@@ -366,7 +375,7 @@ export default function TempleDetail() {
                   }`}
               >
                 <Sparkles className="w-5 h-5" />
-                Poojas
+                {t("nav.poojas")}
                 {poojas.length > 0 && (
                   <span className={`px-2 py-1 rounded-full text-xs ${activeTab === 'poojas' ? 'bg-white/20' : 'bg-sindoor/10 text-sindoor'
                     }`}>
@@ -383,7 +392,7 @@ export default function TempleDetail() {
                   }`}
               >
                 <Heart className="w-5 h-5" />
-                Chadawas
+                {t("nav.chadawas")}
                 {chadawas.length > 0 && (
                   <span className={`px-2 py-1 rounded-full text-xs ${activeTab === 'chadawas' ? 'bg-white/20' : 'bg-sindoor/10 text-sindoor'
                     }`}>
@@ -399,11 +408,11 @@ export default function TempleDetail() {
                   <UnifiedCard
                     key={p.id}
                     image={getAssetUrl(p.image)}
-                    title={p.title}
-                    description={p.description || "Join this sacred pooja."}
+                    title={language === 'hi' && p.title_hi ? p.title_hi : p.title}
+                    description={(language === 'hi' && p.description_hi ? p.description_hi : p.description) || t("poojas_page.subtitle")}
                     link={`/poojas/${generatePureSlug(p.title)}`}
                     state={{ id: p.id }}
-                    buttonText="View Details"
+                    buttonText={t("temple_detail.view_details")}
                     className="h-full"
                   />
                 ))}
@@ -412,9 +421,9 @@ export default function TempleDetail() {
                     <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                       <Sparkles className="w-8 h-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Poojas Available</h3>
+                    <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t("temple_detail.no_poojas")}</h3>
                     <p className="text-stone-500 font-sans italic">
-                      There are currently no poojas available for this temple.
+                      {t("temple_detail.no_poojas_desc")}
                     </p>
                   </div>
                 )}
@@ -425,11 +434,11 @@ export default function TempleDetail() {
                   <UnifiedCard
                     key={c.id}
                     image={getAssetUrl(c.image)}
-                    title={c.title}
-                    description={c.description || "Make a sacred offering."}
+                    title={language === 'hi' && c.title_hi ? c.title_hi : c.title}
+                    description={(language === 'hi' && c.description_hi ? c.description_hi : c.description) || t("chadawas_page.subtitle")}
                     link={`/chadawas/${generatePureSlug(c.title)}`}
                     state={{ id: c.id }}
-                    buttonText="Make Offering"
+                    buttonText={t("temple_detail.make_offering")}
                     className="h-full"
                   />
                 ))}
@@ -438,9 +447,9 @@ export default function TempleDetail() {
                     <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                       <Heart className="w-8 h-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Chadawas Available</h3>
+                    <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t("temple_detail.no_chadawas")}</h3>
                     <p className="text-stone-500 font-sans italic">
-                      There are currently no chadawas available for this temple.
+                      {t("temple_detail.no_chadawas_desc")}
                     </p>
                   </div>
                 )}

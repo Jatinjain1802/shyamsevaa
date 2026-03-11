@@ -1,10 +1,15 @@
 import * as ChadawaModel from "../models/chadawas.model.js";
+import { translateObject } from "../utils/translation.js";
 
 /* ================= CHADAWA ================= */
 
 export const createChadawa = async (req, res) => {
     try {
-        const { title, image, description, benefits, chadawa_date } = req.body;
+        const { title, image, description, benefits, chadawa_date, status } = req.body;
+
+        // Handle auto-translation
+        const translatableFields = ["title", "description", "benefits"];
+        const translated = await translateObject(req.body, translatableFields);
 
         // Handle file upload
         let imagePath = image;
@@ -16,10 +21,14 @@ export const createChadawa = async (req, res) => {
 
         const chadawaId = await ChadawaModel.createChadawa({
             title,
+            title_hi: translated.title_hi,
             image: imagePath,
             description,
+            description_hi: translated.description_hi,
             benefits,
+            benefits_hi: translated.benefits_hi,
             chadawa_date,
+            status: status !== undefined ? parseInt(status) : 1,
         });
 
         // Handle Gallery Images
@@ -49,6 +58,19 @@ export const createChadawa = async (req, res) => {
 export const updateChadawa = async (req, res) => {
     try {
         const updateData = { ...req.body };
+
+        if (updateData.status !== undefined) {
+            updateData.status = parseInt(updateData.status);
+        }
+
+        // Handle auto-translation if fields are updated
+        const translatableFields = ["title", "description", "benefits"];
+        const needsTranslation = translatableFields.some(field => updateData[field] !== undefined);
+        
+        if (needsTranslation) {
+            const translated = await translateObject(updateData, translatableFields);
+            Object.assign(updateData, translated);
+        }
 
         // Handle file upload
         if (req.files && req.files['chadawa_image']) {
@@ -108,18 +130,42 @@ export const deleteChadawa = async (req, res) => {
 /* ================= ITEMS ================= */
 
 export const addChadawaItem = async (req, res) => {
-    const { title, description, price } = req.body;
-    const itemId = await ChadawaModel.addChadawaItem(req.params.chadawaId, {
-        title,
-        description,
-        price,
-    });
-    res.json({ success: true, itemId });
+    try {
+        const { title, description, price } = req.body;
+        const translatableFields = ["title", "description"];
+        const translated = await translateObject(req.body, translatableFields);
+
+        const itemId = await ChadawaModel.addChadawaItem(req.params.chadawaId, {
+            title,
+            title_hi: translated.title_hi,
+            description,
+            description_hi: translated.description_hi,
+            price,
+        });
+        res.json({ success: true, itemId });
+    } catch (error) {
+        console.error("Add chadawa item error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const updateChadawaItem = async (req, res) => {
-    const updated = await ChadawaModel.updateChadawaItem(req.params.itemId, req.body);
-    res.json({ success: true, updated });
+    try {
+        const updateData = { ...req.body };
+        const translatableFields = ["title", "description"];
+        const needsTranslation = translatableFields.some(field => updateData[field] !== undefined);
+        
+        if (needsTranslation) {
+            const translated = await translateObject(updateData, translatableFields);
+            Object.assign(updateData, translated);
+        }
+
+        const updated = await ChadawaModel.updateChadawaItem(req.params.itemId, updateData);
+        res.json({ success: true, updated });
+    } catch (error) {
+        console.error("Update chadawa item error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const deleteChadawaItem = async (req, res) => {
@@ -130,12 +176,22 @@ export const deleteChadawaItem = async (req, res) => {
 /* ================= BENEFITS ================= */
 
 export const addChadawaBenefit = async (req, res) => {
-    const { title, description } = req.body;
-    const id = await ChadawaModel.addChadawaBenefit(req.params.chadawaId, {
-        title,
-        description,
-    });
-    res.json({ success: true, id });
+    try {
+        const { title, description } = req.body;
+        const translatableFields = ["title", "description"];
+        const translated = await translateObject(req.body, translatableFields);
+
+        const id = await ChadawaModel.addChadawaBenefit(req.params.chadawaId, {
+            title,
+            title_hi: translated.title_hi,
+            description,
+            description_hi: translated.description_hi,
+        });
+        res.json({ success: true, id });
+    } catch (error) {
+        console.error("Add chadawa benefit error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const deleteChadawaBenefit = async (req, res) => {
@@ -188,7 +244,19 @@ export const getChadawasByTemple = async (req, res) => {
     res.json({ success: true, data });
 };
 export const getAllChadawas = async (req, res) => {
-    const data = await ChadawaModel.getAllChadawas();
-    res.json({ success: true, data });
-}
+    try {
+        const { status } = req.query;
+        let data = await ChadawaModel.getAllChadawas();
+
+        if (status !== undefined) {
+            const s = parseInt(status);
+            data = data.filter(c => c.status === s);
+        }
+
+        res.json({ success: true, data });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 

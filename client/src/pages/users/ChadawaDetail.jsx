@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { extractIdFromSlug, generateSlug, slugify, generatePureSlug } from "../../utils/slugify"; // LEARNING: Import slug utilities
 import { getAssetUrl } from "../../utils/assets";
 import { useWishlist } from "../../context/WishlistContext";
+import { useLanguage } from "../../context/LanguageContext";
 import {
     ChevronRight,
     Home,
@@ -149,6 +150,7 @@ const HeroSlideshow = ({ gallery, mainImage, title, onShare }) => {
 };
 
 export default function ChadawaDetail() {
+    const { t, language } = useLanguage();
     // LEARNING: Get slug from URL and extract ID from it
     const { slug } = useParams();
     const location = useLocation();
@@ -278,10 +280,10 @@ export default function ChadawaDetail() {
                         <AlertCircle className="text-red-500 w-10 h-10" />
                     </div>
                     <h3 className="text-2xl font-bold text-sindoor mb-3 font-serif">
-                        {!data ? "Chadawa Not Found" : "Oops! Something went wrong"}
+                        {!data ? t('chadawa_detail.not_found') : t('common.error_occurred')}
                     </h3>
                     <p className="text-stone-600 mb-6 italic">
-                        {error || "The chadawa you're looking for doesn't exist or has been removed."}
+                        {error || t('chadawa_detail.not_found_desc')}
                     </p>
                     <div className="flex gap-4 justify-center">
                         <button
@@ -289,7 +291,7 @@ export default function ChadawaDetail() {
                             className="bg-marigold text-white px-6 py-3 rounded-xl font-bold hover:bg-marigold/90 transition-all shadow-lg flex items-center gap-2"
                         >
                             <ArrowLeft className="w-5 h-5" />
-                            Browse Chadawas
+                            {t('chadawa_detail.browse_offerings')}
                         </button>
                         {error && (
                             <button
@@ -297,7 +299,7 @@ export default function ChadawaDetail() {
                                 className="bg-sindoor text-white px-6 py-3 rounded-xl font-bold hover:bg-sindoor/90 transition-all shadow-lg flex items-center gap-2"
                             >
                                 <RefreshCw className="w-5 h-5" />
-                                Try Again
+                                {t('chadawa_detail.try_again')}
                             </button>
                         )}
                     </div>
@@ -308,26 +310,36 @@ export default function ChadawaDetail() {
 
     const { chadawa, items, benefits, reviews, temples, gallery } = data;
 
+    // Localized fields mapping
+    const getLocalizedField = (obj, field) => {
+        if (!obj) return "";
+        const hiField = `${field}_hi`;
+        return (language === 'hi' && obj[hiField]) ? obj[hiField] : obj[field];
+    };
+
+    const currentTitle = getLocalizedField(chadawa, 'title');
+    const currentDescription = getLocalizedField(chadawa, 'description');
+
     // Handle Share Functionality
     const handleShare = async () => {
         const shareData = {
-            title: chadawa.title,
-            text: `Check out this divine offering: ${chadawa.title}`,
+            title: currentTitle,
+            text: `Check out this divine offering: ${currentTitle}`,
             url: window.location.href
         };
 
         try {
             if (navigator.share) {
                 await navigator.share(shareData);
-                showToast('Shared successfully!', 'success');
+                showToast(t('chadawa_detail.shared_success'), 'success');
             } else {
                 await navigator.clipboard.writeText(window.location.href);
-                showToast('Link copied to clipboard!', 'success');
+                showToast(t('chadawa_detail.link_copied'), 'success');
             }
         } catch (err) {
             if (err.name !== 'AbortError') {
                 console.error('Error sharing:', err);
-                showToast('Failed to share', 'error');
+                showToast(t('chadawa_detail.shared_error'), 'error');
             }
         }
     };
@@ -344,13 +356,21 @@ export default function ChadawaDetail() {
 
     const handleOffering = () => {
         if (selectedItems.length === 0) {
-            toast.error("Please select at least one offering item.");
+            toast.error(t('chadawa_detail.select_warning'));
             return;
         }
         const totalAmount = selectedItems.reduce((sum, item) => sum + Number(item.price), 0);
-        toast.success(`Proceeding to offer ${selectedItems.length} items for ₹${totalAmount.toLocaleString()}`);
-        // Implementation for checkout navigation would go here
-        // navigate('/checkout', { state: { type: 'chadawa', items: selectedItems, total: totalAmount } })
+        
+        // Navigate to booking checkout page with chadawa data
+        navigate('/booking-checkout', {
+            state: {
+                type: 'chadawa',
+                chadawa: chadawa,
+                selectedItems: selectedItems,
+                totalPrice: totalAmount,
+                temple_id: temples && temples.length > 0 ? temples[0].id : null
+            }
+        });
     };
 
     const nextSlide = () => {
@@ -363,7 +383,7 @@ export default function ChadawaDetail() {
 
     const handleAddToWishlist = async () => {
         if (selectedItems.length === 0) {
-            showToast("Please select at least one offering item.", 'warning');
+            showToast(t('chadawa_detail.select_warning'), 'warning');
             return;
         }
 
@@ -374,9 +394,9 @@ export default function ChadawaDetail() {
         });
 
         if (response.success) {
-            showToast("Saved to Wishlist successfully!", 'success');
+            showToast(t('chadawa_detail.wishlist_success'), 'success');
         } else {
-            showToast("Failed to save to Wishlist", 'error');
+            showToast(t('chadawa_detail.wishlist_error'), 'error');
         }
     };
 
@@ -385,28 +405,26 @@ export default function ChadawaDetail() {
             {/* Decorative Toran Border */}
             <div className="hidden md:block toran-border mb-8"></div>
 
-            {/* Removed legacy custom toast display as react-hot-toast is global */}
-
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* LEARNING: Breadcrumb Navigation for better UX */}
+                {/* Breadcrumb Navigation */}
                 <div className="py-4 text-sm text-stone-500 font-bold tracking-widest uppercase mb-6 flex items-center gap-2">
-                    <Link to="/" className="hover:text-sindoor transition-colors">Home</Link>
+                    <Link to="/" className="hover:text-sindoor transition-colors">{t('nav.home')}</Link>
                     <span className="text-marigold">/</span>
-                    <Link to="/chadawas" className="hover:text-sindoor transition-colors">Chadawas</Link>
+                    <Link to="/chadawas" className="hover:text-sindoor transition-colors">{t('nav.offerings')}</Link>
                     <span className="text-marigold">/</span>
-                    <span className="text-sindoor truncate max-w-xs">{chadawa.title}</span>
+                    <span className="text-sindoor truncate max-w-xs">{currentTitle}</span>
                 </div>
 
-                {/* Back Button - Mobile Friendly */}
+                {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
                     className="mb-6 flex items-center gap-2 text-sindoor hover:text-marigold transition-colors font-bold group"
                 >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Back
+                    {t('chadawa_detail.back')}
                 </button>
 
-                {/* LEARNING: Hero Section with Heritage Design */}
+                {/* Hero Section */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-[3rem] overflow-hidden shadow-2xl border-b-4 border-marigold mb-12">
                     <div className="flex flex-col md:flex-row gap-8 p-6 md:p-10">
                         {/* Image : Left Side */}
@@ -415,13 +433,13 @@ export default function ChadawaDetail() {
                                 <HeroSlideshow
                                     gallery={gallery}
                                     mainImage={chadawa.image}
-                                    title={chadawa.title}
+                                    title={currentTitle}
                                     onShare={handleShare}
                                 />
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center text-stone-400">
                                     <MdVolunteerActivism className="text-6xl mb-2" />
-                                    <p className="text-sm">No Image Available</p>
+                                    <p className="text-sm">{t('chadawa_detail.no_image')}</p>
                                 </div>
                             )}
 
@@ -433,10 +451,10 @@ export default function ChadawaDetail() {
                             <div>
                                 <h1 className="text-3xl md:text-5xl text-sindoor mb-4 font-serif flex items-center gap-3">
                                     <MdVolunteerActivism className="text-marigold text-4xl md:text-5xl" />
-                                    {chadawa.title}
+                                    {currentTitle}
                                 </h1>
                                 <p className="text-stone-700 leading-relaxed text-base md:text-lg font-sans">
-                                    {chadawa.description}
+                                    {currentDescription}
                                 </p>
                             </div>
 
@@ -445,52 +463,42 @@ export default function ChadawaDetail() {
                                 <div>
                                     <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                                         <MdTempleHindu className="text-marigold text-sm" />
-                                        AVAILABLE AT TEMPLE
+                                        {t('chadawa_detail.available_at')}
                                     </h3>
                                     <div className="flex flex-wrap gap-3">
-                                        {temples.map((t) => (
-                                            // LEARNING: Using slug for temple navigation
+                                        {temples.map((t_item) => (
                                             <div
-                                                key={t.id}
+                                                key={t_item.id}
                                                 className="flex items-center gap-3 bg-paper-bg border-2 border-marigold/20 rounded-xl p-3 pr-5 hover:bg-white hover:border-marigold hover:shadow-lg transition-all cursor-pointer group"
-                                                onClick={() => navigate(`/temples/${generatePureSlug(t.title)}`, {
-                                                    state: { id: t.id }
+                                                onClick={() => navigate(`/temples/${generatePureSlug(t_item.title)}`, {
+                                                    state: { id: t_item.id }
                                                 })}
                                             >
                                                 <div className="w-10 h-10 rounded-full bg-marigold/20 flex items-center justify-center overflow-hidden border-2 border-marigold/30">
-                                                    {/* Start of temple image logic - if available, otherwise fallback */}
-                                                    {t.image ? (
-                                                        <img src={getAssetUrl(t.image)} alt={t.title} className="w-full h-full object-cover" />
+                                                    {t_item.image ? (
+                                                        <img src={getAssetUrl(t_item.image)} alt={getLocalizedField(t_item, 'title')} className="w-full h-full object-cover" />
                                                     ) : (
                                                         <MdTempleHindu className="text-marigold text-lg" />
                                                     )}
                                                 </div>
-                                                <span className="font-bold text-stone-800 text-sm group-hover:text-sindoor transition-colors">{t.title}</span>
+                                                <span className="font-bold text-stone-800 text-sm group-hover:text-sindoor transition-colors">{getLocalizedField(t_item, 'title')}</span>
                                                 <ArrowRight className="text-stone-400 group-hover:text-marigold transition-colors w-4 h-4" />
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
-
-                            {/* Decorative Divider */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <div className="garland-decoration"></div>
-                                <div className="garland-decoration"></div>
-                                <div className="garland-decoration"></div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-16">
-
                     {/* LEFT: Selection */}
                     <div className="lg:col-span-2 space-y-8">
                         <div>
                             <h2 className="text-2xl md:text-3xl text-sindoor mb-6 flex items-center font-serif">
                                 <span className="bg-sindoor text-white w-10 h-10 rounded-full flex items-center justify-center text-lg mr-4 shadow-lg">1</span>
-                                Select Your Offering
+                                {t('chadawa_detail.select_offering')}
                             </h2>
 
                             <div className="space-y-4">
@@ -511,8 +519,8 @@ export default function ChadawaDetail() {
                                                         {isSelected && <Check className="text-white w-4 h-4" />}
                                                     </div>
                                                     <div>
-                                                        <h3 className="font-bold text-stone-900 text-lg">{item.title}</h3>
-                                                        <p className="text-stone-500 text-sm">{item.description}</p>
+                                                        <h3 className="font-bold text-stone-900 text-lg">{getLocalizedField(item, 'title')}</h3>
+                                                        <p className="text-stone-500 text-sm">{getLocalizedField(item, 'description')}</p>
                                                     </div>
                                                 </div>
                                                 <div className={`text-xl font-bold transition-colors ${isSelected ? 'text-sindoor' : 'text-stone-700'}`}>
@@ -526,9 +534,9 @@ export default function ChadawaDetail() {
                                         <div className="w-16 h-16 bg-paper-bg rounded-full flex items-center justify-center mx-auto mb-4 text-sindoor text-2xl border border-marigold/20">
                                             <Package className="w-8 h-8" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">No Items Listed</h3>
+                                        <h3 className="text-xl font-bold text-sindoor mb-2 font-serif">{t('chadawa_detail.no_items')}</h3>
                                         <p className="text-stone-500 font-sans italic">
-                                            No specific items listed for this offering yet.
+                                            {t('chadawa_detail.no_items_desc')}
                                         </p>
                                     </div>
                                 )}
@@ -540,25 +548,25 @@ export default function ChadawaDetail() {
                             <div className="pt-8 border-t-2 border-marigold/20">
                                 <h2 className="text-2xl md:text-3xl text-sindoor mb-6 font-serif flex items-center gap-3">
                                     <MessageSquareQuote className="text-marigold w-8 h-8" />
-                                    Devotee Experiences
+                                    {t('chadawa_detail.devotee_experiences')}
                                 </h2>
                                 <div className="grid gap-4">
-                                    {reviews.map((r, idx) => (
+                                    {reviews.map((r_rev, idx) => (
                                         <div key={idx} className="bg-white/80 p-5 rounded-2xl shadow-sm border border-marigold/20 hover:shadow-md transition-all">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-10 h-10 rounded-full bg-sindoor/10 flex items-center justify-center text-sindoor font-bold text-sm border-2 border-sindoor/20">
-                                                    {r.user_name?.[0] || 'D'}
+                                                    {r_rev.user_name?.[0] || 'D'}
                                                 </div>
                                                 <div className="flex-1">
-                                                    <span className="font-bold text-stone-800">{r.user_name || 'Devotee'}</span>
+                                                    <span className="font-bold text-stone-800">{r_rev.user_name || 'Devotee'}</span>
                                                     <div className="flex items-center gap-1 text-marigold">
-                                                        {[...Array(r.rating || 5)].map((_, i) => (
+                                                        {[...Array(r_rev.rating || 5)].map((_, i) => (
                                                             <Star key={i} className="w-4 h-4 fill-current" />
                                                         ))}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p className="text-stone-600 leading-relaxed italic">"{r.comment}"</p>
+                                            <p className="text-stone-600 leading-relaxed italic">"{r_rev.comment}"</p>
                                         </div>
                                     ))}
                                 </div>
@@ -573,7 +581,7 @@ export default function ChadawaDetail() {
                             <div className="bg-linear-to-r from-sindoor to-sindoor/90 text-white p-6">
                                 <h3 className="font-bold text-xl font-serif flex items-center gap-2">
                                     <Receipt className="w-6 h-6" />
-                                    Offering Summary
+                                    {t('chadawa_detail.offering_summary')}
                                 </h3>
                             </div>
 
@@ -582,14 +590,14 @@ export default function ChadawaDetail() {
                                 <div className="mb-6">
                                     <p className="text-xs text-stone-500 uppercase font-bold tracking-widest mb-3 flex items-center gap-2">
                                         <CheckCircle className="text-marigold w-4 h-4" />
-                                        Selected Items ({selectedItems.length})
+                                        {t('chadawa_detail.selected_items')} ({selectedItems.length})
                                     </p>
 
                                     {selectedItems.length > 0 ? (
                                         <div className="space-y-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-marigold/20">
                                             {selectedItems.map((item, idx) => (
                                                 <div key={idx} className="flex justify-between items-start bg-paper-bg p-3 rounded-xl border border-marigold/20">
-                                                    <span className="font-medium text-stone-900 text-sm">{item.title}</span>
+                                                    <span className="font-medium text-stone-900 text-sm">{getLocalizedField(item, 'title')}</span>
                                                     <div className="flex items-center gap-2">
                                                         <span className="font-bold text-sindoor text-sm">₹{Number(item.price).toLocaleString()}</span>
                                                         <button
@@ -599,21 +607,23 @@ export default function ChadawaDetail() {
                                                             }}
                                                             className="text-stone-400 hover:text-red-500"
                                                         >
-                                                            <span className="material-symbols-outlined text-sm">close</span>
+                                                            <X className="w-4 h-4" />
                                                         </button>
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-stone-400 italic text-sm p-4 bg-stone-50 rounded-xl border border-dashed border-stone-200">Please select offerings from the list</p>
+                                        <p className="text-stone-400 italic text-sm p-4 bg-stone-50 rounded-xl border border-dashed border-stone-200">
+                                            {t('chadawa_detail.select_items')}
+                                        </p>
                                     )}
                                 </div>
 
                                 {/* Total */}
                                 <div className="pt-4 border-t-2 border-dashed border-marigold/30 mb-6">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-lg font-bold text-stone-900">Total Contribution</span>
+                                        <span className="text-lg font-bold text-stone-900">{t('chadawa_detail.total_contribution')}</span>
                                         <span className="text-3xl font-bold text-sindoor">
                                             ₹{selectedItems.reduce((sum, i) => sum + Number(i.price), 0).toLocaleString()}
                                         </span>
@@ -639,7 +649,7 @@ export default function ChadawaDetail() {
                                                 : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
                                     >
                                         {selectedItems.length > 0 ? <MdVolunteerActivism className="w-6 h-6" /> : <MousePointerClick className="w-6 h-6" />}
-                                        {selectedItems.length > 0 ? "Make Offering Now" : "Select Items"}
+                                        {selectedItems.length > 0 ? t('chadawa_detail.make_offering_now') : t('chadawa_detail.select_items')}
                                     </button>
                                 </div>
 
@@ -648,7 +658,7 @@ export default function ChadawaDetail() {
                                     <div className="flex items-start gap-3">
                                         <ShieldCheck className="text-green-600 w-5 h-5" />
                                         <p className="text-xs text-green-800 leading-relaxed">
-                                            Your offering will be processed securely. You will receive a confirmation and digital receipt via email.
+                                            {t('chadawa_detail.trust_badge_desc')}
                                         </p>
                                     </div>
                                 </div>
@@ -663,7 +673,7 @@ export default function ChadawaDetail() {
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-3xl md:text-4xl text-sindoor font-serif flex items-center gap-3">
                                 <Flower className="text-marigold w-10 h-10" />
-                                Spiritual Benefits
+                                {t('chadawa_detail.spiritual_benefits')}
                             </h2>
                             <div className="flex gap-2">
                                 <button
@@ -688,9 +698,6 @@ export default function ChadawaDetail() {
                                 className="flex transition-transform duration-500 ease-in-out"
                                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                             >
-                                {/* LEARNING: We chunk benefits into slides
-                                    To simplify sliding logic with translateX(-100% * slide), we group them into pages.
-                                */}
                                 {Array.from({ length: Math.ceil(benefits.length / itemsPerSlide) }).map((_, slideIndex) => (
                                     <div key={slideIndex} className="min-w-full grid grid-cols-1 md:grid-cols-3 gap-6 px-1">
                                         {benefits.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((b, idx) => (
@@ -702,10 +709,10 @@ export default function ChadawaDetail() {
                                                     <CheckCircle className="w-8 h-8" />
                                                 </div>
                                                 <h3 className="text-xl font-bold text-stone-900 mb-3 group-hover:text-white transition-colors font-serif">
-                                                    {b.title}
+                                                    {getLocalizedField(b, 'title')}
                                                 </h3>
                                                 <p className="text-stone-600 leading-relaxed group-hover:text-white/90 transition-colors">
-                                                    {b.description}
+                                                    {getLocalizedField(b, 'description')}
                                                 </p>
                                             </div>
                                         ))}

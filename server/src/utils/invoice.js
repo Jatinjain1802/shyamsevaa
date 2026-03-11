@@ -39,10 +39,10 @@ export const generateInvoicePDF = async (orderId, userId) => {
     }
 
     // Company Info
-    doc.fontSize(22).font('Helvetica-Bold').fillColor('#800000').text('Shyam Sevaa', 130, 30);
+    doc.fontSize(22).font('Helvetica-Bold').fillColor('#800000').text('Shyampuja', 130, 30);
     doc.fontSize(10).fillColor('#666666')
        .text('The Sacred Spiritual Connection', 130, 55)
-       .text('Email: support@shyamsevaa.com | Web: www.shyamsevaa.com', 130, 70);
+       .text('Email: [info@shyampuja.com] | Web: www.shyampuja.com', 130, 70);
 
     // Invoice Title
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#333333').text('TAX INVOICE', 400, 30, { align: 'right' });
@@ -162,7 +162,7 @@ export const generateInvoicePDF = async (orderId, userId) => {
     currentY += 80;
     doc.moveTo(50, currentY).lineTo(550, currentY).lineWidth(1).strokeColor('#800000').stroke();
     doc.font('Helvetica-Oblique').fontSize(9).fillColor('#888888');
-    doc.text('Thank you for choosing Shyam Sevaa. May the divine blessings be with you always.', 50, currentY + 15, { align: 'center' });
+    doc.text('Thank you for choosing Shyampuja. May the divine blessings be with you always.', 50, currentY + 15, { align: 'center' });
     doc.text('This is a computer-generated document. No signature is required.', 50, currentY + 30, { align: 'center' });
 
     doc.end();

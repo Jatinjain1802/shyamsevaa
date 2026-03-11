@@ -12,14 +12,23 @@
     "no_data": "No Information Available",
     "view_all": "View All",
     "showing": "Showing",
-    "of": "of"
+    "of": "of",
+    "all": "All",
+    "items": "Items",
+    "sacred_item": "Sacred Item",
+    "price": "Price",
+    "sold_out": "Sold Out",
+    "order_now": "Order Now",
+    "loading_more": "Loading more sacred items...",
+    "clear_all_filters": "Clear all filters",
+    "out_of_stock": "Out of Stock"
   },
-
   "nav": {
     "home": "Home",
     "temples": "Temples",
     "poojas": "Poojas",
     "chadawas": "Chadawas",
+    "offerings": "Offerings",
     "about": "About Us",
     "blog": "Blog",
     "products": "Products",
@@ -56,16 +65,9 @@
     "refunds": "Refunds"
   },
   "services": {
-    "pandit": "Online Pandit Booking",
+    "pandit": "Online Pooja Booking",
     "epuja": "Temple E-Puja",
     "vastu": "Vastu & Astrology"
-  },
-  "temple_detail": {
-    "location": "Location",
-    "deity": "Main Deity",
-    "timings": "Temple Timings",
-    "history": "History",
-    "gallery": "Gallery"
   },
   "panchang": {
     "title": "Dainik Panchang",
@@ -116,7 +118,6 @@
     "view_calendar": "View Calendar",
     "solar_lunar_flow": "Solar & Lunar Flow"
   },
-
   "home": {
     "hero_view_puja": "View Puja",
     "explore_poojas": "EXPLORE POOJAS",
@@ -165,10 +166,10 @@
     "subtitle": "Bring home the divine essence with our curated collection of authentic puja items and spiritual essentials.",
     "search_placeholder": "Search sacred items...",
     "no_results": "No items found",
+    "no_results_desc": "We couldn't find any sacred items matching \"{{query}}\".",
     "no_available": "No Products Available",
     "updating_listing": "We are currently updating our sacred store. Please check back soon."
   },
-
   "about": {
     "title": "About Us",
     "title_part1": "About",
@@ -284,6 +285,73 @@
     "dakshina_from": "Dakshina from",
     "revered_ritual": "Most Revered Ritual",
     "remove": "REMOVE",
-    "add_seva": "ADD SEVA"
+    "add_seva": "ADD SEVA",
+    "wait_next_muhurat": "WAIT FOR NEXT MUHURAT"
+  },
+  "temple_detail": {
+    "location": "Location",
+    "deity": "Main Deity",
+    "timings": "Temple Timings",
+    "history": "History",
+    "gallery": "Gallery",
+    "sacred_destination": "Sacred Destination",
+    "sacred_offerings": "Sacred Offerings",
+    "no_poojas": "No Poojas Available",
+    "no_poojas_desc": "There are currently no poojas available for this temple.",
+    "no_chadawas": "No Chadawas Available",
+    "no_chadawas_desc": "There are currently no chadawas available for this temple.",
+    "view_details": "View Details",
+    "make_offering": "Make Offering",
+    "temple_not_found": "Temple Not Found",
+    "not_found_desc": "The temple you're looking for doesn't exist or has been removed.",
+    "browse_temples": "Browse Temples"
+  },
+  "chadawa_detail": {
+    "select_offering": "Select Your Offering",
+    "offering_summary": "Offering Summary",
+    "selected_items": "Selected Items",
+    "total_contribution": "Total Contribution",
+    "make_offering_now": "Make Offering Now",
+    "select_items": "Select Items",
+    "spiritual_benefits": "Spiritual Benefits",
+    "devotee_experiences": "Devotee Experiences",
+    "available_at": "AVAILABLE AT TEMPLE",
+    "no_items": "No Items Listed",
+    "no_items_desc": "No specific items listed for this offering yet.",
+    "not_found": "Offering Not Found",
+    "not_found_desc": "The offering you're looking for doesn't exist or has been removed.",
+    "browse_offerings": "Browse Offerings",
+    "trust_badge_desc": "Your offering will be processed securely. You will receive a confirmation and digital receipt via email.",
+    "select_warning": "Please select at least one offering item.",
+    "wishlist_success": "Saved to Wishlist successfully!",
+    "wishlist_error": "Failed to save to Wishlist",
+    "shared_success": "Shared successfully!",
+    "link_copied": "Link copied to clipboard!",
+    "shared_error": "Failed to share",
+    "offering_proceed": "Proceeding to offer {{count}} items for ₹{{total}}",
+    "no_image": "No Image Available",
+    "back": "Back",
+    "try_again": "Try Again"
+  },
+  "product_detail": {
+    "authentic_offering": "Pure & Authentic Offering",
+    "dakshina": "Exchangeable Dakshina",
+    "divine_savings": "Divine Savings",
+    "off": "OFF",
+    "sacred_essence": "Sacred Essence",
+    "essence_quote": "Every item in our sacred store is handpicked for its spiritual purity and authentic origin. We ensure that your tools of devotion are as divine as your prayers.",
+    "default_description_extension": "This sacred offering is more than just a product; it is a vehicle for your devotion, crafted according to Vedic standards to ensure that your rituals are performed with the highest level of purity and spiritual focus.",
+    "delivery_title": "Sacred Delivery",
+    "delivery_desc": "Ensured safe and spiritually clean handling for all divine items.",
+    "purity_title": "Vedic Purity",
+    "purity_desc": "Sourced directly from verified artisans and sacred regions.",
+    "quality_title": "Lab Tested",
+    "quality_desc": "Items meet the rigorous quality standards of ancient traditions.",
+    "return_title": "Grace Return",
+    "return_desc": "7-day easy returns if the item doesn't resonate with your spirit.",
+    "related_items": "Related Sacred Items",
+    "related_tagline": "Complete your divine collection",
+    "explore_sanctuary": "Explore Sanctuary",
+    "order": "Order"
   }
 }

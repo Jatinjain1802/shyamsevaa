@@ -15,7 +15,9 @@ import {
     FiX,
     FiMapPin,
     FiTag,
-    FiDownload
+    FiDownload,
+    FiChevronLeft,
+    FiChevronRight
 } from "react-icons/fi";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,6 +27,14 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [filterType, setFilterType] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalOrders, setTotalOrders] = useState(0);
+    const limit = 10;
 
     // Modal state
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -33,14 +43,38 @@ export default function Orders() {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [currentPage, filterType, filterStatus]);
+
+    // Handle search with debounce or manual trigger
+    // For now, let's just trigger on enter or via a button, or simple timeout
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (currentPage !== 1) {
+                setCurrentPage(1);
+            } else {
+                fetchOrders();
+            }
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
 
     const fetchOrders = async () => {
         try {
             setLoading(true);
-            const res = await api.get("/admin/orders");
+            const res = await api.get("/admin/orders", {
+                params: {
+                    page: currentPage,
+                    limit: limit,
+                    search: searchTerm,
+                    type: filterType,
+                    status: filterStatus
+                }
+            });
             if (res.data.success) {
                 setOrders(res.data.data);
+                setTotalPages(res.data.totalPages);
+                setTotalOrders(res.data.total);
             }
         } catch (error) {
             console.error("Failed to fetch admin orders", error);
@@ -91,6 +125,21 @@ export default function Orders() {
         );
     };
 
+    const OrderTypeBadge = ({ type }) => {
+        const types = {
+            pooja_variant: { label: "Pooja", color: "bg-orange-100 text-orange-700 border-orange-200" },
+            chadawa_item: { label: "Chadawa", color: "bg-purple-100 text-purple-700 border-purple-200" },
+            product: { label: "Product", color: "bg-indigo-100 text-indigo-700 border-indigo-200" }
+        };
+        const config = types[type] || { label: type?.split('_')[0]?.toUpperCase() || "N/A", color: "bg-gray-100 text-gray-700 border-gray-200" };
+
+        return (
+            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${config.color}`}>
+                {config.label}
+            </span>
+        );
+    };
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -99,13 +148,7 @@ export default function Orders() {
         }).format(amount);
     };
 
-    const filteredOrders = orders.filter(o =>
-        o.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    if (loading) {
+    if (loading && orders.length === 0) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
                 <Loader2 className="w-10 h-10 text-sindoor animate-spin" />
@@ -116,7 +159,7 @@ export default function Orders() {
     return (
         <div className="space-y-6 animate-in fade-in duration-500 relative">
             {/* Header Section */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-stone-200 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-heritage-dark flex items-center gap-3 font-serif">
                         <FiShoppingBag className="text-sindoor" />
@@ -124,30 +167,65 @@ export default function Orders() {
                     </h1>
                     <p className="text-stone-500 mt-1 text-sm italic">View and manage all financial transactions and orders.</p>
                 </div>
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
+                
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                    {/* Filter Type */}
+                    <div className="relative w-full sm:w-40">
+                        <select 
+                            className="w-full pl-4 pr-10 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-marigold appearance-none transition-all cursor-pointer font-medium text-stone-600"
+                            value={filterType}
+                            onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}
+                        >
+                            <option value="">All Types</option>
+                            <option value="pooja_variant">Pooja</option>
+                            <option value="chadawa_item">Chadawa</option>
+                            <option value="product">Product</option>
+                        </select>
+                        <FiFilter className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                    </div>
+
+                    {/* Filter Status */}
+                    <div className="relative w-full sm:w-40">
+                        <select 
+                            className="w-full pl-4 pr-10 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-marigold appearance-none transition-all cursor-pointer font-medium text-stone-600"
+                            value={filterStatus}
+                            onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
+                        >
+                            <option value="">All Status</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <FiCheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                    </div>
+
+                    {/* Search Search */}
+                    <div className="relative flex-1 xl:w-64 w-full">
                         <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                         <input
                             type="text"
-                            placeholder="Search order or email..."
+                            placeholder="Search order, name or email..."
                             className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-marigold transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <button className="p-2.5 bg-white border border-stone-200 rounded-xl text-stone-600 hover:bg-stone-50 transition-colors">
-                        <FiFilter />
-                    </button>
                 </div>
             </div>
 
             {/* Orders Table */}
-            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden relative">
+                {loading && (
+                    <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-10">
+                        <Loader2 className="w-8 h-8 text-sindoor animate-spin" />
+                    </div>
+                )}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-stone-50 border-b border-stone-100">
                                 <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Order Info</th>
+                                <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Type</th>
                                 <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Customer</th>
                                 <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Transaction</th>
                                 <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Payment Status</th>
@@ -155,7 +233,7 @@ export default function Orders() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-stone-50">
-                            {filteredOrders.length > 0 ? filteredOrders.map((order) => (
+                            {orders.length > 0 ? orders.map((order) => (
                                 <tr key={order.id} className="hover:bg-linear-to-r hover:from-white hover:to-haldi/5 transition-colors group">
                                     <td className="px-6 py-5">
                                         <div className="text-sm font-bold text-heritage-dark tracking-wide">{order.order_number}</div>
@@ -167,6 +245,9 @@ export default function Orders() {
                                                 year: 'numeric'
                                             })}
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <OrderTypeBadge type={order.order_type} />
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-3">
@@ -191,31 +272,31 @@ export default function Orders() {
                                         <StatusBadge status={order.payment_status} />
                                     </td>
                                     <td className="px-6 py-5">
-                                        <div className="flex items-center justify-center gap-3">
+                                        <div className="flex items-center justify-center gap-2">
                                             {order.invoice_path && (
                                                 <a
                                                     href={getAssetUrl(order.invoice_path)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-2 text-stone-500 hover:text-marigold hover:bg-marigold/10 rounded-xl transition-all"
+                                                    className="p-2 text-stone-400 hover:text-marigold hover:bg-marigold/10 rounded-xl transition-all"
                                                     title="Download Invoice"
                                                 >
-                                                    <FiDownload className="w-5 h-5" />
+                                                    <FiDownload className="w-4 h-4" />
                                                 </a>
                                             )}
                                             <button
                                                 onClick={() => fetchOrderDetails(order.id)}
-                                                className="p-2 text-stone-500 hover:text-sindoor hover:bg-sindoor/10 rounded-xl transition-all"
+                                                className="p-2 text-stone-400 hover:text-sindoor hover:bg-sindoor/10 rounded-xl transition-all"
                                                 title="View Details"
                                             >
-                                                <FiEye className="w-5 h-5" />
+                                                <FiEye className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-20 text-center text-stone-400 italic">
+                                    <td colSpan="6" className="px-6 py-20 text-center text-stone-400 italic">
                                         No orders found matching your search.
                                     </td>
                                 </tr>
@@ -223,6 +304,58 @@ export default function Orders() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="px-6 py-4 bg-stone-50/50 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-xs text-stone-500 font-medium">
+                            Showing <span className="font-bold text-heritage-dark">{(currentPage-1)*limit + 1}</span> to <span className="font-bold text-heritage-dark">{Math.min(currentPage*limit, totalOrders)}</span> of <span className="font-bold text-heritage-dark">{totalOrders}</span> orders
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                disabled={currentPage === 1}
+                                className="p-2 rounded-xl border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                                <FiChevronLeft className="w-5 h-5" />
+                            </button>
+                            
+                            <div className="flex items-center gap-1">
+                                {[...Array(totalPages)].map((_, i) => {
+                                    const pageNum = i + 1;
+                                    // Logic to show only few page numbers if totalPages is large
+                                    if (totalPages > 5 && Math.abs(currentPage - pageNum) > 2 && pageNum !== 1 && pageNum !== totalPages) {
+                                        if (Math.abs(currentPage - pageNum) === 3) return <span key={pageNum} className="px-1 text-stone-400">...</span>;
+                                        return null;
+                                    }
+                                    
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            className={`w-9 h-9 rounded-xl text-xs font-bold transition-all border ${
+                                                currentPage === pageNum 
+                                                ? "bg-marigold border-marigold text-white shadow-lg shadow-marigold/20" 
+                                                : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
+                                            }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <button 
+                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                disabled={currentPage === totalPages}
+                                className="p-2 rounded-xl border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                                <FiChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Order Details Modal */}
@@ -281,8 +414,6 @@ export default function Orders() {
                                                     )}
                                                     {selectedOrder.order.communication_mobile && (
                                                         <div className="flex items-start gap-2">
-                                                            <FiMapPin className="w-4 h-4 text-stone-400 mt-0.5 shrink-0 bg-transparent rotate-90" style={{ visibility: 'hidden' }} />
-                                                            {/* Hidden icon just for alignment, let's use a real one */}
                                                             <FiUser className="w-4 h-4 text-stone-400 mt-0.5 shrink-0 opacity-0" />
                                                             <p className="text-xs font-medium text-stone-600 -ml-6 border border-stone-200 rounded px-2 bg-white">📱 +91 {selectedOrder.order.communication_mobile}</p>
                                                         </div>

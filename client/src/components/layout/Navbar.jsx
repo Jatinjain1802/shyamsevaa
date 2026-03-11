@@ -89,7 +89,7 @@ export default function Navbar() {
   const navLinks = [
     { name: t('nav.temples'), path: "/temples" },
     { name: t('nav.poojas'), path: "/poojas" },
-    { name: t('nav.chadawas'), path: "/chadawas" },
+    { name: t('nav.offerings'), path: "/chadawas" },
     { name: t('nav.products'), path: "/products" },
   ];
 
