@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext";
 import { getAssetUrl } from "../../utils/assets";
 import {
@@ -7,28 +7,20 @@ import {
     Frown,
     ArrowLeft,
     MapPin,
-    Plus,
-    Minus,
     Trash2,
     PlusCircle,
-    Receipt,
-    ArrowRight,
     ShieldCheck,
-    Truck,
-    Headphones,
-    Video,
     Sparkles
 } from "lucide-react";
 import { MdSelfImprovement, MdVolunteerActivism } from "react-icons/md";
+import { slugify, generateSlug } from "../../utils/slugify";
 
 export default function Wishlist() {
     const navigate = useNavigate();
     const {
         wishlistItems,
         loading,
-        updateItemQuantity,
         removeItem,
-        calculateTotal,
         fetchWishlist,
     } = useWishlist();
 
@@ -38,11 +30,6 @@ export default function Wishlist() {
         window.scrollTo(0, 0);
         fetchWishlist();
     }, [fetchWishlist]);
-
-    const handleQuantityChange = async (itemId, newQty) => {
-        if (newQty < 1) return;
-        await updateItemQuantity(itemId, newQty);
-    };
 
     const handleRemove = async (itemId) => {
         setRemoving(itemId);
@@ -73,6 +60,20 @@ export default function Wishlist() {
                 return <Sparkles className="text-2xl text-marigold" />;
             default:
                 return <Sparkles className="text-2xl text-marigold" />;
+        }
+    };
+
+    const getItemLink = (item) => {
+        const title = item.name || "item";
+        switch (item.product_type) {
+            case "pooja_variant":
+                return `/poojas/${generateSlug(title, item.pooja_id)}`;
+            case "chadawa_item":
+                return `/chadawas/${generateSlug(title, item.chadawa_id)}`;
+            case "product":
+                return `/product/${generateSlug(title, item.product_id)}`;
+            default:
+                return "#";
         }
     };
 
@@ -139,7 +140,7 @@ export default function Wishlist() {
     return (
         <div className="min-h-screen bg-paper-bg pb-32">
             <div className="bg-white border-b border-stone-100 sticky top-0 z-40">
-                <div className="max-w-[1280px] mx-auto px-6 py-6">
+                <div className="max-w-4xl mx-auto px-6 py-6 font-serif">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <button
@@ -164,223 +165,112 @@ export default function Wishlist() {
                 </div>
             </div>
 
-            <div className="max-w-[1280px] mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-4">
-                        {wishlistItems.map((item) => (
-                            <div
-                                key={item.id}
-                                className={`bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all ${removing === item.id ? "opacity-50 scale-98" : ""
-                                    }`}
-                            >
-                                <div className="p-6 border-b border-stone-50">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-14 h-14 bg-marigold/10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border border-stone-100">
-                                            {item.image ? (
-                                                <img
-                                                    src={getAssetUrl(item.image)}
-                                                    alt={item.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                getProductTypeIcon(item.product_type)
-                                            )}
-                                        </div>
+            <div className="max-w-3xl mx-auto px-6 py-8">
+                <div className="space-y-6">
+                    {wishlistItems.map((item) => (
+                        <div
+                            key={item.id}
+                            className={`bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all hover:shadow-md ${removing === item.id ? "opacity-50 scale-98" : ""
+                                }`}
+                        >
+                            <div className="p-6 border-b border-stone-50">
+                                <Link
+                                    to={getItemLink(item)}
+                                    state={{ id: item.pooja_id || item.chadawa_id || item.product_id }}
+                                    className="flex flex-col sm:flex-row items-start sm:items-center gap-6 group/item"
+                                >
+                                    <div className="w-full sm:w-24 h-48 sm:h-24 bg-marigold/10 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden border border-stone-100 shadow-inner group-hover/item:border-marigold/50 transition-colors">
+                                        {item.image ? (
+                                            <img
+                                                src={getAssetUrl(item.image)}
+                                                alt={item.name}
+                                                className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500"
+                                            />
+                                        ) : (
+                                            <div className="p-4 group-hover/item:scale-110 transition-transform">
+                                                {getProductTypeIcon(item.product_type)}
+                                            </div>
+                                        )}
+                                    </div>
 
-                                        <div className="grow">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div>
-                                                    <span className="text-xs text-marigold font-bold uppercase tracking-wider">
+                                    <div className="grow w-full">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] bg-marigold/10 text-marigold font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded">
                                                         {getProductTypeLabel(item.product_type)}
                                                     </span>
-                                                    <h3 className="text-lg font-bold text-heritage-dark mt-1">
-                                                        {item.name || (item.product_type === "pooja_variant"
-                                                            ? `Pooja Variant #${item.pooja_variant_id}`
-                                                            : item.product_type === "chadawa_item"
-                                                                ? `Chadawa Item #${item.chadawa_item_id}`
-                                                                : `Product #${item.product_id}`)}
-                                                    </h3>
-                                                    {item.temple_id && (
-                                                        <p className="text-sm text-stone-500 flex items-center gap-1 mt-1">
-                                                            <MapPin className="w-4 h-4" />
-                                                            Temple #{item.temple_id}
-                                                        </p>
-                                                    )}
                                                 </div>
+                                                <h3 className="text-xl font-bold text-heritage-dark leading-tight group-hover/item:text-sindoor transition-colors">
+                                                    {item.name || (item.product_type === "pooja_variant"
+                                                        ? `Pooja Variant #${item.pooja_variant_id}`
+                                                        : item.product_type === "chadawa_item"
+                                                            ? `Chadawa Item #${item.chadawa_item_id}`
+                                                            : `Product #${item.product_id}`)}
+                                                </h3>
+                                                {item.temple_id && (
+                                                    <div className="flex items-center gap-1.5 text-stone-400 text-xs font-medium">
+                                                        <MapPin className="w-3.5 h-3.5" />
+                                                        Divine Location ID: #{item.temple_id}
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                                <div className="text-right">
-                                                    <p className="text-2xl font-black text-sindoor">
-                                                        ₹{Number(item.base_price * (item.quantity || 1)).toLocaleString()}
-                                                    </p>
-                                                    <p className="text-xs text-stone-400">
-                                                        ₹{Number(item.base_price).toLocaleString()} × {item.quantity || 1}
-                                                    </p>
-                                                </div>
+                                            <div className="sm:text-right bg-paper-bg/50 sm:bg-transparent p-4 sm:p-0 rounded-xl border border-stone-100 sm:border-0 group-hover/item:border-marigold/20 transition-colors">
+                                                <p className="text-[10px] text-stone-400 uppercase font-bold tracking-widest mb-1">Base Price</p>
+                                                <p className="text-3xl font-black text-sindoor">
+                                                    ₹{Number(item.base_price).toLocaleString()}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="p-4 bg-stone-50/50 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-sm text-stone-500 font-medium">Qty:</span>
-                                        <div className="flex items-center bg-white rounded-lg border border-stone-200 overflow-hidden">
-                                            <button
-                                                onClick={() =>
-                                                    handleQuantityChange(item.id, (item.quantity || 1) - 1)
-                                                }
-                                                disabled={(item.quantity || 1) <= 1}
-                                                className="p-2 hover:bg-stone-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                            >
-                                                <Minus className="w-4 h-4" />
-                                            </button>
-                                            <span className="px-4 py-2 font-bold text-heritage-dark min-w-[40px] text-center">
-                                                {item.quantity || 1}
-                                            </span>
-                                            <button
-                                                onClick={() =>
-                                                    handleQuantityChange(item.id, (item.quantity || 1) + 1)
-                                                }
-                                                className="p-2 hover:bg-stone-100 transition-colors"
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        onClick={() => handleRemove(item.id)}
-                                        disabled={removing === item.id}
-                                        className="flex items-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                        <span className="text-sm font-medium hidden sm:inline">
-                                            Remove
-                                        </span>
-                                    </button>
-                                </div>
-
-                                {item.addons && item.addons.length > 0 && (
-                                    <div className="p-4 border-t border-stone-100 bg-haldi/5">
-                                        <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3">
-                                            Sacred Add-ons
-                                        </p>
-                                        <div className="space-y-2">
-                                            {item.addons.map((addon) => (
-                                                <div
-                                                    key={addon.id}
-                                                    className="flex items-center justify-between bg-white p-3 rounded-lg"
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <PlusCircle className="text-marigold w-5 h-5" />
-                                                        <span className="text-sm font-medium">
-                                                            {addon.title || `Addon #${addon.addon_id}`}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-sm text-stone-500">
-                                                            × {addon.quantity || 1}
-                                                        </span>
-                                                        <span className="font-bold text-sindoor">
-                                                            ₹{Number(addon.price * (addon.quantity || 1)).toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 sticky top-32">
-                            <div className="p-6 border-b border-stone-100">
-                                <h2 className="text-xl font-serif text-sindoor flex items-center gap-2">
-                                    <Receipt className="text-marigold w-6 h-6" />
-                                    Booking Summary
-                                </h2>
+                                </Link>
                             </div>
 
-                            <div className="p-6 space-y-4">
-                                <div className="flex justify-between text-stone-600">
-                                    <span>Subtotal ({wishlistItems.length} items)</span>
-                                    <span className="font-medium">
-                                        ₹{calculateTotal().toLocaleString()}
-                                    </span>
-                                </div>
-
-                                <div className="flex justify-between text-stone-600">
-                                    <span>Pandit Dakshina</span>
-                                    <span className="text-green-600 font-medium">Included</span>
-                                </div>
-
-                                <div className="flex justify-between text-stone-600">
-                                    <span>Prasad Delivery</span>
-                                    <span className="text-green-600 font-medium">Free</span>
-                                </div>
-
-                                <div className="h-px bg-stone-100"></div>
-
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold text-heritage-dark">
-                                        Total Dakshina
-                                    </span>
-                                    <span className="text-2xl font-black text-sindoor">
-                                        ₹{calculateTotal().toLocaleString()}
-                                    </span>
-                                </div>
-
+                            <div className="p-4 bg-stone-50/30 flex items-center justify-center sm:justify-end border-t border-stone-50">
                                 <button
-                                    onClick={() => navigate("/booking-checkout")}
-                                    className="w-full bg-sindoor text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all shadow-lg shadow-sindoor/20 mt-4"
+                                    onClick={() => handleRemove(item.id)}
+                                    disabled={removing === item.id}
+                                    className="w-full sm:w-auto flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 px-6 py-3 rounded-xl transition-all duration-300 font-bold text-sm border-2 border-transparent hover:border-red-100"
                                 >
-                                    Proceed to Booking
-                                    <ArrowRight className="w-5 h-5" />
+                                    {removing === item.id ? (
+                                        <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        <Trash2 className="w-4 h-4" />
+                                    )}
+                                    Remove from Wishlist
                                 </button>
+                            </div>
 
-                                <div className="grid grid-cols-2 gap-3 mt-6">
-                                    <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <ShieldCheck className="text-green-500 w-5 h-5" />
-                                        Secure Payment
-                                    </div>
-                                    <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <Truck className="text-marigold w-5 h-5" />
-                                        Prasad Delivery
-                                    </div>
-                                    <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <Headphones className="text-sindoor w-5 h-5" />
-                                        24/7 Support
-                                    </div>
-                                    <div className="flex items-center gap-2 text-stone-500 text-xs">
-                                        <Video className="text-haldi w-5 h-5" />
-                                        Live Darshan
+                            {item.addons && item.addons.length > 0 && (
+                                <div className="p-4 border-t border-stone-100 bg-haldi/5">
+                                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-3 px-2">
+                                        Sacred Add-ons
+                                    </p>
+                                    <div className="space-y-2">
+                                        {item.addons.map((addon) => (
+                                            <div
+                                                key={addon.id}
+                                                className="flex items-center justify-between bg-white/60 p-3 rounded-xl border border-stone-100/50"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <PlusCircle className="text-marigold w-4 h-4" />
+                                                    <span className="text-sm font-medium text-stone-700">
+                                                        {addon.title || `Addon #${addon.addon_id}`}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <span className="font-bold text-sindoor text-sm">
+                                                        ₹{Number(addon.price).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 lg:hidden z-50">
-                <div className="flex items-center justify-between gap-4">
-                    <div>
-                        <p className="text-xs text-stone-500 uppercase tracking-wider">
-                            Total
-                        </p>
-                        <p className="text-2xl font-black text-sindoor">
-                            ₹{calculateTotal().toLocaleString()}
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => navigate("/booking-checkout")}
-                        className="flex-1 bg-sindoor text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-sindoor/90 transition-all"
-                    >
-                        Book Now
-                        <ArrowRight className="w-5 h-5" />
-                    </button>
+                    ))}
                 </div>
             </div>
         </div>

@@ -7,6 +7,7 @@ import {
     updateCartItemQty,
     updateAddonQty,
     removeCartItem,
+    clearCart,
 } from "../controllers/cart.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
@@ -33,5 +34,8 @@ router.put("/addons/:addonId", authMiddleware.optional, updateAddonQty);
 
 // remove item
 router.delete("/items/:cartItemId", authMiddleware.optional, removeCartItem);
+
+// clear cart
+router.delete("/clear", authMiddleware.optional, clearCart);
 
 export default router;

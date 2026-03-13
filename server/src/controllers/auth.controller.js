@@ -4,15 +4,15 @@ import * as AuthModel from "../models/auth.model.js";
 import crypto from "crypto";
 import { sendEmail } from "../utils/email.js";
 
-const generateAccessToken = (payload) => {
+const generateAccessToken = (payload, expiresIn = process.env.JWT_EXPIRES_IN) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn,
   });
 };
 
-const generateRefreshToken = (payload) => {
+const generateRefreshToken = (payload, expiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN) => {
   return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+    expiresIn,
   });
 };
 
@@ -93,9 +93,12 @@ export const login = async (req, res) => {
       role: user.role,
     });
 
+    // Admin logout in 7 days, Regular user in 1 year (no autologout effectively)
+    const refreshTokenExpiresIn = user.role === "admin" ? "7d" : "365d";
+
     const refreshToken = generateRefreshToken({
       id: user.id,
-    });
+    }, refreshTokenExpiresIn);
 
     // Store refresh token in DB
     await AuthModel.saveRefreshToken(user.id, refreshToken);

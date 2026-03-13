@@ -37,15 +37,28 @@ export const addPoojaToCart = async (req, res) => {
 /* ================= ADD CHADAWA ================= */
 
 export const addChadawaToCart = async (req, res) => {
-    const { chadawa_item_id, temple_id, quantity } = req.body;
+    const { chadawa_item_id, temple_id, quantity, items } = req.body;
     const cart = await CartModel.getOrCreateCart(req);
 
-    await CartModel.addChadawaItem({
-        cart_id: cart.id,
-        chadawa_item_id,
-        temple_id,
-        quantity,
-    });
+    // Support bulk add from ChadawaDetail
+    if (Array.isArray(items)) {
+        for (const item of items) {
+            await CartModel.addChadawaItem({
+                cart_id: cart.id,
+                chadawa_item_id: item.chadawa_item_id,
+                temple_id,
+                quantity: item.quantity || 1,
+            });
+        }
+    } else if (chadawa_item_id) {
+        // Fallback for single item add
+        await CartModel.addChadawaItem({
+            cart_id: cart.id,
+            chadawa_item_id,
+            temple_id,
+            quantity: quantity || 1,
+        });
+    }
 
     res.json({ success: true, message: "Chadawa added to cart" });
 };
@@ -88,4 +101,9 @@ export const updateAddonQty = async (req, res) => {
 export const removeCartItem = async (req, res) => {
     await CartModel.removeCartItem(req.params.cartItemId);
     res.json({ success: true });
+};
+export const clearCart = async (req, res) => {
+    const cart = await CartModel.getOrCreateCart(req);
+    await CartModel.clearCart(cart.id);
+    res.json({ success: true, message: "Cart cleared" });
 };

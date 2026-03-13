@@ -84,6 +84,8 @@ export default function ProductDetail() {
     // Attempt to get numeric ID: first from state, then from slug
     const [productId, setProductId] = useState(location.state?.id || extractIdFromSlug(slug));
 
+    const { addProductToWishlist } = useWishlist();
+
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
@@ -169,6 +171,19 @@ export default function ProductDetail() {
             }
         } catch (err) {
             console.error('Error sharing:', err);
+        }
+    };
+
+    const handleAddToWishlist = async () => {
+        const response = await addProductToWishlist({
+            product_id: product.id,
+            quantity: 1
+        });
+
+        if (response.success) {
+            toast.success("Saved to Wishlist!");
+        } else {
+            toast.error("Failed to save to Wishlist");
         }
     };
 
@@ -272,35 +287,44 @@ export default function ProductDetail() {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex flex-col sm:flex-row gap-6">
-                                <div className="flex items-center bg-stone-50 border-2 border-stone-100 rounded-4xl p-2 self-start ring-4 ring-stone-50/50">
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="flex items-center bg-stone-50 border-2 border-stone-100 rounded-2xl p-1 self-start">
                                     <button
                                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                        className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-sindoor hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
+                                        className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-sindoor transition-all disabled:opacity-50"
                                         disabled={quantity <= 1}
                                     >
-                                        <Minus className="w-5 h-5" />
+                                        <Minus className="w-4 h-4" />
                                     </button>
-                                    <span className="w-14 text-center font-black text-2xl text-heritage-dark">{quantity}</span>
+                                    <span className="w-10 text-center font-bold text-xl text-heritage-dark">{quantity}</span>
                                     <button
                                         onClick={() => setQuantity(q => q + 1)}
-                                        className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-sindoor hover:shadow-md transition-all active:scale-95"
+                                        className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-sindoor transition-all"
                                     >
-                                        <Plus className="w-5 h-5" />
+                                        <Plus className="w-4 h-4" />
                                     </button>
                                 </div>
 
-                                <button
-                                    onClick={handleOrderNow}
-                                    disabled={product.stock_quantity === 0}
-                                    className={`flex-1 flex items-center justify-center gap-3 px-10 py-5 rounded-4xl font-black text-lg transition-all shadow-xl hover:-translate-y-1 active:scale-95 ${product.stock_quantity === 0
-                                        ? "bg-stone-100 text-stone-400 cursor-not-allowed"
-                                        : "bg-marigold text-white hover:bg-sindoor hover:shadow-sindoor/20 shadow-marigold/30"
-                                        }`}
-                                >
-                                    <ShoppingBag className="w-6 h-6" />
-                                    <span>{product.stock_quantity === 0 ? t('common.sold_out') : t('common.order_now')}</span>
-                                </button>
+                                <div className="flex gap-3 grow">
+                                    <button
+                                        onClick={handleAddToWishlist}
+                                        className="w-14 h-14 bg-white border-2 border-marigold/20 text-marigold rounded-2xl hover:bg-marigold hover:text-white transition-all flex items-center justify-center shrink-0 shadow-sm"
+                                        title="Add to Wishlist"
+                                    >
+                                        <Heart className="w-6 h-6" />
+                                    </button>
+                                    <button
+                                        onClick={handleOrderNow}
+                                        disabled={product.stock_quantity === 0}
+                                        className={`flex-1 flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-base transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${product.stock_quantity === 0
+                                            ? "bg-stone-100 text-stone-400 cursor-not-allowed"
+                                            : "bg-marigold text-white hover:bg-sindoor shadow-marigold/20"
+                                            }`}
+                                    >
+                                        <ShoppingBag className="w-5 h-5" />
+                                        <span>{product.stock_quantity === 0 ? t('common.sold_out') : t('common.order_now')}</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

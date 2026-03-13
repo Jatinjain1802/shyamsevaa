@@ -73,8 +73,11 @@ export const getAllBookings = async () => {
         u.name as user_name,
         u.email as user_email,
         COALESCE(p.title, ci.title) as pooja_title,
+        COALESCE(pv.description, (CASE WHEN pv.persons IS NOT NULL THEN CONCAT(pv.persons, ' Person(s)') ELSE NULL END)) as variant_title,
         t.title as temple_title,
-        oi.product_type
+        oi.product_type,
+        (SELECT COUNT(*) FROM order_item_addons oia WHERE oia.order_item_id = oi.id) as addon_count,
+        (SELECT GROUP_CONCAT(a.title SEPARATOR ', ') FROM order_item_addons oia JOIN addons a ON a.id = oia.addon_id WHERE oia.order_item_id = oi.id) as addon_details
      FROM bookings b
      JOIN order_items oi ON oi.id = b.order_item_id
      JOIN orders o ON o.id = oi.order_id

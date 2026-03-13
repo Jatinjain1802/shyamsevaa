@@ -172,7 +172,7 @@ export const getCartDetail = async (cartId) => {
     for (const item of items) {
         if (item.product_type === 'pooja_variant') {
             const [[poojaDetail]] = await db.query(
-                `SELECT p.title, p.image 
+                `SELECT p.id as pooja_id, p.title, p.image 
                  FROM poojas p
                  JOIN pooja_variants pv ON pv.pooja_id = p.id
                  WHERE pv.id = ?`,
@@ -181,10 +181,11 @@ export const getCartDetail = async (cartId) => {
             if (poojaDetail) {
                 item.name = poojaDetail.title;
                 item.image = poojaDetail.image;
+                item.pooja_id = poojaDetail.pooja_id;
             }
         } else if (item.product_type === 'chadawa_item') {
             const [[chadawaDetail]] = await db.query(
-                `SELECT c.title, c.image 
+                `SELECT c.id as chadawa_id, c.title, c.image 
                  FROM chadawas c
                  JOIN chadawa_items ci ON ci.chadawa_id = c.id
                  WHERE ci.id = ?`,
@@ -193,6 +194,7 @@ export const getCartDetail = async (cartId) => {
             if (chadawaDetail) {
                 item.name = chadawaDetail.title;
                 item.image = chadawaDetail.image;
+                item.chadawa_id = chadawaDetail.chadawa_id;
             }
         } else if (item.product_type === 'product') {
             const [[productDetail]] = await db.query(

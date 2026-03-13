@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Menu, X, Search, Bell, Heart, User, Loader2, LogOut, Languages } from "lucide-react";
+import { Menu, X, Search, Heart, User, Loader2, LogOut, Languages } from "lucide-react";
 import { useWishlist } from "../../context/WishlistContext";
 import { AuthContext } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -246,10 +246,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              <button className="p-2.5 text-sindoor hover:bg-sindoor/10 rounded-full transition-all duration-300 hidden sm:block relative group">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-marigold rounded-full animate-pulse"></span>
-              </button>
+
 
               <Link
                 to="/wishlist"

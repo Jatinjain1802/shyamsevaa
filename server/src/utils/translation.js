@@ -42,13 +42,17 @@ export const translateToHindi = async (text) => {
 /**
  * Translates multiple fields of an object from English to Hindi
  * @param {Object} obj - Object containing fields to translate
- * @param {Array<string>} fields - List of keys to translate
+ * @param {Array<string>} [fields] - Optional list of keys to translate. If not provided, translates all keys in obj.
  * @returns {Promise<Object>} - New object with translated fields (suffixed with _hi)
  */
 export const translateObject = async (obj, fields) => {
-    const translations = {};
+    if (!obj) return {};
     
-    for (const field of fields) {
+    const translations = {};
+    // If fields are not provided, translate all keys in the object
+    const keysToTranslate = fields || Object.keys(obj);
+    
+    for (const field of keysToTranslate) {
         if (obj[field]) {
             translations[`${field}_hi`] = await translateToHindi(obj[field]);
         } else {

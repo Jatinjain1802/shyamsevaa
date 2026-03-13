@@ -38,12 +38,8 @@ export function WishlistProvider({ children }) {
             const items = res.data.data || [];
             setWishlistItems(items);
 
-            // Calculate total count (items + addon quantities)
-            const count = items.reduce((total, item) => {
-                const addonCount = item.addons?.reduce((sum, a) => sum + (a.quantity || 1), 0) || 0;
-                return total + (item.quantity || 1) + addonCount;
-            }, 0);
-            setWishlistCount(count);
+            // Calculate total count (items only, ignoring quantities)
+            setWishlistCount(items.length);
         } catch (err) {
             console.error("Failed to fetch wishlist:", err);
         } finally {
@@ -69,12 +65,12 @@ export function WishlistProvider({ children }) {
     };
 
     // Add chadawa to wishlist (via /cart/chadawa)
-    const addChadawaToWishlist = async ({ chadawa_item_id, temple_id, quantity = 1 }) => {
+    const addChadawaToWishlist = async ({ chadawa_item_id, temple_id, quantity = 1, items }) => {
         try {
             const sessionId = getSessionId();
             await api.post(
                 "/cart/chadawa",
-                { chadawa_item_id, temple_id, quantity },
+                { chadawa_item_id, temple_id, quantity, items },
                 { headers: { "x-session-id": sessionId } }
             );
             await fetchWishlist();
@@ -135,12 +131,12 @@ export function WishlistProvider({ children }) {
     };
 
     // Add product to wishlist (via /cart/add-product)
-    const addProductToWishlist = async ({ productId, quantity = 1 }) => {
+    const addProductToWishlist = async ({ product_id, quantity = 1 }) => {
         try {
             const sessionId = getSessionId();
             await api.post(
                 "/cart/add-product",
-                { product_id: productId, quantity },
+                { product_id, quantity },
                 { headers: { "x-session-id": sessionId } }
             );
             await fetchWishlist();

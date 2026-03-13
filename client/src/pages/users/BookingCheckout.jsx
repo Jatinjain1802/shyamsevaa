@@ -166,7 +166,10 @@ export default function BookingCheckout() {
             if (bookingData && !hasAddedToCart.current) {
                 // LEARNING: hasAddedToCart.current acts as a flag without causing re-renders.
                 // If the user goes back and comes again, the component is new so this resets.
-                // The server already handles duplicates with upsert logic — this is a belt-and-suspenders guard.
+                
+                // CRITICAL FIX: Clear the existing cart first to prevent accumulating previous "Buy Now" attempts
+                await api.delete('/cart/clear');
+
                 if (checkoutType === 'product') {
                     await api.post('/cart/add-product', { product_id: product.id, quantity: bookingData.quantity });
                 } else if (checkoutType === 'pooja') {
@@ -222,7 +225,7 @@ export default function BookingCheckout() {
                 currency: currency,
                 name: "Shyampuja",
                 description: checkoutType === 'product' ? `Product: ${product?.name}` : (checkoutType === 'chadawa' ? `Chadawa: ${chadawa?.title}` : "Spiritual Services"),
-                image: "/logo.png",
+                image: "https://shyampuja.com/logo.png",
                 order_id: razorpay_order_id,
                 handler: async function (response) {
                     try {

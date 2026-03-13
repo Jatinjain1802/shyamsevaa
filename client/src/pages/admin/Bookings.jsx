@@ -13,9 +13,13 @@ import {
   FiUsers,
   FiPackage,
   FiClock as FiTime,
-  FiArrowRight
+  FiArrowRight,
+  FiDownload,
+  FiX
 } from "react-icons/fi";
-import { Loader2, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, User, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
+import * as XLSX from 'xlsx';
+import toast from "react-hot-toast";
 
 export default function Bookings() {
   const [bookings, setBookings] = useState([]);
@@ -24,6 +28,9 @@ export default function Bookings() {
   const [activeTab, setActiveTab] = useState("pooja");
   const [statusFilter, setStatusFilter] = useState("all");
   const [expandedItems, setExpandedItems] = useState(new Set());
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedDateKey, setSelectedDateKey] = useState(null);
+  const [processingDate, setProcessingDate] = useState(null);
 
   useEffect(() => {
     fetchBookings();
@@ -71,11 +78,31 @@ export default function Bookings() {
     setExpandedItems(newExpanded);
   };
 
-  const markDateAsCompleted = async (dateKey) => {
-    const confirm = window.confirm(`Are you sure you want to mark all ${activeTab === 'pooja' ? 'poojas' : 'chadawas'} for ${new Date(dateKey).toLocaleDateString()} as completed?`);
-    if (!confirm) return;
+  const exportToExcel = (bookingsData, date) => {
+    const data = bookingsData.map(b => ({
+      'Order ID': b.order_number,
+      'Pooja Name': b.pooja_title,
+      'Devotee': b.devotee_name,
+      'Gotra': b.gotra || 'N/A',
+      'Mobile': b.mobile || 'N/A',
+      'Variant': b.variant_title || 'N/A',
+      'Add-ons': b.addon_details || 'None',
+      'Temple': b.temple_title,
+      'Status': 'Completed'
+    }));
 
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+    XLSX.writeFile(wb, `Bookings_${date}.xlsx`);
+  };
+
+  const handleMarkAsCompleted = async () => {
+    const dateKey = selectedDateKey;
+    if (!dateKey) return;
+    
     try {
+      setProcessingDate(dateKey);
       const targetBookings = bookings.filter(b => {
         const isSameDate = b.pooja_date.split('T')[0] === dateKey;
         const matchesType = activeTab === "pooja" ? b.product_type === 'pooja_variant' : b.product_type === 'chadawa_item';
@@ -83,19 +110,38 @@ export default function Bookings() {
         return isSameDate && matchesType && isNotCompleted;
       });
 
-      if (targetBookings.length === 0) return;
+      if (targetBookings.length === 0) {
+          setShowConfirm(false);
+          return;
+      }
 
+      // 1. Export TO Excel before status update
+      exportToExcel(targetBookings, dateKey);
+
+      // 2. Update status on server
       await Promise.all(targetBookings.map(b => 
         api.put(`/admin/bookings/${b.id}/status`, { status: 'completed' })
       ));
 
+      // 3. Update local state
       const updatedBookingIds = new Set(targetBookings.map(b => b.id));
       setBookings(prev => prev.map(b => 
         updatedBookingIds.has(b.id) ? { ...b, status: 'completed' } : b
       ));
+
+      toast.success(`Bookings for ${dateKey} marked as completed & Excel downloaded`);
+      setShowConfirm(false);
     } catch (error) {
       console.error("Failed to mark all as completed", error);
+      toast.error("Operation failed. Please try again.");
+    } finally {
+      setProcessingDate(null);
     }
+  };
+
+  const markDateAsCompleted = (dateKey) => {
+    setSelectedDateKey(dateKey);
+    setShowConfirm(true);
   };
 
   // LEARNING: Grouping logic for clean UI - Bundling by Order Number
@@ -267,15 +313,17 @@ export default function Bookings() {
                 </div>
                 
                 {/* Bulk Completion Action */}
-                <button 
-                  onClick={() => markDateAsCompleted(date)}
-                  className="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white border border-stone-200 text-stone-500 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50/50 transition-all shadow-sm active:scale-95"
-                >
-                  <FiCheckCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-black uppercase tracking-widest">
-                    Mark All Completed
-                  </span>
-                </button>
+                {!orders.every(o => o.status.toLowerCase() === 'completed') && (
+                  <button 
+                    onClick={() => markDateAsCompleted(date)}
+                    className="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white border border-stone-200 text-stone-500 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50/50 transition-all shadow-sm active:scale-95"
+                  >
+                    <FiCheckCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-black uppercase tracking-widest">
+                      Mark All Completed
+                    </span>
+                  </button>
+                )}
               </div>
 
               {/* Items for this date */}
@@ -410,6 +458,59 @@ export default function Bookings() {
            </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" onClick={() => !processingDate && setShowConfirm(false)}></div>
+          <div className="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8">
+              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
+                <FiDownload className="w-10 h-10 text-blue-500" />
+              </div>
+              <h3 className="text-2xl font-black text-heritage-dark text-center mb-2 font-serif">Confirm Completion</h3>
+              <p className="text-stone-500 text-center text-sm leading-relaxed mb-8">
+                This will mark all bookings for <span className="font-bold text-sindoor">{new Date(selectedDateKey).toLocaleDateString()}</span> as completed and download the Excel report automatically.
+              </p>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  disabled={!!processingDate}
+                  onClick={handleMarkAsCompleted}
+                  className="w-full bg-sindoor text-white py-4 rounded-2xl font-black tracking-widest text-xs shadow-xl shadow-sindoor/20 hover:bg-sindoor/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {processingDate ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      PROCESSING...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      YES, CONFIRM & DOWNLOAD
+                    </>
+                  )}
+                </button>
+                <button
+                  disabled={!!processingDate}
+                  onClick={() => setShowConfirm(false)}
+                  className="w-full bg-stone-100 text-stone-500 py-4 rounded-2xl font-black tracking-widest text-xs hover:bg-stone-200 transition-all"
+                >
+                  CANCEL
+                </button>
+              </div>
+            </div>
+            
+            {/* Modal Footer Tip */}
+            <div className="bg-stone-50 py-4 px-8 border-t border-stone-100">
+               <p className="flex items-center gap-2 text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+                 <FiAlertCircle className="text-marigold" />
+                 Report contains devotee names, orders, and variants
+               </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
