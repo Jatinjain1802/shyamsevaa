@@ -261,7 +261,6 @@ export default function UserDashboard() {
                             <StatCard title="Total Poojas" value={bookings.length} icon={MdTempleHindu} color="sindoor" />
                             <StatCard title="Total Chadawas" value={chadawas.length} icon={MdVolunteerActivism} color="marigold" />
                             <StatCard title="Total Orders" value={orders.length} icon={ShoppingBag} color="sindoor" />
-                            <StatCard title="Active Days" value="12" icon={Calendar} color="stone" />
                         </div>
 
                         {/* Tab Content: Bookings */}
@@ -290,9 +289,21 @@ export default function UserDashboard() {
                                                 </p>
                                                 <div className="pt-4 border-t border-stone-100 flex justify-between items-center">
                                                     <span className="font-bold text-sindoor">₹{Number(booking.base_price).toLocaleString()}</span>
-                                                    <button className="text-xs font-bold text-stone-600 hover:text-sindoor flex items-center gap-1">
-                                                        View Details <ArrowRight className="w-3 h-3" />
-                                                    </button>
+                                                    {booking.invoice_path ? (
+                                                        <a
+                                                            href={getAssetUrl(booking.invoice_path)}
+                                                            download
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-xs font-bold text-marigold hover:text-sindoor flex items-center gap-1 group"
+                                                        >
+                                                            Download Invoice <Download className="w-3 h-3 group-hover:scale-125 transition-transform" />
+                                                        </a>
+                                                    ) : (
+                                                        <button className="text-xs font-bold text-stone-400 cursor-not-allowed flex items-center gap-1">
+                                                            Processing <Loader2 className="w-3 h-3 animate-spin" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
@@ -337,9 +348,21 @@ export default function UserDashboard() {
                                                 <p className="text-sm text-stone-500 mb-4">{item.temple_name || "Temple Name"}</p>
                                                 <div className="pt-4 border-t border-stone-100 flex justify-between items-center">
                                                     <span className="font-bold text-sindoor">₹{Number(item.price).toLocaleString()}</span>
-                                                    <button className="text-xs font-bold text-stone-600 hover:text-sindoor flex items-center gap-1">
-                                                        View Details <ArrowRight className="w-3 h-3" />
-                                                    </button>
+                                                    {item.invoice_path ? (
+                                                        <a
+                                                            href={getAssetUrl(item.invoice_path)}
+                                                            download
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-xs font-bold text-marigold hover:text-sindoor flex items-center gap-1 group"
+                                                        >
+                                                            Download Invoice <Download className="w-3 h-3 group-hover:scale-125 transition-transform" />
+                                                        </a>
+                                                    ) : (
+                                                        <button className="text-xs font-bold text-stone-400 cursor-not-allowed flex items-center gap-1">
+                                                            Processing <Loader2 className="w-3 h-3 animate-spin" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
@@ -374,6 +397,7 @@ export default function UserDashboard() {
                                             <thead className="bg-stone-50 border-b border-stone-100">
                                                 <tr>
                                                     <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase">Order ID</th>
+                                                    <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase">Type</th>
                                                     <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase">Date</th>
                                                     <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase">Amount</th>
                                                     <th className="px-6 py-4 text-xs font-bold text-stone-500 uppercase">Status</th>
@@ -383,6 +407,17 @@ export default function UserDashboard() {
                                                 {orders.map((order) => (
                                                     <tr key={order.id} className="hover:bg-stone-50/50 transition-colors">
                                                         <td className="px-6 py-4 font-bold text-heritage-dark text-sm">{order.order_number}</td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider ${
+                                                                order.order_type === 'pooja_variant' ? 'bg-sindoor/10 text-sindoor' : 
+                                                                order.order_type === 'chadawa_item' ? 'bg-marigold/10 text-marigold' : 
+                                                                'bg-stone-100 text-stone-600'
+                                                            }`}>
+                                                                {order.order_type === 'pooja_variant' ? 'Pooja' : 
+                                                                 order.order_type === 'chadawa_item' ? 'Chadawa' : 
+                                                                 order.order_type === 'product' ? 'Product' : 'Other'}
+                                                            </span>
+                                                        </td>
                                                         <td className="px-6 py-4 text-stone-500 text-sm">{new Date(order.created_at).toLocaleDateString()}</td>
                                                         <td className="px-6 py-4 font-bold text-sindoor text-sm">₹{Number(order.total_amount).toLocaleString()}</td>
                                                         <td className="px-6 py-4 flex items-center justify-between">
@@ -622,6 +657,22 @@ export default function UserDashboard() {
                                                             <p className="text-[10px] text-stone-400">Qty: {item.quantity}</p>
                                                         </div>
                                                     </div>
+
+                                                    {/* Devotee Details */}
+                                                    {item.bookings && item.bookings.length > 0 && (
+                                                        <div className="mt-3 pt-3 border-t border-stone-50 space-y-2">
+                                                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Devotees</p>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {item.bookings.map((booking, bIdx) => (
+                                                                    <div key={bIdx} className="text-[11px] bg-sindoor/5 text-sindoor px-2 py-1 rounded-lg border border-sindoor/10">
+                                                                        <span className="font-bold">{booking.devotee_name}</span>
+                                                                        {booking.gotra && <span className="text-stone-500 ml-1">({booking.gotra})</span>}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
                                                     {item.addons && item.addons.length > 0 && (
                                                         <div className="mt-3 pt-3 border-t border-stone-50 space-y-2">
                                                             <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Addons</p>

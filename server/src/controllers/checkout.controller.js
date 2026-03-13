@@ -1,5 +1,6 @@
 import * as CartModel from "../models/cart.model.js";
 import * as OrderModel from "../models/order.model.js";
+import * as ProductModel from "../models/products.model.js";
 
 export const checkout = async (req, res) => {
   try {
@@ -24,6 +25,17 @@ export const checkout = async (req, res) => {
       }
 
       totalAmount += itemTotal;
+
+      // Check stock if it's a product
+      if (item.product_type === "product" && item.product_id) {
+        const product = await ProductModel.getProductById(item.product_id);
+        if (product && product.stock_quantity < item.quantity) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Insufficient stock for ${product.name}. Available: ${product.stock_quantity}` 
+          });
+        }
+      }
     }
 
     const { customer_name, communication_mobile, shipping_address } = req.body;

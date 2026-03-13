@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow private and admin sections
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /booking-checkout/
+Disallow: /forgot-password/
+Disallow: /verify-otp/
+Disallow: /reset-password/
+
+# Sitemap location
+Sitemap: https://shyampuja.com/sitemap.xml

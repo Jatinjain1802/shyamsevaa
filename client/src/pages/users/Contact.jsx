@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, MessageCircle, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, HelpCircle, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import api from '../../utils/axios';
 
 const Contact = () => {
     const { t } = useTranslation();
     const [openFaq, setOpenFaq] = useState(0);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
+    const [loading, setLoading] = useState(false);
 
     const faqs = [
         { q: t('contact_page.q1'), a: t('contact_page.a1') },
@@ -13,10 +21,26 @@ const Contact = () => {
         { q: t('contact_page.q3'), a: t('contact_page.a3') }
     ];
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        toast.success(t('contact_page.form_success'));
-        e.target.reset();
+        setLoading(true);
+        try {
+            const res = await api.post('/contact', formData);
+            if (res.data.success) {
+                toast.success(t('contact_page.form_success') || "Message sent skillfully! We'll get back to you soon.");
+                setFormData({ name: '', email: '', subject: '', message: '' });
+                e.target.reset();
+            }
+        } catch (error) {
+            console.error("Contact Form error:", error);
+            toast.error(error.response?.data?.message || "Failed to send message. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -55,11 +79,11 @@ const Contact = () => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">{t('footer.email_support')}</p>
-                                        <p className="text-stone-700 font-bold text-lg">support@shyampuja.com</p>
+                                        <p className="text-stone-700 font-bold text-lg">info@shyampuja.com</p>
                                     </div>
                                 </div>
 
-                                <a href="https://wa.me/919174116410" target="_blank" rel="noopener noreferrer" className="flex items-start gap-6 group cursor-pointer">
+                                <a href="https://wa.me/919203683115" target="_blank" rel="noopener noreferrer" className="flex items-start gap-6 group cursor-pointer">
                                     <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 shrink-0 group-hover:bg-green-600 group-hover:text-white transition-all duration-300 transform group-hover:-rotate-6 hover:shadow-lg">
                                         <MessageCircle className="w-6 h-6" />
                                     </div>
@@ -75,7 +99,7 @@ const Contact = () => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">{t('footer.helpline')}</p>
-                                        <p className="text-stone-700 font-bold text-lg">1800-SANATAN</p>
+                                        <p className="text-stone-700 font-bold text-lg">7770942072</p>
                                     </div>
                                 </div>
                             </div>
@@ -126,6 +150,9 @@ const Contact = () => {
                                         <input
                                             required
                                             type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
                                             placeholder="John Doe"
                                             className="w-full bg-paper-bg/50 border-2 border-stone-100 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-marigold/10 focus:border-marigold outline-none transition-all font-medium text-stone-700 hover:border-stone-200"
                                         />
@@ -135,6 +162,9 @@ const Contact = () => {
                                         <input
                                             required
                                             type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
                                             placeholder="john@example.com"
                                             className="w-full bg-paper-bg/50 border-2 border-stone-100 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-marigold/10 focus:border-marigold outline-none transition-all font-medium text-stone-700 hover:border-stone-200"
                                         />
@@ -146,6 +176,9 @@ const Contact = () => {
                                     <input
                                         required
                                         type="text"
+                                        name="subject"
+                                        value={formData.subject}
+                                        onChange={handleChange}
                                         placeholder="Pooja Booking Query"
                                         className="w-full bg-paper-bg/50 border-2 border-stone-100 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-marigold/10 focus:border-marigold outline-none transition-all font-medium text-stone-700 hover:border-stone-200"
                                     />
@@ -156,6 +189,9 @@ const Contact = () => {
                                     <textarea
                                         required
                                         rows="5"
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
                                         placeholder="Namaste, I would like to inquire about..."
                                         className="w-full bg-paper-bg/50 border-2 border-stone-100 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-marigold/10 focus:border-marigold outline-none transition-all font-medium text-stone-700 hover:border-stone-200 resize-none"
                                     ></textarea>
@@ -163,10 +199,15 @@ const Contact = () => {
 
                                 <button
                                     type="submit"
-                                    className="w-full bg-sindoor text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-marigold hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 text-lg"
+                                    disabled={loading}
+                                    className={`w-full bg-sindoor text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-marigold hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 text-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
-                                    <Send className="w-6 h-6" />
-                                    {t('contact_page.form_submit')}
+                                    {loading ? (
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                    ) : (
+                                        <Send className="w-6 h-6" />
+                                    )}
+                                    {loading ? 'Sending...' : t('contact_page.form_submit')}
                                 </button>
                             </form>
                         </div>

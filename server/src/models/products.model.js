@@ -73,3 +73,10 @@ export const getAllProducts = async (filters = {}) => {
   const [rows] = await db.query(query, values);
   return rows;
 };
+
+export const reduceStock = async (productId, quantity) => {
+  await db.query(
+    `UPDATE products SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?`,
+    [quantity, productId]
+  );
+};

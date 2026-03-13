@@ -13,7 +13,8 @@ import {
   FiMapPin,
   FiGrid,
   FiZap,
-  FiChevronRight
+  FiChevronRight,
+  FiVideo
 } from "react-icons/fi";
 
 export default function AdminLayout() {
@@ -48,8 +49,13 @@ export default function AdminLayout() {
       title: "Directory",
       items: [
         { name: "Temples", path: "/admin/temples", icon: FiMapPin },
-        { name: "Pandits", path: "/admin/pandits", icon: FiBriefcase },
         { name: "Users", path: "/admin/users", icon: FiUsers },
+      ]
+    },
+    {
+      title: "Content",
+      items: [
+        { name: "YouTube Links", path: "/admin/youtube-links", icon: FiVideo },
       ]
     }
   ];

@@ -723,6 +723,31 @@ const tables = [
       { name: "created_at",    definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // YOUTUBE LINKS
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    name: "youtube_links",
+    query: `
+      CREATE TABLE IF NOT EXISTS youtube_links (
+        id          INT AUTO_INCREMENT PRIMARY KEY,
+        title       VARCHAR(255) NOT NULL,
+        video_url   VARCHAR(255) NOT NULL,
+        status       TINYINT DEFAULT 1,
+        sort_order   INT DEFAULT 0,
+        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    columns: [
+      { name: "id",          definition: "INT AUTO_INCREMENT PRIMARY KEY" },
+      { name: "title",       definition: "VARCHAR(255) NOT NULL" },
+      { name: "video_url",   definition: "VARCHAR(255) NOT NULL" },
+      { name: "status",      definition: "TINYINT DEFAULT 1" },
+      { name: "sort_order",  definition: "INT DEFAULT 0" },
+      { name: "created_at",  definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
+    ],
+  },
 ];
 
 // =============================================================================

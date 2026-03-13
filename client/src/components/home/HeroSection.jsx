@@ -105,13 +105,18 @@ const HeroSection = () => {
                             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
                                 }`}
                         >
-                            {/* Background Image with Zoom Effect */}
+                            {/* Background Image/LCP Optimization */}
                             <div
-                                className={`absolute inset-0 bg-cover bg-center transition-transform duration-8000 ${index === currentSlide ? "scale-110" : "scale-100"
+                                className={`absolute inset-0 transition-transform duration-8000 ${index === currentSlide ? "scale-110" : "scale-100"
                                     }`}
-                                style={{ backgroundImage: `url("${getAssetUrl(temple.image)}")` }}
                             >
-                                {/* Overlay for better text readability */}
+                                <img 
+                                    src={getAssetUrl(temple.image)} 
+                                    alt={title}
+                                    className="w-full h-full object-cover"
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    fetchpriority={index === 0 ? "high" : "low"}
+                                />
                             </div>
 
                             {/* Professional Gradients */}
@@ -162,12 +167,14 @@ const HeroSection = () => {
                 <div className="absolute bottom-6 md:bottom-12 right-6 md:right-16 flex items-center gap-4 z-20">
                     <button
                         onClick={prevSlide}
+                        aria-label="Previous Slide"
                         className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-white/30 hover:border-white bg-black/20 hover:bg-white/10 backdrop-blur-md flex items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 group"
                     >
                         <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 group-hover:-translate-x-0.5 transition-transform" />
                     </button>
                     <button
                         onClick={nextSlide}
+                        aria-label="Next Slide"
                         className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-white/30 hover:border-white bg-black/20 hover:bg-white/10 backdrop-blur-md flex items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 group"
                     >
                         <ChevronRight className="w-6 h-6 md:w-8 md:h-8 group-hover:translate-x-0.5 transition-transform" />

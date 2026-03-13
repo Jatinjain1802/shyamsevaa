@@ -150,7 +150,7 @@ export default function ChadawaSection() {
                             to={`/chadawas/${generatePureSlug(item.title)}`}
                             state={{ id: item.id }}
                             key={item.id}
-                            className="min-w-[88vw] md:min-w-[42%] lg:min-w-[calc(33.333%-1.5rem)] snap-center group relative bg-white rounded-[2.5rem] overflow-hidden shadow-2xl hover:shadow-marigold/30 transition-all duration-700 hover:-translate-y-3 border border-stone-100 flex flex-col"
+                            className="min-w-[88vw] md:min-w-[42%] lg:min-w-[calc(33.333%-1.5rem)] snap-center group relative bg-white rounded-4xl overflow-hidden shadow-2xl hover:shadow-marigold/30 transition-all duration-700 hover:-translate-y-3 border border-stone-100 flex flex-col"
                         >
                             {/* Card Image Wrapper */}
                             <div className="relative aspect-16/10 w-full overflow-hidden shrink-0">
@@ -169,6 +169,7 @@ export default function ChadawaSection() {
                                 <img
                                     src={getAssetUrl(item.image)}
                                     alt={title}
+                                    loading="lazy"
                                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-115"
                                 />
 

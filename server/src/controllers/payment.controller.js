@@ -1,6 +1,8 @@
 import * as PaymentModel from "../models/payment.model.js";
 import * as BookingModel from "../models/booking.model.js";
 import * as CartModel from "../models/cart.model.js";
+import * as OrderModel from "../models/order.model.js";
+import * as ProductModel from "../models/products.model.js";
 import crypto from "crypto";
 import Razorpay from "razorpay";
 import dotenv from "dotenv";
@@ -101,7 +103,15 @@ export const verifyPayment = async (req, res) => {
     const cart = await CartModel.getOrCreateCart(req);
     await CartModel.clearCart(cart.id);
 
-    // 4️⃣ generate invoice
+    // 4️⃣ Reduce product stock
+    const orderItems = await OrderModel.getOrderItems(order_id);
+    for (const item of orderItems) {
+      if (item.product_type === "product" && item.product_id) {
+        await ProductModel.reduceStock(item.product_id, item.quantity);
+      }
+    }
+
+    // 5️⃣ generate invoice
     const invoice_path = await generateInvoicePDF(order_id, req.user.id);
 
     res.json({

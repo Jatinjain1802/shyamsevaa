@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Share2, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Globe, Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 
 export default function Footer() {
@@ -40,13 +40,13 @@ export default function Footer() {
               </p>
 
               <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <Share2 className="w-4 h-4" />
+                <a href="https://shyampuja.com" target="_blank" rel="noopener noreferrer" aria-label="Visit our Website" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <Globe className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <a href="mailto:info@shyampuja.com" aria-label="Send us an Email" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                   <Mail className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <a href="tel:7770942072" aria-label="Call us" className="w-10 h-10 rounded-full bg-white border border-marigold/20 flex items-center justify-center text-marigold hover:bg-marigold hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                   <Phone className="w-4 h-4" />
                 </a>
               </div>
@@ -58,11 +58,8 @@ export default function Footer() {
               <ul className="space-y-3 text-sm text-stone-600 font-medium">
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/about">{t('nav.about')}</Link></li>
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/contact">{t('nav.contact')}</Link></li>
-                {/* <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/privacy">{t('footer.privacy')}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/terms">{t('footer.terms')}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/refund-policy">{t('refund.title')}</Link></li> */}
                 <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/panchang">Panchang {new Date().getFullYear()}</Link></li>
-                <li><Link className="hover:text-marigold transition-colors hover:translate-x-1 inline-block" to="/blog">{t('nav.blog')}</Link></li>
+
               </ul>
             </div>
 
@@ -76,7 +73,7 @@ export default function Footer() {
                   </div>
                   <div>
                     <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">{t('footer.helpline')}</p>
-                    <p className="text-lg font-black text-heritage-dark">1800-SANATAN</p>
+                    <p className="text-lg font-black text-heritage-dark">7770942072</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -85,7 +82,7 @@ export default function Footer() {
                   </div>
                   <div>
                     <p className="text-[10px] text-stone-400 uppercase tracking-wider mb-1 font-bold">{t('footer.email_support')}</p>
-                    <p className="text-sm font-bold text-heritage-dark">support@Shyampuja.com</p>
+                    <p className="text-sm font-bold text-heritage-dark">info@shyampuja.com</p>
                   </div>
                 </div>
               </div>

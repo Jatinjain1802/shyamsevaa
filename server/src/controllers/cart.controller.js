@@ -1,4 +1,5 @@
 import * as CartModel from "../models/cart.model.js";
+import * as ProductModel from "../models/products.model.js";
 
 /* ================= GET / CREATE CART ================= */
 
@@ -69,6 +70,15 @@ export const addProductToCart = async (req, res) => {
     const { product_id, quantity } = req.body;
     const cart = await CartModel.getOrCreateCart(req);
 
+    // Check stock
+    const product = await ProductModel.getProductById(product_id);
+    if (!product || product.stock_quantity < (quantity || 1)) {
+        return res.status(400).json({ 
+            success: false, 
+            message: product ? `Insufficient stock. Available: ${product.stock_quantity}` : "Product not found" 
+        });
+    }
+
     await CartModel.addProductItem({
         cart_id: cart.id,
         product_id,
@@ -81,10 +91,22 @@ export const addProductToCart = async (req, res) => {
 /* ================= UPDATE QTY ================= */
 
 export const updateCartItemQty = async (req, res) => {
-    await CartModel.updateCartItemQty(
-        req.params.cartItemId,
-        req.body.quantity
-    );
+    const { cartItemId } = req.params;
+    const { quantity } = req.body;
+
+    // Optional: check stock if it's a product
+    const [item] = await CartModel.getCartDetailById(cartItemId);
+    if (item && item.product_type === 'product' && item.product_id) {
+        const product = await ProductModel.getProductById(item.product_id);
+        if (product && product.stock_quantity < quantity) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Insufficient stock. Available: ${product.stock_quantity}` 
+            });
+        }
+    }
+
+    await CartModel.updateCartItemQty(cartItemId, quantity);
     res.json({ success: true });
 };
 

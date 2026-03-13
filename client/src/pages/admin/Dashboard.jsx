@@ -15,7 +15,7 @@ import {
   FiZap
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, IndianRupee } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -27,7 +27,8 @@ export default function Dashboard() {
     total_users: 0,
     total_temples: 0,
     total_poojas: 0,
-    total_chadawas: 0
+    total_chadawas: 0,
+    total_products: 0
   });
   const [recentOrders, setRecentOrders] = useState([]);
   const [recentBookings, setRecentBookings] = useState([]);
@@ -40,7 +41,7 @@ export default function Dashboard() {
           api.get("/admin/dashboard/stats"),
           api.get("/admin/orders"),
           api.get("/admin/bookings"),
-          api.get("/api/admin/users").catch(() => api.get("/admin/users")) // Fallback if route differs
+          api.get("/admin/users")
         ]);
 
         setStats(statsRes.data.data);
@@ -135,7 +136,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-start relative z-10">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-stone-400 font-bold text-[10px] uppercase tracking-widest">
-                <FiTrendingUp className="text-green-500" /> Revenue Growth
+                <IndianRupee className="w-3 h-3 text-green-500" /> Revenue Growth
               </div>
               <h3 className="text-3xl xl:text-5xl font-black text-heritage-dark tracking-tighter">
                 {formatCurrency(stats.total_revenue)}
@@ -143,7 +144,7 @@ export default function Dashboard() {
               <p className="text-xs text-stone-400 font-medium italic">Lifetime platform earnings across rituals & offerings</p>
             </div>
             <div className="h-16 w-16 bg-stone-50 rounded-2.5xl flex items-center justify-center border border-stone-100 group-hover:bg-marigold transform group-hover:rotate-12 transition-all duration-500">
-              <FiDollarSign className="w-8 h-8 text-marigold group-hover:text-white" />
+              <IndianRupee className="w-8 h-8 text-marigold group-hover:text-white" />
             </div>
           </div>
           <div className="absolute -bottom-6 -right-6 h-32 w-32 bg-marigold/5 rounded-full blur-3xl group-hover:bg-marigold/10 transition-colors"></div>
@@ -183,7 +184,7 @@ export default function Dashboard() {
           { label: "Temples", val: stats.total_temples, icon: FiDatabase, color: "text-amber-600 bg-amber-50" },
           { label: "Poojas", val: stats.total_poojas, icon: FiActivity, color: "text-rose-600 bg-rose-50" },
           { label: "Chadawas", val: stats.total_chadawas, icon: FiShoppingBag, color: "text-emerald-600 bg-emerald-50" },
-          { label: "Unpaid", val: stats.pending_bookings, icon: FiClock, color: "text-orange-600 bg-orange-50" }
+          { label: "Products", val: stats.total_products, icon: FiZap, color: "text-indigo-600 bg-indigo-50" }
         ].map((item, i) => (
           <div key={i} className="bg-white px-5 py-4 rounded-2xl border border-stone-50 flex items-center gap-4 hover:border-stone-200 transition-colors">
             <div className={`h-10 w-10 ${item.color} rounded-xl flex items-center justify-center shrink-0`}>
@@ -277,6 +278,9 @@ export default function Dashboard() {
               <h3 className="text-md font-bold text-heritage-dark flex items-center gap-2 font-serif">
                 <FiUsers className="text-indigo-500" /> New Sangha Members
               </h3>
+              <Link to="/admin/users" className="text-xs font-bold text-indigo-500 hover:underline decoration-2 underline-offset-4">
+                Manage All
+              </Link>
             </div>
             <div className="flex flex-wrap gap-4">
               {recentUsers.map((u) => (
@@ -292,9 +296,6 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              <Link to="/admin/users" className="flex items-center justify-center w-32 border-2 border-dashed border-stone-100 rounded-2xl text-stone-300 hover:border-marigold hover:text-marigold transition-all font-bold text-xs uppercase tracking-tighter">
-                Manage All
-              </Link>
             </div>
           </div>
         </div>

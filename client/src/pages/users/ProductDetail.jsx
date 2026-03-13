@@ -18,6 +18,7 @@ import {
     Package,
     CheckCircle,
     MoveRight,
+    Heart,
     ShoppingBag
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -292,14 +293,15 @@ export default function ProductDetail() {
                                     <button
                                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
                                         className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-sindoor transition-all disabled:opacity-50"
-                                        disabled={quantity <= 1}
+                                        disabled={quantity <= 1 || product.stock_quantity === 0}
                                     >
                                         <Minus className="w-4 h-4" />
                                     </button>
-                                    <span className="w-10 text-center font-bold text-xl text-heritage-dark">{quantity}</span>
+                                    <span className="w-10 text-center font-bold text-xl text-heritage-dark">{product.stock_quantity === 0 ? 0 : quantity}</span>
                                     <button
-                                        onClick={() => setQuantity(q => q + 1)}
-                                        className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-sindoor transition-all"
+                                        onClick={() => setQuantity(q => Math.min(product.stock_quantity, q + 1))}
+                                        className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-sindoor transition-all disabled:opacity-50"
+                                        disabled={quantity >= product.stock_quantity || product.stock_quantity === 0}
                                     >
                                         <Plus className="w-4 h-4" />
                                     </button>
@@ -456,8 +458,8 @@ export default function ProductDetail() {
                                                     <button
                                                         disabled={p.stock_quantity === 0}
                                                         className={`px-4 py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 whitespace-nowrap ${p.stock_quantity === 0
-                                                                ? "bg-stone-100 text-stone-400 cursor-not-allowed shadow-none"
-                                                                : "bg-marigold text-white hover:bg-sindoor hover:shadow-sindoor/30"
+                                                            ? "bg-stone-100 text-stone-400 cursor-not-allowed shadow-none"
+                                                            : "bg-marigold text-white hover:bg-sindoor hover:shadow-sindoor/30"
                                                             }`}
                                                     >
                                                         <ShoppingBag className="w-4 h-4" />

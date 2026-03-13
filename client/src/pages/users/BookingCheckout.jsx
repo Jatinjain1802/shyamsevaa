@@ -159,6 +159,11 @@ export default function BookingCheckout() {
             }
         }
 
+        if (checkoutType === 'cart' && cartItems.length === 0 && !bookingData) {
+            toast.error("Your cart is empty.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {

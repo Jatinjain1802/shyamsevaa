@@ -44,7 +44,9 @@ export const getBookingsByUser = async (userId) => {
   const [rows] = await db.query(
     `SELECT 
         b.*, 
+        o.id as order_id,
         o.order_number,
+        o.invoice_path,
         pv.persons as variant_persons,
         COALESCE(p.title, ci.title) as pooja_title,
         p.image as pooja_image,

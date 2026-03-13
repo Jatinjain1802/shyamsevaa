@@ -49,6 +49,12 @@ import searchRoutes from "./routes/search.routes.js";
 // Products
 import productRoutes from "./routes/products.routes.js";
 
+// YouTube Links
+import youtubeLinksRoutes from "./routes/youtubeLinks.routes.js";
+
+// Contact
+import contactRoutes from "./routes/contact.routes.js";
+
 // Blogs (optional but DB me hai)
 //import blogRoutes from "./routes/blog.routes.js";
 
@@ -114,6 +120,12 @@ app.use("/api/search", searchRoutes);
 
 // Products
 app.use("/api/products", productRoutes);
+
+// YouTube Links
+app.use("/api/youtube-links", youtubeLinksRoutes);
+
+// Contact Inquiry
+app.use("/api", contactRoutes); // /api/contact
 
 // Blogs
 //app.use("/api/blogs", blogRoutes);

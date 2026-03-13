@@ -31,6 +31,10 @@ export const getStats = async () => {
     `SELECT COUNT(*) AS totalUsers FROM users`
   );
 
+  const [[products]] = await db.query(
+    `SELECT COUNT(*) AS totalProducts FROM products`
+  );
+
   return {
     total_orders: orders.totalOrders,
     total_revenue: revenue.totalRevenue || 0,
@@ -39,6 +43,7 @@ export const getStats = async () => {
     total_poojas: poojas.totalPoojas,
     total_chadawas: chadawas.totalChadawas,
     total_users: users.totalUsers,
+    total_products: products.totalProducts
   };
 };
 

@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import YoutubeFeed from "./YoutubeFeed";
 import AddressUpdateModal from "../common/AddressUpdateModal";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -30,6 +31,7 @@ export default function UserLayout() {
       <main className="flex-1"> {/* Navbar is sticky, no margin-top needed */}
         <Outlet />
       </main>
+      <YoutubeFeed />
       <Footer />
 
       <AddressUpdateModal

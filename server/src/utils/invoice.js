@@ -127,6 +127,14 @@ export const generateInvoicePDF = async (orderId, userId) => {
         doc.fontSize(8).fillColor('#666666').text(extraInfo.join(' | '), 60, currentY + itemHeight);
         itemHeight += 12;
       }
+
+      // Devotee details (Names and Gotra)
+      if (item.bookings && item.bookings.length > 0) {
+        const devotees = item.bookings.map(b => `${b.devotee_name}${b.gotra ? ` (${b.gotra})` : ''}`).join(', ');
+        doc.fontSize(8).fillColor('#800000').font('Helvetica-Bold').text('Devotees: ', 60, currentY + itemHeight, { continued: true });
+        doc.font('Helvetica').fillColor('#444444').text(devotees);
+        itemHeight += 12;
+      }
       
       currentY += itemHeight + 5;
 

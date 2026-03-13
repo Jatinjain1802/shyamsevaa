@@ -114,7 +114,7 @@ const PrivacyPolicy = () => {
 
                     <div className="pt-10 border-t border-marigold/20">
                         <p className="text-center text-sm italic">
-                            {t('privacy.contact_text')} <span className="text-sindoor font-bold">support@shyampuja.com</span>
+                            {t('privacy.contact_text')} <span className="text-sindoor font-bold">info@shyampuja.com</span>
 
                         </p>
                     </div>

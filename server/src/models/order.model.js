@@ -44,8 +44,17 @@ export const createOrderItemAddon = async (d) => {
 
 export const getOrdersByUser = async (userId) => {
   const [rows] = await db.query(
-    `SELECT id, order_number, total_amount, payment_status, created_at, invoice_path
-     FROM orders WHERE user_id=? ORDER BY created_at DESC`,
+    `SELECT 
+      id, 
+      order_number, 
+      total_amount, 
+      payment_status, 
+      created_at, 
+      invoice_path,
+      (SELECT product_type FROM order_items WHERE order_id = orders.id LIMIT 1) as order_type
+     FROM orders 
+     WHERE user_id=? 
+     ORDER BY created_at DESC`,
     [userId]
   );
   return rows;
@@ -154,6 +163,7 @@ export const getOrderItems = async (orderId) => {
   );
 
   for (const item of items) {
+    // Fetch Addons
     const [addons] = await db.query(
       `SELECT 
           oia.*,
@@ -164,6 +174,15 @@ export const getOrderItems = async (orderId) => {
       [item.id]
     );
     item.addons = addons;
+
+    // Fetch Bookings (Devotees)
+    const [bookings] = await db.query(
+      `SELECT devotee_name, gotra, mobile 
+       FROM bookings 
+       WHERE order_item_id = ?`,
+      [item.id]
+    );
+    item.bookings = bookings;
   }
 
   return items;

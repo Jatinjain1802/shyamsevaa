@@ -77,7 +77,7 @@ const RefundPolicy = () => {
                     <div className="pt-10 border-t border-marigold/20">
                         <p className="text-center text-sm italic flex items-center justify-center gap-2">
                             <Mail className="w-4 h-4 text-sindoor" />
-                            {t('refund.contact_text')} <span className="text-sindoor font-bold">support@shyampuja.com</span>
+                            {t('refund.contact_text')} <span className="text-sindoor font-bold">info@shyampuja.com</span>
                         </p>
                     </div>
                 </div>
