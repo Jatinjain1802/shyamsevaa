@@ -30,6 +30,7 @@ const tables = [
         state           VARCHAR(100),
         otp             VARCHAR(10),
         otp_expires_at  DATETIME,
+        refresh_token   TEXT,
         created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `,
@@ -48,6 +49,7 @@ const tables = [
       { name: "state",          definition: "VARCHAR(100)", after: "city" },
       { name: "otp",            definition: "VARCHAR(10)" },
       { name: "otp_expires_at", definition: "DATETIME" },
+      { name: "refresh_token",   definition: "TEXT", after: "otp_expires_at" },
       { name: "created_at",     definition: "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" },
     ],
   },
